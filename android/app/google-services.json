@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "78384394271",
+    "project_id": "bitetrace",
+    "storage_bucket": "bitetrace.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78384394271:android:835e5986a2eef9bd6ae52a",
+        "android_client_info": {
+          "package_name": "com.example.bite_trace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "78384394271-cg56eck5p7k6sjfpnoqvdp790eijmaee.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsstFqafG59vlVPAHpKErnQEA8UrGRGvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "78384394271-cg56eck5p7k6sjfpnoqvdp790eijmaee.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
