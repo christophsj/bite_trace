@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-bitetrace-dev-103654-authRole",
+      "UnauthRoleArn": "arn:aws:iam::179077459464:role/amplify-bitetrace-dev-103654-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::179077459464:role/amplify-bitetrace-dev-103654-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-bitetrace-dev-103654-deployment",
+      "UnauthRoleName": "amplify-bitetrace-dev-103654-unauthRole",
+      "StackName": "amplify-bitetrace-dev-103654",
+      "StackId": "arn:aws:cloudformation:eu-central-1:179077459464:stack/amplify-bitetrace-dev-103654/37dd2540-4190-11ee-a12e-063a008fe346",
+      "AmplifyAppId": "d3mz85q4izh54s"
+    },
+    "categories": {
+      "auth": {
+        "bitetraceff4467e3": {}
+      }
+    }
+  }
+}

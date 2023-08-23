@@ -1,0 +1,6 @@
+type DiaryEntry @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  title: String!
+  description: String
+  amount: Float!
+}
