@@ -1,11 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/models/account_data.dart';
-import 'package:bite_trace/models/daily_log.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/state/diary_state.dart';
-import 'package:bite_trace/utils/macros.dart';
+import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/async_value_builder.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
 import 'package:bite_trace/widgets/diary_calendar.dart';
@@ -14,11 +13,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
-class DiaryScreen extends ConsumerWidget {
+class DiaryScreen extends ConsumerStatefulWidget {
   const DiaryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiaryScreen> createState() => _DiaryScreenState();
+}
+
+class _DiaryScreenState extends ConsumerState<DiaryScreen> {
+  @override
+  void initState() {
+    ref.read(diaryServiceProvider).getLog(DateTime.now());
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final data = ref.read(accountDataProvider);
     return AsyncValueBuilder(
       data,
@@ -26,7 +36,13 @@ class DiaryScreen extends ConsumerWidget {
         final diaryState = ref.watch(diaryProvider);
 
         return switch (diaryState) {
-          (DiaryStateInitializing _) => const CircularProgressIndicator(),
+          (DiaryStateInitializing _) => const Center(
+              child: SizedBox(
+                height: 40,
+                width: 40,
+                child: CircularProgressIndicator(),
+              ),
+            ),
           (final DiaryStateError s) => ErrorView(error: s),
           (final DiaryStateReady s) => SingleChildScrollView(
               child: Column(
@@ -46,12 +62,12 @@ class DiaryScreen extends ConsumerWidget {
 class DiarySection extends ConsumerWidget {
   const DiarySection(this.log, this.data, {super.key});
 
-  final DailyLog log;
+  final DiaryEntry log;
   final AccountData data;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final meals = log.sortedMeals;
+    final meals = log.meals!;
     return Column(
       children: [
         Dashboard(
@@ -72,7 +88,9 @@ class DiarySection extends ConsumerWidget {
             itemBuilder: (context, index) {
               final meal = meals[index];
               final color = Theme.of(context).colorScheme.primary;
-              final m = Macros.getMealMacros(meal.foods);
+              final n = NutrientsExtension.combine(
+                meal.foods.map((e) => e.nutritionalContents).toList(),
+              );
               return ListTile(
                 onTap: () {
                   context.pushRoute(MealDetailsRoute(log: log, meal: meal));
@@ -86,7 +104,7 @@ class DiarySection extends ConsumerWidget {
                       size: 30,
                     ),
                     Text(
-                      '${m.calories.toInt()}',
+                      '${n.calories.toInt()}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -101,7 +119,7 @@ class DiarySection extends ConsumerWidget {
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 subtitle: Text(
-                  '${m.carbs.toInt()}g carbs ${m.fats.toInt()}g fat ${m.protein.toInt()}g protein',
+                  '${n.carbohydrates.toInt()}g carbs ${n.fat.toInt()}g fat ${n.protein.toInt()}g protein',
                 ),
                 trailing: ElevatedButton(
                   onPressed: () {

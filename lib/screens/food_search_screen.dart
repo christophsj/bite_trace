@@ -2,8 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/dtos/myfitnesspal_api/item.dart';
 import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
-import 'package:bite_trace/models/daily_log.dart';
-import 'package:bite_trace/models/food.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/widgets/app_bar_with_meal_selector.dart';
@@ -19,7 +18,7 @@ class FoodSearchScreen extends ConsumerStatefulWidget {
     super.key,
   });
 
-  final DailyLog log;
+  final DiaryEntry log;
   final int initialMealIndex;
 
   @override
@@ -71,8 +70,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen> {
     return Scaffold(
       appBar: AppBarWithMealSelector(
         selectedMealIndex: selectedMealIndex,
-        meals: widget.log.meals.values.toList()
-          ..sort((a, b) => a.index.compareTo(b.index)),
+        meals: widget.log.meals!..sort((a, b) => a.index.compareTo(b.index)),
         onChanged: (i) {
           setState(() {
             if (i != null) selectedMealIndex = i;
@@ -175,16 +173,19 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen> {
                           ),
                         ),
                         trailing: IconButton(
-                          onPressed: () {
+                          onPressed: () async {
                             final selectedMeal =
-                                widget.log.sortedMeals[selectedMealIndex];
-                            diaryService
+                                widget.log.meals![selectedMealIndex];
+                            await diaryService
                                 .addFoodsToMeal(widget.log, selectedMeal, [
                               FoodDtoToFoodMapper.foodDtoToFood(
                                 item.item,
                                 item.item.servingSizes[0],
                               )
                             ]);
+                            ref
+                                .read(snackbarServiceProvider)
+                                .showBasic('Added ${item.item.description}');
                           },
                           icon: const Icon(Icons.add),
                           style: IconButton.styleFrom(

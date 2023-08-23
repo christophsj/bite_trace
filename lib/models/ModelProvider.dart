@@ -20,23 +20,37 @@
 // ignore_for_file: public_member_api_docs, annotate_overrides, dead_code, dead_codepublic_member_api_docs, depend_on_referenced_packages, file_names, library_private_types_in_public_api, no_leading_underscores_for_library_prefixes, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, null_check_on_nullable_type_parameter, prefer_adjacent_string_concatenation, prefer_const_constructors, prefer_if_null_operators, prefer_interpolation_to_compose_strings, slash_for_doc_comments, sort_child_properties_last, unnecessary_const, unnecessary_constructor_name, unnecessary_late, unnecessary_new, unnecessary_null_aware_assignments, unnecessary_nullable_for_final_variable_declarations, unnecessary_string_interpolations, use_build_context_synchronously
 
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
+import 'AccountData.dart';
 import 'DiaryEntry.dart';
+import 'Food.dart';
+import 'Meal.dart';
+import 'NutrientGoals.dart';
+import 'Nutrients.dart';
+import 'ServingSize.dart';
 
+export 'AccountData.dart';
 export 'DiaryEntry.dart';
+export 'Food.dart';
+export 'Meal.dart';
+export 'NutrientGoals.dart';
+export 'Nutrients.dart';
+export 'ServingSize.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "d6aa23bbc4d6a990f4972da7e7d97b55";
+  String version = "1ac85d99d51d09b9c7c34f0e91dbb001";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [DiaryEntry.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema];
   @override
-  List<amplify_core.ModelSchema> customTypeSchemas = [];
+  List<amplify_core.ModelSchema> customTypeSchemas = [Food.schema, Meal.schema, NutrientGoals.schema, Nutrients.schema, ServingSize.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
   
   amplify_core.ModelType getModelTypeByModelName(String modelName) {
     switch(modelName) {
+      case "AccountData":
+        return AccountData.classType;
       case "DiaryEntry":
         return DiaryEntry.classType;
       default:

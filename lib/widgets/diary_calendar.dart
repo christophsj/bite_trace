@@ -5,30 +5,16 @@ import 'package:intl/intl.dart';
 
 class DiaryCalendar extends ConsumerWidget {
   late final ScrollController scrollController = ScrollController();
-  late final List<DateTime> days = _generateDateList();
 
-  static List<DateTime> _generateDateList() {
-    final DateTime today = DateTime.now();
-    final List<DateTime> dateList = [];
-
-    // Previous 3 days
-    for (int i = 3; i > 0; i--) {
-      dateList.add(today.subtract(Duration(days: i)));
-    }
-
-    // Current day
-    dateList.add(today);
-
-    // Next 3 days
-    for (int i = 1; i <= 3; i++) {
-      dateList.add(today.add(Duration(days: i)));
-    }
-
-    return dateList;
-  }
-
-  Widget _weekdayButton(DateTime day, int selected, void Function() onSelect) {
-    final s = day.day == selected;
+  Widget _weekdayButton(
+    DateTime day,
+    DateTime selected,
+    void Function() onSelect,
+  ) {
+    // ignore time when comparing
+    final s = day.day == selected.day &&
+        day.month == selected.month &&
+        day.year == selected.year;
 
     return Builder(
       builder: (context) {
@@ -54,7 +40,7 @@ class DiaryCalendar extends ConsumerWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
                 Text(
-                  DateFormat('EEE').format(day),
+                  DateFormat('MMM').format(day),
                   style: const TextStyle(fontSize: 10),
                 ),
               ],
@@ -68,15 +54,41 @@ class DiaryCalendar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedDayProvider);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: days
-          .map(
-            (e) => _weekdayButton(e, selected.day, () {
-              ref.read(selectedDayProvider.notifier).state = e;
-            }),
-          )
-          .toList(),
+    final now = DateTime.now();
+    const itemExtent = 56.0;
+    const futureDays = 20;
+    return SizedBox(
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemExtent: itemExtent,
+        reverse: true,
+        itemCount: 1000,
+        controller: ScrollController(
+          initialScrollOffset: 4 +
+              (itemExtent * (futureDays + 1)) -
+              MediaQuery.of(context).size.width,
+        ),
+        itemBuilder: (context, index) {
+          final e = now.subtract(Duration(days: index - futureDays));
+          return _weekdayButton(e, selected, () {
+            ref.read(selectedDayProvider.notifier).state = e;
+            ref.read(diaryServiceProvider).getLog(e);
+          });
+        },
+      ),
     );
+
+    // return Row(
+    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //   children: days
+    //       .map(
+    //         (e) => _weekdayButton(e, selected.day, () {
+    //           ref.read(selectedDayProvider.notifier).state = e;
+    //           ref.read(diaryServiceProvider).getLog(e);
+    //         }),
+    //       )
+    //       .toList(),
+    // );
   }
 }

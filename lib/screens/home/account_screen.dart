@@ -21,9 +21,9 @@ class AccountScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text('Account'),
-              Text(data.uid),
-              Text(data.username),
-              Text(data.nutrients.toString()),
+              // Text(data.uid),
+              // Text(data.username),
+              // Text(data.nutrients.toString()),
               ElevatedButton(
                 onPressed: authService.signOut,
                 child: Text('logout'.toUpperCase()),

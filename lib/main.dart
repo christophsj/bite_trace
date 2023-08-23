@@ -1,31 +1,98 @@
-import 'package:bite_trace/firebase_options.dart';
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_authenticator/amplify_authenticator.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:bite_trace/amplifyconfiguration.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await _configureAmplify();
   runApp(const ProviderScope(child: BiteTraceApp()));
+}
+
+Future<void> _configureAmplify() async {
+  try {
+    final api = AmplifyAPI(modelProvider: ModelProvider.instance);
+    final auth = AmplifyAuthCognito();
+
+    await Amplify.addPlugins([api, auth]);
+    await Amplify.configure(amplifyconfig);
+
+    safePrint('Successfully configured');
+  } on Exception catch (e) {
+    safePrint('Error configuring Amplify: $e');
+  }
 }
 
 class BiteTraceApp extends ConsumerWidget {
   const BiteTraceApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appRouter = ref.read(routerProvider);
-    final sb = ref.read(snackbarServiceProvider);
-    return MaterialApp.router(
-      routerConfig: appRouter.config(),
-      debugShowCheckedModeBanner: false,
-      title: 'Bite Trace',
-      scaffoldMessengerKey: sb.key,
-      theme: FlexThemeData.light(scheme: FlexScheme.redWine),
-      darkTheme: FlexThemeData.dark(scheme: FlexScheme.redWine),
+    return Authenticator(
+      authenticatorBuilder: (context, state) {
+        switch (state.currentStep) {
+          case AuthenticatorStep.signIn:
+            return Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Image.asset('assets/logo.png'),
+                    SignInForm(),
+                    TextButton(
+                      onPressed: () => state.changeStep(
+                        AuthenticatorStep.signUp,
+                      ),
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          case AuthenticatorStep.signUp:
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Image.asset('assets/logo.png'),
+                    SignUpForm(),
+                    TextButton(
+                      onPressed: () => state.changeStep(
+                        AuthenticatorStep.signIn,
+                      ),
+                      child: const Text('back to sign in'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          default:
+            return null;
+        }
+      },
+      initialStep: AuthenticatorStep.onboarding,
+      child: MaterialApp.router(
+        routerConfig: ref.read(routerProvider).config(),
+        debugShowCheckedModeBanner: false,
+        title: 'Bite Trace',
+        builder: Authenticator.builder(),
+        scaffoldMessengerKey: ref.read(snackbarServiceProvider).key,
+        theme: FlexThemeData.light(scheme: FlexScheme.bigStone),
+        darkTheme: FlexThemeData.dark(scheme: FlexScheme.redWine),
+      ),
     );
   }
 }

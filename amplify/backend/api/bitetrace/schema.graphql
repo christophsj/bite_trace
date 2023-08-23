@@ -1,6 +1,62 @@
 type DiaryEntry @model @auth(rules: [{ allow: owner }]) {
-  id: ID!
-  title: String!
-  description: String
-  amount: Float!
+  day: AWSDate! @primaryKey
+  meals: [Meal!]
+}
+type AccountData @model @auth(rules: [{ allow: owner }]) {
+  id: ID! @primaryKey
+  nutrientGoals: NutrientGoals!
+  mealNames: [String!]
+}
+
+type NutrientGoals {
+  calories: Int!
+  carbPerc: Int!
+  fatPerc: Int!
+  proteinPerc: Int!
+  otherNutrients: Nutrients
+}
+
+type Meal {
+  name: String!
+  index: Int!
+  foods: [Food!]!
+}
+
+type Food {
+  countryCode: String
+  description: String!
+  foodId: String!
+  chosenServingSize: Int!
+  verified: Boolean!
+  brandName: String
+  nutritionalContents: Nutrients!
+  servingSizes: [ServingSize!]!
+}
+
+type ServingSize {
+  index: Int!
+  nutritionMultiplier: Float!
+  unit: String!
+  value: Float!
+}
+
+type Nutrients {
+  calories: Float!
+  carbohydrates: Float!
+  protein: Float!
+  fat: Float!
+  calcium: Float
+  cholesterol: Float
+  fiber: Float
+  iron: Float
+  monounsaturatedFat: Float
+  polyunsaturatedFat: Float
+  potassium: Float
+  saturatedFat: Float
+  sodium: Float
+  sugar: Float
+  vitaminC: Float
+  vitaminD: Float
+  transFat: Float
+  vitaminA: Float
 }

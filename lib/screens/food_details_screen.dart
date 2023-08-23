@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/models/daily_log.dart';
-import 'package:bite_trace/models/food.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
@@ -17,7 +16,7 @@ class FoodDetailsScreen extends ConsumerStatefulWidget {
   });
 
   final Food food;
-  final DailyLog log;
+  final DiaryEntry log;
   final int initialMealIndex;
 
   @override
@@ -179,7 +178,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen> {
                           isExpanded: true,
                           underline: Container(),
                           value: selectedMealIndex,
-                          items: widget.log.sortedMeals
+                          items: widget.log.meals!
                               .map(
                                 (e) => DropdownMenuItem(
                                   value: e.index,
@@ -211,7 +210,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen> {
                     AnimatedElevatedButton(
                       onPressed: () async {
                         final selectedMeal =
-                            widget.log.sortedMeals[selectedMealIndex];
+                            widget.log.meals![selectedMealIndex];
                         await ref.read(diaryServiceProvider).addFoodsToMeal(
                           widget.log,
                           selectedMeal,

@@ -5,11 +5,15 @@ import 'package:bite_trace/routing/router.gr.dart';
 class AppRouter extends $AppRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: HomeRoute.page, initial: true, children: [
-          AutoRoute(page: AccountRoute.page),
-          AutoRoute(page: DiaryRoute.page),
-        ],),
-        AutoRoute(page: LoginRoute.page),
+        AutoRoute(
+          page: HomeRoute.page,
+          initial: true,
+          children: [
+            AutoRoute(page: AccountRoute.page),
+            AutoRoute(page: DiaryRoute.page),
+          ],
+        ),
+        // AutoRoute(page: LoginRoute.page),
         AutoRoute(page: RegisterRoute.page),
         AutoRoute(page: FoodSearchRoute.page),
         AutoRoute(page: FoodDetailsRoute.page),

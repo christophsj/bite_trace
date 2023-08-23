@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/models/daily_log.dart';
-import 'package:bite_trace/models/meal.dart';
-import 'package:bite_trace/models/nutrients.dart';
-import 'package:bite_trace/utils/macros.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
+import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +13,7 @@ class MealDetailsScreen extends ConsumerStatefulWidget {
     required this.meal,
   });
 
-  final DailyLog log;
+  final DiaryEntry log;
   final Meal meal;
 
   @override
@@ -27,6 +25,9 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final n = NutrientsExtension.combine(
+      widget.meal.foods.map((e) => e.nutritionalContents).toList(),
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.meal.name),
@@ -46,16 +47,13 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     MacrosDisplay(
-                      nutrients:
-                          Macros.getMealMacros(widget.meal.foods).toNutrients(),
+                      nutrients: n,
                     ),
                     const SizedBox(
                       height: 20,
                     ),
                     MicroNutrientsDisplay(
-                      nutrients: Nutrients.combine(widget.meal.foods
-                          .map((e) => e.nutritionalContents)
-                          .toList(),),
+                      nutrients: n,
                     ),
                   ],
                 ),

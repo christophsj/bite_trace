@@ -1,18 +1,20 @@
 import 'package:bite_trace/dtos/myfitnesspal_api/food_response.dart';
 import 'package:bite_trace/dtos/myfitnesspal_api/nutritional_contents.dart';
 import 'package:bite_trace/dtos/myfitnesspal_api/serving_size.dart';
-import 'package:bite_trace/models/food.dart';
-import 'package:bite_trace/models/nutrients.dart';
-import 'package:bite_trace/models/serving_size.dart';
+import 'package:bite_trace/models/Food.dart';
+import 'package:bite_trace/models/Nutrients.dart';
+import 'package:bite_trace/models/ServingSize.dart';
 
 class FoodDtoToFoodMapper {
   static Food foodDtoToFood(
-      FoodResponse foodResponse, ServingSizeDto chosenServingSize,) {
+    FoodResponse foodResponse,
+    ServingSizeDto chosenServingSize,
+  ) {
     final servingSizes =
         foodResponse.servingSizes.map(servingSizeDtoToServingSize).toList();
     return Food(
       description: foodResponse.description,
-      id: foodResponse.id,
+      foodId: foodResponse.id.toString(),
       nutritionalContents:
           nutritionalContentsDtoToNutrients(foodResponse.nutritionalContents),
       chosenServingSize: chosenServingSize.index,
@@ -22,7 +24,8 @@ class FoodDtoToFoodMapper {
   }
 
   static Nutrients nutritionalContentsDtoToNutrients(
-      NutritionalContentsDto dto,) {
+    NutritionalContentsDto dto,
+  ) {
     return Nutrients(
       calories: dto.energy?.value ?? 0,
       calcium: dto.calcium,

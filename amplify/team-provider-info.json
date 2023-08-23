@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "bitetraceff4467e3": {}
+      },
+      "api": {
+        "bitetrace": {}
       }
     }
   }

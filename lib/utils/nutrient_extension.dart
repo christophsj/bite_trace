@@ -1,39 +1,9 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:bite_trace/models/Nutrients.dart';
 
-part 'nutrients.freezed.dart';
-part 'nutrients.g.dart';
-
-@freezed
-class Nutrients with _$Nutrients {
-  const factory Nutrients({
-    required double calories,
-    @JsonKey(defaultValue: 0) required double carbohydrates,
-    @JsonKey(defaultValue: 0) required double protein,
-    @JsonKey(defaultValue: 0) required double fat,
-    double? calcium,
-    double? cholesterol,
-    double? fiber,
-    double? iron,
-    double? monounsaturatedFat,
-    double? polyunsaturatedFat,
-    double? potassium,
-    double? saturatedFat,
-    double? sodium,
-    double? sugar,
-    double? vitaminC,
-    double? vitaminD,
-    double? transFat,
-    double? vitaminA,
-  }) = _Nutrients;
-  const Nutrients._();
-
-  factory Nutrients.fromJson(Map<String, Object?> json) =>
-      _$NutrientsFromJson(json);
-
-  factory Nutrients.combine(List<Nutrients> list) {
+extension NutrientsExtension on Nutrients {
+  static Nutrients combine(List<Nutrients> list) {
     if (list.isEmpty) {
-      return const Nutrients(calories: 0, carbohydrates: 0, protein: 0, fat: 0);
+      return Nutrients(calories: 0, carbohydrates: 0, protein: 0, fat: 0);
     }
     return list.reduce(
       (a, b) {

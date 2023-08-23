@@ -1,5 +1,5 @@
 import 'package:bite_trace/constants.dart';
-import 'package:bite_trace/models/nutrients.dart';
+import 'package:bite_trace/models/Nutrients.dart';
 import 'package:flutter/material.dart';
 
 class MacrosDisplay extends StatelessWidget {
@@ -26,7 +26,9 @@ class MacrosDisplay extends StatelessWidget {
                 Text(
                   nutrients.calories.toInt().toString(),
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600,),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const Icon(Icons.local_fire_department),
               ],
@@ -41,15 +43,18 @@ class MacrosDisplay extends StatelessWidget {
                   Text(
                     entry.key,
                     style: TextStyle(
-                        color: entry.value.$2, fontWeight: FontWeight.w600,),
+                      color: entry.value.$2,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const Spacer(),
                   Text(
                     '${(entry.value.$1 * 10).toInt() / 10}g',
                     style: TextStyle(
-                        color: entry.value.$2,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,),
+                      color: entry.value.$2,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -128,7 +133,6 @@ class MicroNutrientsDisplay extends StatelessWidget {
 }
 
 class SegmentedProgressIndicator extends StatelessWidget {
-
   const SegmentedProgressIndicator({
     required this.colors,
     required this.segmentLengths,
@@ -142,36 +146,39 @@ class SegmentedProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final List<Widget> segments = [];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final List<Widget> segments = [];
 
-      final double totalLength =
-          segmentLengths.reduce((value, element) => value + element);
+        final double totalLength =
+            segmentLengths.reduce((value, element) => value + element);
 
-      if (totalLength == 0) {
-        return Container();
-      }
+        if (totalLength == 0) {
+          return Container();
+        }
 
-      for (int i = 0; i < colors.length; i++) {
-        final w = constraints.maxWidth * (segmentLengths[i] / totalLength);
-        segments.add(
-          Container(
-            width: w,
-            height: height,
-            color: colors[i],
-            child: (w < 8)
-                ? null
-                : Center(
-                    child: Text(
-                    vals[i],
-                    style: const TextStyle(color: Colors.white),
-                  ),),
-          ),
+        for (int i = 0; i < colors.length; i++) {
+          final w = constraints.maxWidth * (segmentLengths[i] / totalLength);
+          segments.add(
+            Container(
+              width: w,
+              height: height,
+              color: colors[i],
+              child: (w < 8)
+                  ? null
+                  : Center(
+                      child: Text(
+                        vals[i],
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+            ),
+          );
+        }
+        return Row(
+          children: segments,
         );
-      }
-      return Row(
-        children: segments,
-      );
-    },);
+      },
+    );
   }
 }

@@ -1,11 +1,10 @@
-import 'package:bite_trace/models/account_data.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/routing/router.dart';
 import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/service/auth_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/service/food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final routerProvider = Provider<AppRouter>((ref) => AppRouter());
@@ -38,13 +37,12 @@ final accountDataProvider = FutureProvider<AccountData?>((ref) async {
   if (created != null) {
     return created;
   }
-  final user = await ref.watch(authStateChangesProvider.future);
+  final user = await ref.watch(authServiceProvider).getCurrentUser();
   if (user == null) {
     return null;
   }
-  return ref.watch(accountServiceProvider).getAccount(user.uid);
+  return ref.watch(accountServiceProvider).getAccount(user.userId);
 });
 
-final authStateChangesProvider = StreamProvider<User?>((ref) {
-  return ref.watch(authServiceProvider).authStateChanges();
-});
+final userProvider =
+    FutureProvider((ref) => ref.watch(authServiceProvider).getCurrentUser());

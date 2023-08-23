@@ -1,8 +1,8 @@
-import 'package:bite_trace/models/daily_log.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 
 sealed class DiaryState {
   const factory DiaryState.initializing() = DiaryStateInitializing;
-  const factory DiaryState.ready(DailyLog userlog) = DiaryStateReady;
+  const factory DiaryState.ready(DiaryEntry userlog) = DiaryStateReady;
   const factory DiaryState.error(String? errorText) = DiaryStateError;
 }
 
@@ -12,7 +12,7 @@ class DiaryStateInitializing implements DiaryState {
 
 class DiaryStateReady implements DiaryState {
   const DiaryStateReady(this.log);
-  final DailyLog log;
+  final DiaryEntry log;
 
   @override
   String toString() {
@@ -21,7 +21,6 @@ class DiaryStateReady implements DiaryState {
 }
 
 class DiaryStateError implements DiaryState {
-
   const DiaryStateError(this.error);
   final String? error;
 }
