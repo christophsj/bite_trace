@@ -1,13 +1,17 @@
 type DiaryEntry @model @auth(rules: [{ allow: owner }]) {
-  day: AWSDate! @primaryKey(sortKeyFields: ["user"])
+  day: AWSDate!
   meals: [Meal!]
-  user: String!
+  id: ID! @primaryKey(sortKeyFields: ["day"])
 }
 type AccountData @model @auth(rules: [{ allow: owner }]) {
   id: ID! @primaryKey
   nutrientGoals: NutrientGoals!
   mealNames: [String!]
   themeModeIdx: Int
+}
+type FavoriteFoods @model @auth(rules: [{ allow: owner }]) {
+  id: ID! @primaryKey
+  favorites: [Food!]
 }
 
 type NutrientGoals {

@@ -2,11 +2,12 @@ export type AmplifyDependentResourcesAttributes = {
   "api": {
     "bitetrace": {
       "GraphQLAPIEndpointOutput": "string",
-      "GraphQLAPIIdOutput": "string"
+      "GraphQLAPIIdOutput": "string",
+      "GraphQLAPIKeyOutput": "string"
     }
   },
   "auth": {
-    "bitetraceff4467e3": {
+    "bitetraced2dea256": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",

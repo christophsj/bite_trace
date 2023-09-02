@@ -49,13 +49,14 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
         title: Text(widget.meal.name),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Card(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: Column(
                   children: [
                     for (final food in foods.asMap().entries)
@@ -92,7 +93,7 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
               ),
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: MacrosDisplay(
                     nutrients: n,
                   ),
@@ -103,7 +104,7 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
               ),
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

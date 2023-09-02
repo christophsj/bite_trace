@@ -1,4 +1,3 @@
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
@@ -24,7 +23,7 @@ class AccountService extends StateNotifier<AccountState> {
       await Amplify.DataStore.save(accountData);
       _handleState(accountData);
       return accountData;
-    } on ApiException catch (e) {
+    } on DataStoreException catch (e) {
       safePrint('Mutation failed: $e');
       ref.read(snackbarServiceProvider).showBasic(e.toString());
       state = AccountState.error(e.message);
@@ -48,6 +47,9 @@ class AccountService extends StateNotifier<AccountState> {
           ),
         ),
       );
+      if (result.isEmpty) {
+        return null;
+      }
       final response = result.first;
       _handleState(response);
       return response;

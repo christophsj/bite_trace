@@ -7,17 +7,24 @@
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "bitetraceff4467e3"
+          "resourceName": "bitetraced2dea256"
         }
       ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [],
-          "defaultAuthentication": {
-            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-            "userPoolConfig": {
-              "userPoolId": "authbitetraceff4467e3"
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authbitetraced2dea256"
+              }
             }
+          ],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7
+            },
+            "authenticationType": "API_KEY"
           }
         }
       },
@@ -26,7 +33,7 @@
     }
   },
   "auth": {
-    "bitetraceff4467e3": {
+    "bitetraced2dea256": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {

@@ -50,7 +50,6 @@ class FoodListTile extends StatelessWidget {
             ),
           ],
         ),
-        titleAlignment: ListTileTitleAlignment.center,
         title: Text(
           name,
           style: TextStyle(
@@ -59,29 +58,21 @@ class FoodListTile extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        isThreeLine: subtitle != null,
-        subtitle: RichText(
-          text: TextSpan(
-            children: [
-              if (subtitle != null)
-                TextSpan(
-                  text: '$subtitle\n',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              TextSpan(
-                text:
-                    '${n.carbohydrates.toInt()}C ${n.fat.toInt()}F ${n.protein.toInt()}P',
+        subtitle: subtitle != null
+            ? Text(
+                '$subtitle',
                 style: TextStyle(
                   fontSize: 13,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               )
-            ],
-          ),
-        ),
+            : Text(
+                '${n.carbohydrates.toInt()}C ${n.fat.toInt()}F ${n.protein.toInt()}P',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
         trailing: AnimatedElevatedButton(
           onPressed: onTapTrailing,
           style: ElevatedButton.styleFrom(

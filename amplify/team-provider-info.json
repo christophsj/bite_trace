@@ -1,4 +1,46 @@
 {
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifydab76dcefd8c4-staging-165311-authRole",
+      "UnauthRoleArn": "arn:aws:iam::179077459464:role/amplify-amplifydab76dcefd8c4-staging-165311-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::179077459464:role/amplify-amplifydab76dcefd8c4-staging-165311-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-amplifydab76dcefd8c4-staging-165311-deployment",
+      "UnauthRoleName": "amplify-amplifydab76dcefd8c4-staging-165311-unauthRole",
+      "StackName": "amplify-amplifydab76dcefd8c4-staging-165311",
+      "StackId": "arn:aws:cloudformation:eu-central-1:179077459464:stack/amplify-amplifydab76dcefd8c4-staging-165311/33cb8900-49b1-11ee-98a1-02bdf8bce3e9",
+      "AmplifyAppId": "d3mz85q4izh54s"
+    },
+    "categories": {
+      "auth": {
+        "bitetraced2dea256": {}
+      },
+      "api": {
+        "bitetrace": {}
+      }
+    }
+  },
+  "develop": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-bitetrace-develop-162730-authRole",
+      "UnauthRoleArn": "arn:aws:iam::179077459464:role/amplify-bitetrace-develop-162730-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::179077459464:role/amplify-bitetrace-develop-162730-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-bitetrace-develop-162730-deployment",
+      "UnauthRoleName": "amplify-bitetrace-develop-162730-unauthRole",
+      "StackName": "amplify-bitetrace-develop-162730",
+      "StackId": "arn:aws:cloudformation:eu-central-1:179077459464:stack/amplify-bitetrace-develop-162730/9d139460-49ad-11ee-82f7-0a2e1bd89e38",
+      "AmplifyAppId": "d3mz85q4izh54s"
+    },
+    "categories": {
+      "auth": {
+        "bitetraceff4467e3": {}
+      },
+      "api": {
+        "bitetrace": {}
+      }
+    }
+  },
   "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-bitetrace-dev-103654-authRole",

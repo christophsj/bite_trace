@@ -12,33 +12,6 @@ class Dashboard extends ConsumerWidget {
   final AccountData data;
   final List<Food> foods;
 
-  Widget _buildSmallIconHeaderValue(
-    Widget icon,
-    String header,
-    String value,
-    ThemeData theme,
-  ) {
-    return Row(
-      children: [
-        icon,
-        const SizedBox(
-          width: 10,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              header,
-              style:
-                  TextStyle(fontSize: 13, color: theme.colorScheme.secondary),
-            ),
-            Text(value),
-          ],
-        )
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final n = NutrientsExtension.combine(

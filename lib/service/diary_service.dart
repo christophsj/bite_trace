@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
@@ -54,7 +53,7 @@ class DiaryService extends StateNotifier<DiaryState> {
       log = _setDefaultMeals(
         DiaryEntry(
           day: TemporalDate(date),
-          user: (await ref.read(userProvider.future))!.userId,
+          id: (await ref.read(userProvider.future))!.userId,
         ),
         ref.read(accountStateProvider).getData()!,
       );
@@ -66,17 +65,23 @@ class DiaryService extends StateNotifier<DiaryState> {
     _updateState(log);
   }
 
-  Future<List<Food>> getRecentFoods({int limitDays = 10}) async {
+  Future<List<Food>> getRecentFoods({
+    required String filter,
+    int page = 0,
+    int limitDays = 10,
+  }) async {
     final userId = await getUserId();
-    if (userId == null) {
-      throw Exception('User id is null');
-    }
+
     final entries = await Amplify.DataStore.query<DiaryEntry>(
       DiaryEntry.classType,
-      where: DiaryEntry.USER.eq(userId),
-      sortBy: [DiaryEntry.DAY.descending()],
-      pagination: QueryPagination(limit: limitDays),
+      where: DiaryEntry.ID.eq(userId),
+      sortBy: [DiaryEntry.ID.descending()],
+      pagination: QueryPagination(page: page, limit: limitDays),
     );
+
+    for (final log in entries) {
+      _updateState(log);
+    }
 
     return entries
         .map((e) => e.meals!)
@@ -84,6 +89,10 @@ class DiaryService extends StateNotifier<DiaryState> {
         .map((e) => e.foods)
         .toList()
         .expand((e) => e)
+        .where(
+          (element) =>
+              element.description.toLowerCase().contains(filter.toLowerCase()),
+        )
         .toList();
   }
 
@@ -91,13 +100,12 @@ class DiaryService extends StateNotifier<DiaryState> {
     final user = await getUserId();
     final result = await Amplify.DataStore.query(
       DiaryEntry.classType,
-      where: DiaryEntry.MODEL_IDENTIFIER.eq(
-        DiaryEntryModelIdentifier(
-          day: TemporalDate(date),
-          user: user,
-        ),
-      ),
+      where: DiaryEntry.DAY.eq(TemporalDate(date)).and(DiaryEntry.ID.eq(user)),
     );
+
+    if (result.isEmpty) {
+      return null;
+    }
     return result[0];
   }
 
@@ -131,7 +139,7 @@ class DiaryService extends StateNotifier<DiaryState> {
   }
 
   void _updateState(DiaryEntry log) {
-    safePrint('Updating state at ${log.day}');
+    safePrint('Updating state at ${log.id}');
     state = state.copyWithEntry(
       dateTime: log.day.getDateTime().toLocal(),
       entry: DiaryEntryState(entry: log),

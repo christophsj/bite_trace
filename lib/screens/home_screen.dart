@@ -56,9 +56,11 @@ Widget _buildLoggedInContent(WidgetRef ref) {
                 'DiaryRoute'
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(
-                  120,
+                  130,
                 ),
-                child: Material(elevation: 2, child: DiaryCalendar()),
+                child: SafeArea(
+                  child: DiaryCalendar(),
+                ),
               )
             : AppBar(
                 title: FutureBuilder<AuthUser?>(

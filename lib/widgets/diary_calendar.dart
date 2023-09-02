@@ -98,8 +98,13 @@ class DiaryCalendar extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Row(
             children: [
-              Text(
-                DateFormat('EEE, d MMMM yyyy').format(selected),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: Text(
+                  key: Key(selected.toString()),
+                  _format(selected),
+                  style: const TextStyle(fontSize: 16),
+                ),
               ),
               const Spacer(),
               if (selected != now)
@@ -113,27 +118,33 @@ class DiaryCalendar extends ConsumerWidget {
             ],
           ),
         ),
-        SizedBox(
-          height: 70,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemExtent: itemExtent,
-            reverse: true,
-            shrinkWrap: true,
-            itemCount: itemCount,
-            controller: ScrollController(
-              initialScrollOffset: (itemExtent *
-                      (futureDays +
-                          (now.difference(selected.atMidday()).inDays))) -
-                  (w / 2) +
-                  (itemExtent / 2),
+        Material(
+          elevation: 1,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: SizedBox(
+              height: 74,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemExtent: itemExtent,
+                reverse: true,
+                shrinkWrap: true,
+                itemCount: itemCount,
+                controller: ScrollController(
+                  initialScrollOffset: (itemExtent *
+                          (futureDays +
+                              (now.difference(selected.atMidday()).inDays))) -
+                      (w / 2) +
+                      (itemExtent / 2),
+                ),
+                itemBuilder: (context, index) {
+                  final e = DiaryScreen.idxToDate(index);
+                  return _weekdayButton(e, selected, () {
+                    ref.read(selectedDayProvider.notifier).state = e;
+                  });
+                },
+              ),
             ),
-            itemBuilder: (context, index) {
-              final e = DiaryScreen.idxToDate(index);
-              return _weekdayButton(e, selected, () {
-                ref.read(selectedDayProvider.notifier).state = e;
-              });
-            },
           ),
         ),
       ],
@@ -150,5 +161,10 @@ class DiaryCalendar extends ConsumerWidget {
     //       )
     //       .toList(),
     // );
+  }
+
+  String _format(DateTime selected) {
+    if (selected == DateTime.now().atMidday()) return 'Today';
+    return DateFormat('EEE, d MMMM yyyy').format(selected);
   }
 }

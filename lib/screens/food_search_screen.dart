@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/constants.dart';
-import 'package:bite_trace/dtos/myfitnesspal_api/item.dart';
 import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
-import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,13 +28,14 @@ class FoodSearchScreen extends ConsumerStatefulWidget {
 
 class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     with TickerProviderStateMixin {
-  int fetched = 0;
   int selectedMealIndex = 0;
   late DiaryEntry log;
   Timer? _debounce;
 
-  final PagingController<int, FoodApiItem> _pagingController =
+  final PagingController<int, Food> _pagingController =
       PagingController(firstPageKey: 1);
+  final PagingController<int, Food> _recentPagingController =
+      PagingController(firstPageKey: 0);
 
   late final TabController tabCtrl;
 
@@ -50,6 +49,9 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    _recentPagingController.addPageRequestListener((pageKey) {
+      _fetchRecentPage(pageKey);
+    });
     super.initState();
   }
 
@@ -57,6 +59,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
   void dispose() {
     tabCtrl.dispose();
     _pagingController.dispose();
+    _recentPagingController.dispose();
     query.dispose();
     _debounce?.cancel();
     super.dispose();
@@ -64,8 +67,11 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
 
   void _onSearchChanged(String query) {
     _cancelDebouncer();
+    final ctrl = _getCurrentPagingController();
     _debounce = Timer(const Duration(milliseconds: 400), () {
-      _pagingController.refresh();
+      if (ctrl == _getCurrentPagingController()) {
+        ctrl?.refresh();
+      }
     });
   }
 
@@ -84,21 +90,42 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
       final foodService = ref.read(foodSearchProvider);
       final newItems =
           await foodService.searchFoods(query: query.text, page: pageKey);
-      fetched += newItems.items.length;
-
-      if (fetched >= newItems.totalResultsCount || newItems.items.isEmpty) {
-        _pagingController.appendLastPage(newItems.items);
+      final items = newItems.items
+          .map(
+            (e) => FoodDtoToFoodMapper.foodDtoToFood(
+              e.item,
+              e.item.servingSizes[0],
+            ),
+          )
+          .toList();
+      if (newItems.items.isEmpty) {
+        _pagingController.appendLastPage(items);
       } else {
-        _pagingController.appendPage(newItems.items, pageKey + 1);
+        _pagingController.appendPage(items, pageKey + 1);
       }
     } catch (error) {
       _pagingController.error = error;
     }
   }
 
+  Future<void> _fetchRecentPage(int pageKey) async {
+    try {
+      final foodService = ref.read(diaryServiceProvider);
+      final newItems =
+          await foodService.getRecentFoods(filter: query.text, page: pageKey);
+
+      if (newItems.isEmpty) {
+        _recentPagingController.appendLastPage(newItems);
+      } else {
+        _recentPagingController.appendPage(newItems, pageKey + 1);
+      }
+    } catch (error) {
+      _recentPagingController.error = error;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final diaryService = ref.read(diaryServiceProvider);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -106,13 +133,16 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
           slivers: [
             SliverAppBar(
               pinned: true,
+              titleSpacing: 1,
+              toolbarHeight: 60,
               title: TextField(
                 autofocus: true,
                 controller: query,
                 onChanged: _onSearchChanged,
                 onSubmitted: (value) {
                   _cancelDebouncer();
-                  _pagingController.refresh();
+                  final ctrl = _getCurrentPagingController();
+                  ctrl?.refresh();
                 },
                 decoration: const InputDecoration(
                   hintText: 'Which food are you looking for?',
@@ -142,8 +172,8 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
               child: TabBarView(
                 controller: tabCtrl,
                 children: [
-                  _buildFoodSearch(diaryService),
-                  const Center(child: Text('Recent')),
+                  _buildPaginatedFoodResult(_pagingController),
+                  _buildPaginatedFoodResult(_recentPagingController),
                   const Center(child: Text('Favorite')),
                 ],
               ),
@@ -154,10 +184,20 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     );
   }
 
-  Widget _buildFoodSearch(DiaryService diaryService) {
-    return PagedListView<int, FoodApiItem>(
-      pagingController: _pagingController,
-      builderDelegate: PagedChildBuilderDelegate<FoodApiItem>(
+  PagingController<int, Food>? _getCurrentPagingController() {
+    final ctrl = switch (tabCtrl.index) {
+      0 => _pagingController,
+      1 => _recentPagingController,
+      2 => null,
+      (final int _) => throw Exception('Invalid tab index'),
+    };
+    return ctrl;
+  }
+
+  Widget _buildPaginatedFoodResult(PagingController<int, Food> controller) {
+    return PagedListView<int, Food>(
+      pagingController: controller,
+      builderDelegate: PagedChildBuilderDelegate<Food>(
         noItemsFoundIndicatorBuilder: (context) {
           if (query.text.isEmpty) {
             return const Center(
@@ -169,14 +209,15 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
           );
         },
         itemBuilder: (context, item, index) {
-          final n = item.item.nutritionalContents;
-          final multi = item.item.servingSizes[0].nutritionMultiplier;
+          final n = item.nutritionalContents;
+          final multi = item.servingSizes[0].nutritionMultiplier;
           final unit =
-              '${item.item.servingSizes[0].value} ${item.item.servingSizes[0].unit}';
+              '${item.servingSizes[0].value} ${item.servingSizes[0].unit}';
           final cals =
-              '${(item.item.nutritionalContents.energy?.value ?? 0 * multi).toInt()} ${item.item.nutritionalContents.energy?.unit ?? 'calories'}';
+              '${(item.nutritionalContents.calories * multi).toInt()} calories';
           return Padding(
-            padding: const EdgeInsets.only(top: 6.0),
+            padding:
+                index == 0 ? EdgeInsets.zero : const EdgeInsets.only(top: 6.0),
             child: ListTile(
               textColor: Theme.of(context).colorScheme.onSurface,
               shape: RoundedRectangleBorder(
@@ -191,10 +232,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                   FoodDetailsRoute(
                     initialMealIndex: selectedMealIndex,
                     log: log,
-                    food: FoodDtoToFoodMapper.foodDtoToFood(
-                      item.item,
-                      item.item.servingSizes[0],
-                    ),
+                    food: item,
                   ),
                 );
                 if (result != null) {
@@ -202,7 +240,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 }
               },
               title: Text(
-                '${item.item.description} ${item.item.verified ? '✅' : ''}',
+                '${item.description} ${item.verified ? '✅' : ''}',
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -243,15 +281,12 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
               trailing: AnimatedElevatedButton(
                 onPressed: () async {
                   final selectedMeal = log.meals![selectedMealIndex];
-                  log = await diaryService.addFoodsToMeal(log, selectedMeal, [
-                    FoodDtoToFoodMapper.foodDtoToFood(
-                      item.item,
-                      item.item.servingSizes[0],
-                    )
-                  ]);
+                  log = await ref
+                      .read(diaryServiceProvider)
+                      .addFoodsToMeal(log, selectedMeal, [item]);
                   ref
                       .read(snackbarServiceProvider)
-                      .showBasic('Added ${item.item.description}');
+                      .showBasic('Added ${item.description}');
                 },
                 icon: const Icon(Icons.add),
                 checkColor: Colors.green,

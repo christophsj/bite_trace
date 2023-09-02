@@ -24,9 +24,9 @@ import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'package:collection/collection.dart';
 
 
-/** This is an auto generated class representing the DiaryEntry type in your schema. */
-class DiaryEntry extends amplify_core.Model {
-  static const classType = const _DiaryEntryModelType();
+/** This is an auto generated class representing the LogEntry type in your schema. */
+class LogEntry extends amplify_core.Model {
+  static const classType = const _LogEntryModelType();
   final String id;
   final amplify_core.TemporalDate? _day;
   final List<Meal>? _meals;
@@ -40,9 +40,9 @@ class DiaryEntry extends amplify_core.Model {
   @override
   String getId() => id;
   
-  DiaryEntryModelIdentifier get modelIdentifier {
+  LogEntryModelIdentifier get modelIdentifier {
     try {
-      return DiaryEntryModelIdentifier(
+      return LogEntryModelIdentifier(
         id: id,
         day: _day!
       );
@@ -81,10 +81,10 @@ class DiaryEntry extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const DiaryEntry._internal({required this.id, required day, meals, createdAt, updatedAt}): _day = day, _meals = meals, _createdAt = createdAt, _updatedAt = updatedAt;
+  const LogEntry._internal({required this.id, required day, meals, createdAt, updatedAt}): _day = day, _meals = meals, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory DiaryEntry({String? id, required amplify_core.TemporalDate day, List<Meal>? meals}) {
-    return DiaryEntry._internal(
+  factory LogEntry({String? id, required amplify_core.TemporalDate day, List<Meal>? meals}) {
+    return LogEntry._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       day: day,
       meals: meals != null ? List<Meal>.unmodifiable(meals) : meals);
@@ -97,7 +97,7 @@ class DiaryEntry extends amplify_core.Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is DiaryEntry &&
+    return other is LogEntry &&
       id == other.id &&
       _day == other._day &&
       DeepCollectionEquality().equals(_meals, other._meals);
@@ -110,7 +110,7 @@ class DiaryEntry extends amplify_core.Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("DiaryEntry {");
+    buffer.write("LogEntry {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("day=" + (_day != null ? _day!.format() : "null") + ", ");
     buffer.write("meals=" + (_meals != null ? _meals!.toString() : "null") + ", ");
@@ -121,24 +121,24 @@ class DiaryEntry extends amplify_core.Model {
     return buffer.toString();
   }
   
-  DiaryEntry copyWith({List<Meal>? meals}) {
-    return DiaryEntry._internal(
+  LogEntry copyWith({List<Meal>? meals}) {
+    return LogEntry._internal(
       id: id,
       day: day,
       meals: meals ?? this.meals);
   }
   
-  DiaryEntry copyWithModelFieldValues({
+  LogEntry copyWithModelFieldValues({
     ModelFieldValue<List<Meal>>? meals
   }) {
-    return DiaryEntry._internal(
+    return LogEntry._internal(
       id: id,
       day: day,
       meals: meals == null ? this.meals : meals.value
     );
   }
   
-  DiaryEntry.fromJson(Map<String, dynamic> json)  
+  LogEntry.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _day = json['day'] != null ? amplify_core.TemporalDate.fromString(json['day']) : null,
       _meals = json['meals'] is List
@@ -162,13 +162,13 @@ class DiaryEntry extends amplify_core.Model {
     'updatedAt': _updatedAt
   };
 
-  static final amplify_core.QueryModelIdentifier<DiaryEntryModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<DiaryEntryModelIdentifier>();
+  static final amplify_core.QueryModelIdentifier<LogEntryModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<LogEntryModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
   static final DAY = amplify_core.QueryField(fieldName: "day");
   static final MEALS = amplify_core.QueryField(fieldName: "meals");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "DiaryEntry";
-    modelSchemaDefinition.pluralName = "DiaryEntries";
+    modelSchemaDefinition.name = "LogEntry";
+    modelSchemaDefinition.pluralName = "LogEntries";
     
     modelSchemaDefinition.authRules = [
       amplify_core.AuthRule(
@@ -191,7 +191,7 @@ class DiaryEntry extends amplify_core.Model {
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: DiaryEntry.DAY,
+      key: LogEntry.DAY,
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.date)
     ));
@@ -219,33 +219,33 @@ class DiaryEntry extends amplify_core.Model {
   });
 }
 
-class _DiaryEntryModelType extends amplify_core.ModelType<DiaryEntry> {
-  const _DiaryEntryModelType();
+class _LogEntryModelType extends amplify_core.ModelType<LogEntry> {
+  const _LogEntryModelType();
   
   @override
-  DiaryEntry fromJson(Map<String, dynamic> jsonData) {
-    return DiaryEntry.fromJson(jsonData);
+  LogEntry fromJson(Map<String, dynamic> jsonData) {
+    return LogEntry.fromJson(jsonData);
   }
   
   @override
   String modelName() {
-    return 'DiaryEntry';
+    return 'LogEntry';
   }
 }
 
 /**
  * This is an auto generated class representing the model identifier
- * of [DiaryEntry] in your schema.
+ * of [LogEntry] in your schema.
  */
-class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEntry> {
+class LogEntryModelIdentifier implements amplify_core.ModelIdentifier<LogEntry> {
   final String id;
   final amplify_core.TemporalDate day;
 
   /**
-   * Create an instance of DiaryEntryModelIdentifier using [id] the primary key.
+   * Create an instance of LogEntryModelIdentifier using [id] the primary key.
    * And [day] the sort key.
    */
-  const DiaryEntryModelIdentifier({
+  const LogEntryModelIdentifier({
     required this.id,
     required this.day});
   
@@ -265,7 +265,7 @@ class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEnt
   String serializeAsString() => serializeAsMap().values.join('#');
   
   @override
-  String toString() => 'DiaryEntryModelIdentifier(id: $id, day: $day)';
+  String toString() => 'LogEntryModelIdentifier(id: $id, day: $day)';
   
   @override
   bool operator ==(Object other) {
@@ -273,7 +273,7 @@ class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEnt
       return true;
     }
     
-    return other is DiaryEntryModelIdentifier &&
+    return other is LogEntryModelIdentifier &&
       id == other.id &&
       day == other.day;
   }
