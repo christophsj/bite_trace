@@ -38,12 +38,13 @@ abstract class $AppRouter extends _i8.RootStackRouter {
     },
     FoodDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<FoodDetailsRouteArgs>();
-      return _i8.AutoRoutePage<_i9.Food?>(
+      return _i8.AutoRoutePage<_i9.DiaryEntry?>(
         routeData: routeData,
         child: _i3.FoodDetailsScreen(
           initialMealIndex: args.initialMealIndex,
           log: args.log,
           food: args.food,
+          foodIdx: args.foodIdx,
           key: args.key,
         ),
       );
@@ -77,11 +78,9 @@ abstract class $AppRouter extends _i8.RootStackRouter {
       );
     },
     RegisterRoute.name: (routeData) {
-      final args = routeData.argsAs<RegisterRouteArgs>(
-          orElse: () => const RegisterRouteArgs());
       return _i8.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i7.RegisterScreen(key: args.key),
+        child: const _i7.RegisterScreen(),
       );
     },
   };
@@ -122,6 +121,7 @@ class FoodDetailsRoute extends _i8.PageRouteInfo<FoodDetailsRouteArgs> {
     required int initialMealIndex,
     required _i9.DiaryEntry log,
     required _i9.Food food,
+    int? foodIdx,
     _i10.Key? key,
     List<_i8.PageRouteInfo>? children,
   }) : super(
@@ -130,6 +130,7 @@ class FoodDetailsRoute extends _i8.PageRouteInfo<FoodDetailsRouteArgs> {
             initialMealIndex: initialMealIndex,
             log: log,
             food: food,
+            foodIdx: foodIdx,
             key: key,
           ),
           initialChildren: children,
@@ -146,6 +147,7 @@ class FoodDetailsRouteArgs {
     required this.initialMealIndex,
     required this.log,
     required this.food,
+    this.foodIdx,
     this.key,
   });
 
@@ -155,11 +157,13 @@ class FoodDetailsRouteArgs {
 
   final _i9.Food food;
 
+  final int? foodIdx;
+
   final _i10.Key? key;
 
   @override
   String toString() {
-    return 'FoodDetailsRouteArgs{initialMealIndex: $initialMealIndex, log: $log, food: $food, key: $key}';
+    return 'FoodDetailsRouteArgs{initialMealIndex: $initialMealIndex, log: $log, food: $food, foodIdx: $foodIdx, key: $key}';
   }
 }
 
@@ -265,29 +269,14 @@ class MealDetailsRouteArgs {
 
 /// generated route for
 /// [_i7.RegisterScreen]
-class RegisterRoute extends _i8.PageRouteInfo<RegisterRouteArgs> {
-  RegisterRoute({
-    _i10.Key? key,
-    List<_i8.PageRouteInfo>? children,
-  }) : super(
+class RegisterRoute extends _i8.PageRouteInfo<void> {
+  const RegisterRoute({List<_i8.PageRouteInfo>? children})
+      : super(
           RegisterRoute.name,
-          args: RegisterRouteArgs(key: key),
           initialChildren: children,
         );
 
   static const String name = 'RegisterRoute';
 
-  static const _i8.PageInfo<RegisterRouteArgs> page =
-      _i8.PageInfo<RegisterRouteArgs>(name);
-}
-
-class RegisterRouteArgs {
-  const RegisterRouteArgs({this.key});
-
-  final _i10.Key? key;
-
-  @override
-  String toString() {
-    return 'RegisterRouteArgs{key: $key}';
-  }
+  static const _i8.PageInfo<void> page = _i8.PageInfo<void>(name);
 }

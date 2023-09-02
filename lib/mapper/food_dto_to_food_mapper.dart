@@ -20,6 +20,7 @@ class FoodDtoToFoodMapper {
       chosenServingSize: chosenServingSize.index,
       servingSizes: servingSizes,
       verified: foodResponse.verified,
+      chosenServingAmount: 1,
     );
   }
 

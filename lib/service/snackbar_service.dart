@@ -3,12 +3,25 @@ import 'package:flutter/material.dart';
 class SnackbarService {
   final GlobalKey<ScaffoldMessengerState> key = GlobalKey();
 
-  void showBasic(String content) {
+  SnackBar basic(String s) => SnackBar(
+        content: Text(
+          s,
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        action: SnackBarAction(
+          label: 'Dismiss',
+          onPressed: () {
+            key.currentState?.hideCurrentSnackBar();
+          },
+        ),
+      );
+
+  void showBasic(String s) {
     key.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(content),
-        duration: const Duration(seconds: 10),
-      ),
+      basic(s),
     );
   }
 }

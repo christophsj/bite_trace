@@ -1,62 +1,95 @@
+import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
+import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-@RoutePage<Food?>()
+@RoutePage<DiaryEntry?>()
 class FoodDetailsScreen extends ConsumerStatefulWidget {
   const FoodDetailsScreen({
     required this.initialMealIndex,
     required this.log,
     required this.food,
+    this.foodIdx,
     super.key,
   });
 
   final Food food;
   final DiaryEntry log;
   final int initialMealIndex;
+  final int? foodIdx;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _FoodDetailsState();
 }
 
-class _FoodDetailsState extends ConsumerState<FoodDetailsScreen> {
+class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
+    with TickerProviderStateMixin {
   int selectedServingIndex = 0;
   int selectedMealIndex = 0;
 
-  final TextEditingController amount = TextEditingController(text: '1');
+  late final TextEditingController amount;
+  late final AnimationController _animController;
+  late Animation<double> _factorAnimation;
 
   @override
   void initState() {
+    final amountValue = widget.food.chosenServingAmount;
+    final multi =
+        widget.food.servingSizes[selectedServingIndex].nutritionMultiplier;
+
+    _animController = AnimationController(
+      value: 0,
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _factorAnimation = Tween(
+      begin: 0.0,
+      end: amountValue * multi,
+    ).animate(_animController);
+
+    amount = TextEditingController(text: amountValue.toString())
+      ..addListener(updateAmountValue);
     selectedMealIndex = widget.initialMealIndex;
     selectedServingIndex = widget.food.chosenServingSize;
+    _animController.forward();
     super.initState();
+  }
+
+  void updateAmountValue() {
+    final amt = double.tryParse(amount.text);
+    final multi =
+        widget.food.servingSizes[selectedServingIndex].nutritionMultiplier;
+    final end = (amt ?? 0) * multi;
+    _factorAnimation = Tween(
+      begin: _factorAnimation.value,
+      end: end,
+    ).animate(_animController);
+
+    if (_animController.isCompleted || _animController.isAnimating) {
+      _animController.reset();
+    }
+    _animController.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    final acc = ref.read(accountDataProvider);
-    final nc = widget.food.nutritionalContents;
-
     final dropdownTextStyle = TextStyle(
       fontSize: 18,
       color: Theme.of(context).colorScheme.onBackground,
     );
 
-    final dropdownDecoration = BoxDecoration(
-      border: Border.all(),
-      borderRadius: BorderRadius.circular(4),
-    );
-
     final inputDecoration = InputDecoration(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 8.0,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(4),
       ),
-      fillColor: Theme.of(context).colorScheme.background,
     );
 
     return Scaffold(
@@ -64,98 +97,174 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen> {
         title: Text(widget.food.description),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              MacrosDisplay(nutrients: nc),
-              const SizedBox(
-                height: 20,
-              ),
-              MicroNutrientsDisplay(
-                nutrients: nc,
-              ),
-              for (final entry in {
-                'Brand': widget.food.brandName,
-                'Origin': widget.food.countryCode,
-              }.entries)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      entry.key,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      entry.value ?? 'N/A',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              const SizedBox(
-                height: 30,
-              ),
-              ColoredBox(
-                color: Theme.of(context).colorScheme.background,
-                child: Row(
-                  children: [
-                    Column(
-                      children: [
-                        const Text('Amount'),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        SizedBox(
-                          width: 70,
-                          child: TextField(
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
+          child: AnimatedBuilder(
+            animation: _animController,
+            builder: (context, child) {
+              final nc = widget.food.nutritionalContents.servingFactor(
+                _factorAnimation.value,
+              );
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Card(child: MacrosDisplay(nutrients: nc)),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          MicroNutrientsDisplay(
+                            nutrients: nc,
+                          ),
+                          for (final entry in {
+                            'Brand': widget.food.brandName,
+                            'Origin': widget.food.countryCode,
+                          }.entries)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  entry.key,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  entry.value ?? 'N/A',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
                             ),
-                            controller: amount,
-                            decoration: inputDecoration,
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  child!,
+                ],
+              );
+            },
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: 70,
+                              child: TextField(
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                  decimal: true,
+                                ),
+                                controller: amount,
+                                decoration: inputDecoration.copyWith(
+                                  labelText: 'Servings',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              DropdownButtonFormField(
+                                isExpanded: true,
+                                dropdownColor:
+                                    Theme.of(context).colorScheme.background,
+                                value: selectedServingIndex,
+                                decoration: inputDecoration.copyWith(
+                                  labelText: 'Serving Size',
+                                ),
+                                items: widget.food.servingSizes
+                                    .asMap()
+                                    .entries
+                                    .map((e) {
+                                  return DropdownMenuItem(
+                                    value: e.key,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(
+                                        '${e.value.value} ${e.value.unit}',
+                                        style: dropdownTextStyle,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (s) {
+                                  if (s != null) {
+                                    selectedServingIndex = s;
+                                    updateAmountValue();
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(
-                      width: 10,
+                      height: 10,
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(
+                      height: 50,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Serving Size'),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          DecoratedBox(
-                            decoration: dropdownDecoration,
-                            child: DropdownButton(
-                              isExpanded: true,
-                              dropdownColor:
-                                  Theme.of(context).colorScheme.background,
-                              underline: Container(),
-                              value: selectedServingIndex,
-                              items: widget.food.servingSizes.map((e) {
-                                return DropdownMenuItem(
-                                  value: e.index,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(
-                                      e.unit,
-                                      style: dropdownTextStyle,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (s) {
-                                setState(() {
-                                  if (s != null) selectedServingIndex = s;
-                                });
-                              },
+                          if (widget.foodIdx == null)
+                            Expanded(
+                              child: DropdownButtonFormField(
+                                isExpanded: true,
+                                value: selectedMealIndex,
+                                decoration: inputDecoration.copyWith(
+                                  labelText: 'Meal',
+                                ),
+                                items: widget.log.meals!
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e.index,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
+                                          ),
+                                          child: Text(
+                                            e.name,
+                                            style: dropdownTextStyle,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (int? i) {
+                                  if (i != null) {
+                                    setState(() {
+                                      selectedMealIndex = i;
+                                    });
+                                  }
+                                },
+                              ),
                             ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          AnimatedElevatedButton(
+                            onPressed: onSubmit,
+                            icon: const Icon(Icons.add),
+                            label: widget.foodIdx == null ? 'LOG' : 'EDIT',
                           ),
                         ],
                       ),
@@ -163,74 +272,58 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 6,
-              ),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: DecoratedBox(
-                        decoration: dropdownDecoration,
-                        child: DropdownButton(
-                          isExpanded: true,
-                          underline: Container(),
-                          value: selectedMealIndex,
-                          items: widget.log.meals!
-                              .map(
-                                (e) => DropdownMenuItem(
-                                  value: e.index,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
-                                    ),
-                                    child: Text(
-                                      e.name,
-                                      style: dropdownTextStyle,
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (i) {
-                            if (i != null) {
-                              setState(() {
-                                selectedMealIndex = i;
-                              });
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 6,
-                    ),
-                    AnimatedElevatedButton(
-                      onPressed: () async {
-                        final selectedMeal =
-                            widget.log.meals![selectedMealIndex];
-                        await ref.read(diaryServiceProvider).addFoodsToMeal(
-                          widget.log,
-                          selectedMeal,
-                          [widget.food],
-                        );
-                        ref.read(routerProvider).pop<Food?>(widget.food);
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text(
-                        'LOG',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  FutureOr<void> onSubmit() async {
+    final amt = double.tryParse(amount.text);
+    if (amt == null) {
+      ref
+          .read(snackbarServiceProvider)
+          .showBasic('Given servings not a number');
+      return;
+    }
+    DiaryEntry? res;
+    final selectedMeal = widget.log.meals![selectedMealIndex];
+    if (widget.foodIdx == null) {
+      res = await _addFood(selectedMeal, amt);
+    } else {
+      res = await _editFood(selectedMeal, amt);
+    }
+    if (res != null) {
+      ref
+          .read(snackbarServiceProvider)
+          .showBasic('Logged ${widget.food.description}');
+      ref.read(routerProvider).pop<DiaryEntry?>(res);
+    }
+  }
+
+  Future<DiaryEntry?> _editFood(Meal selectedMeal, double amt) async {
+    return ref.read(diaryServiceProvider).editFoodInMeal(
+          widget.log,
+          selectedMeal,
+          widget.foodIdx!,
+          newFood: widget.food.copyWith(
+            chosenServingSize: selectedServingIndex,
+            chosenServingAmount: amt,
+          ),
+        );
+  }
+
+  Future<DiaryEntry?> _addFood(Meal selectedMeal, double amt) async {
+    return ref.read(diaryServiceProvider).addFoodsToMeal(
+      widget.log,
+      selectedMeal,
+      [
+        widget.food.copyWith(
+          chosenServingSize: selectedServingIndex,
+          chosenServingAmount: amt,
+        )
+      ],
     );
   }
 }

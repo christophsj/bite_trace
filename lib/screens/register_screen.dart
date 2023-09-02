@@ -163,9 +163,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               mealNames: Constants.defaultMealNames,
                             );
                             await accountService.createAccount(data);
-                            ref
-                                .read(accountDataCreationProvider.notifier)
-                                .state = data;
                             ref.read(routerProvider).replace(const HomeRoute());
                           }
                         },

@@ -1,5 +1,6 @@
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/Nutrients.dart';
+import 'package:bite_trace/widgets/segmented_circle.dart';
 import 'package:flutter/material.dart';
 
 class MacrosDisplay extends StatelessWidget {
@@ -12,72 +13,106 @@ class MacrosDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Calories',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                const Spacer(),
-                Text(
-                  nutrients.calories.toInt().toString(),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Icon(Icons.local_fire_department),
-              ],
-            ),
-            for (final entry in {
-              'Carbs': (nutrients.carbohydrates, CustomColors.carbColor),
-              'Fats': (nutrients.fat, CustomColors.fatColor),
-              'Protein': (nutrients.protein, CustomColors.fatColor),
-            }.entries)
-              Row(
-                children: [
-                  Text(
-                    entry.key,
-                    style: TextStyle(
-                      color: entry.value.$2,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '${(entry.value.$1 * 10).toInt() / 10}g',
-                    style: TextStyle(
-                      color: entry.value.$2,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SegmentedCircle(
+                colors: const [
+                  CustomColors.carbColor,
+                  CustomColors.fatColor,
+                  CustomColors.proteinColor,
                 ],
+                segmentAngles: [
+                  (nutrients.carbohydrates) * 4,
+                  (nutrients.fat) * 9,
+                  (nutrients.protein) * 4
+                ],
+                vals: const ['C', 'F', 'P'],
               ),
-            const SizedBox(
-              height: 6,
-            ),
-            SegmentedProgressIndicator(
-              height: 20,
-              colors: const [
-                CustomColors.carbColor,
-                CustomColors.fatColor,
-                CustomColors.proteinColor,
-              ],
-              segmentLengths: [
-                (nutrients.carbohydrates) * 4,
-                (nutrients.fat) * 9,
-                (nutrients.protein) * 4
-              ],
-              vals: const ['C', 'F', 'P'],
-            ),
-          ],
-        ),
-      ],
+              const SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        const Text(
+                          'Calories',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          nutrients.calories.toInt().toString(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Icon(Icons.local_fire_department),
+                      ],
+                    ),
+                    for (final entry in {
+                      'Carbs': (
+                        nutrients.carbohydrates,
+                        CustomColors.carbColor
+                      ),
+                      'Fats': (nutrients.fat, CustomColors.fatColor),
+                      'Protein': (nutrients.protein, CustomColors.proteinColor),
+                    }.entries)
+                      Row(
+                        children: [
+                          Text(
+                            entry.key,
+                            style: TextStyle(
+                              color: entry.value.$2,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            '${(entry.value.$1 * 10).toInt() / 10}g',
+                            style: TextStyle(
+                              color: entry.value.$2,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(
+            height: 6,
+          ),
+          // SegmentedProgressIndicator(
+          //   height: 20,
+          //   colors: const [
+          //     CustomColors.carbColor,
+          //     CustomColors.fatColor,
+          //     CustomColors.proteinColor,
+          //   ],
+          //   segmentLengths: [
+          //     (nutrients.carbohydrates) * 4,
+          //     (nutrients.fat) * 9,
+          //     (nutrients.protein) * 4
+          //   ],
+          //   vals: const ['C', 'F', 'P'],
+          // ),
+        ],
+      ),
     );
   }
 }
@@ -91,7 +126,8 @@ class MicroNutrientsDisplay extends StatelessWidget {
     if (item == null) {
       return 'N/A';
     }
-    return '${item}g';
+    const rounding = 1000;
+    return '${(item * rounding).toInt() / rounding}g';
   }
 
   @override
@@ -99,6 +135,7 @@ class MicroNutrientsDisplay extends StatelessWidget {
     return Column(
       children: [
         for (final entry in {
+          'Sugar': nutrients.sugar,
           'Calcium': nutrients.calcium,
           'Cholesterol': nutrients.cholesterol,
           'Fiber': nutrients.fiber,
@@ -108,7 +145,6 @@ class MicroNutrientsDisplay extends StatelessWidget {
           'Potassium': nutrients.potassium,
           'Saturated Fat': nutrients.saturatedFat,
           'Sodium': nutrients.sodium,
-          'Sugar': nutrients.sugar,
           'Vitamin C': nutrients.vitaminC,
           'Vitamin D': nutrients.vitaminD,
           'Trans Fat': nutrients.transFat,

@@ -3,10 +3,16 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
+import 'package:bite_trace/state/account_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AccountService {
-  AccountService({required this.ref});
+final accountStateProvider =
+    StateNotifierProvider<AccountService, AccountState>((ref) {
+  return ref.watch(accountServiceProvider);
+});
+
+class AccountService extends StateNotifier<AccountState> {
+  AccountService({required this.ref}) : super(const AccountState.updating());
 
   final Ref ref;
 
@@ -15,12 +21,8 @@ class AccountService {
       final request = ModelMutations.create(accountData);
       final response = await Amplify.API.mutate(request: request).response;
 
-      final createdTodo = response.data;
-      if (createdTodo == null) {
-        safePrint('errors: ${response.errors}');
-        throw Exception(response.errors);
-      }
-      return response.data!;
+      _handleState(response);
+      return response.data;
     } on ApiException catch (e) {
       safePrint('Mutation failed: $e');
       ref.read(snackbarServiceProvider).showBasic(e.toString());
@@ -33,9 +35,20 @@ class AccountService {
       final request = ModelMutations.update<AccountData>(accountData);
       final response = await Amplify.API.mutate(request: request).response;
       safePrint('Response: $response');
+      _handleState(response);
     } on ApiException catch (e) {
       safePrint('Mutation failed: $e');
       ref.read(snackbarServiceProvider).showBasic(e.toString());
+    }
+  }
+
+  void _handleState(GraphQLResponse<AccountData> response) {
+    if (response.data == null) {
+      state = AccountState.error(response.errors.toString());
+    } else {
+      state = AccountState.ready(
+        response.data!,
+      );
     }
   }
 
@@ -46,13 +59,16 @@ class AccountService {
         AccountData.fromJson({'id': uid}).modelIdentifier,
       );
       final response = await Amplify.API.query(request: request).response;
-      final todo = response.data;
-      if (todo == null) {
+      final resp = response.data;
+      if (resp == null) {
         safePrint('errors: ${response.errors}');
       }
-      return todo;
+
+      _handleState(response);
+      return resp;
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
+      state = AccountState.error(e.toString());
       ref.read(snackbarServiceProvider).showBasic(e.toString());
       return null;
     }

@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_annotation_target
 import 'package:bite_trace/dtos/myfitnesspal_api/item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

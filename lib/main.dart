@@ -6,6 +6,7 @@ import 'package:bite_trace/amplifyconfiguration.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,7 +37,7 @@ class BiteTraceApp extends ConsumerWidget {
     return Authenticator(
       authenticatorBuilder: (context, state) {
         switch (state.currentStep) {
-          case AuthenticatorStep.signIn:
+          case AuthenticatorStep.signIn || AuthenticatorStep.onboarding:
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: SingleChildScrollView(
@@ -90,9 +91,19 @@ class BiteTraceApp extends ConsumerWidget {
         title: 'Bite Trace',
         builder: Authenticator.builder(),
         scaffoldMessengerKey: ref.read(snackbarServiceProvider).key,
-        theme: FlexThemeData.light(scheme: FlexScheme.bigStone),
-        darkTheme: FlexThemeData.dark(scheme: FlexScheme.redWine),
+        theme: FlexThemeData.light(scheme: FlexScheme.aquaBlue),
+        darkTheme: FlexThemeData.dark(scheme: FlexScheme.aquaBlue),
+        themeMode: ref.watch(themeModeProvider),
+        scrollBehavior: TouchAndMouseScroll(),
       ),
     );
   }
+}
+
+class TouchAndMouseScroll extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

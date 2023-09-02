@@ -38,7 +38,7 @@ export 'ServingSize.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "1ac85d99d51d09b9c7c34f0e91dbb001";
+  String version = "c1945bb84b091ab1e5a4023be61df2ab";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema];
   @override

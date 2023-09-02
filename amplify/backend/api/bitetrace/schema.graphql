@@ -6,6 +6,7 @@ type AccountData @model @auth(rules: [{ allow: owner }]) {
   id: ID! @primaryKey
   nutrientGoals: NutrientGoals!
   mealNames: [String!]
+  themeModeIdx: Int
 }
 
 type NutrientGoals {
@@ -27,10 +28,12 @@ type Food {
   description: String!
   foodId: String!
   chosenServingSize: Int!
+  chosenServingAmount: Float!
   verified: Boolean!
   brandName: String
   nutritionalContents: Nutrients!
   servingSizes: [ServingSize!]!
+  imageUrl: String
 }
 
 type ServingSize {
@@ -59,4 +62,12 @@ type Nutrients {
   vitaminD: Float
   transFat: Float
   vitaminA: Float
+  vitaminE: Float
+  vitaminB1: Float
+  vitaminB2: Float
+  vitaminPP: Float
+  vitaminB6: Float
+  vitaminB12: Float
+  vitaminB9: Float
+  vitaminK: Float
 }

@@ -6,13 +6,17 @@ class AnimatedElevatedButton extends StatefulWidget {
   const AnimatedElevatedButton({
     super.key,
     required this.onPressed,
-    required this.icon,
-    required this.label,
+    this.icon,
+    this.label,
+    this.checkColor,
+    this.style,
   });
 
-  final FutureOr<void> Function() onPressed;
-  final Widget icon;
-  final Widget label;
+  final FutureOr<void> Function()? onPressed;
+  final Widget? icon;
+  final String? label;
+  final Color? checkColor;
+  final ButtonStyle? style;
 
   @override
   State<AnimatedElevatedButton> createState() => _AnimatedElevatedButtonState();
@@ -23,55 +27,92 @@ class _AnimatedElevatedButtonState extends State<AnimatedElevatedButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.label == null) {
+      assert(widget.icon != null);
+      return IconButton(
+        onPressed: _onPressed(),
+        icon: _buildSwitcher(context, widget.icon!),
+      );
+    }
+    final style = widget.style ??
+        ElevatedButton.styleFrom(
+          minimumSize: const Size(0, 42),
+        );
+    if (widget.icon == null) {
+      return ElevatedButton(
+        onPressed: _onPressed(),
+        style: style,
+        child: _buildSwitcher(context, _buildText()),
+      );
+    }
     return ElevatedButton.icon(
-      onPressed: state == ButtonState.loading
-          ? null
-          : () async {
+      onPressed: _onPressed(),
+      style: style,
+      icon: _buildSwitcher(context, widget.icon!),
+      label: _buildText(),
+    );
+  }
+
+  Widget _buildText() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        widget.label!,
+        style: const TextStyle(fontSize: 18),
+      ),
+    );
+  }
+
+  void Function()? _onPressed() {
+    return state == ButtonState.loading || widget.onPressed == null
+        ? null
+        : () async {
+            setState(() {
+              state = ButtonState.loading;
+            });
+            try {
+              await widget.onPressed!();
               setState(() {
-                state = ButtonState.loading;
+                state = ButtonState.done;
               });
-              try {
-                await widget.onPressed();
+            } catch (e) {
+              setState(() {
+                state = ButtonState.error;
+              });
+            }
+            Future.delayed(const Duration(seconds: 3), () {
+              if (mounted) {
                 setState(() {
-                  state = ButtonState.done;
-                });
-              } catch (e) {
-                setState(() {
-                  state = ButtonState.error;
+                  state = ButtonState.defaultState;
                 });
               }
-              Future.delayed(const Duration(seconds: 3), () {
-                if (mounted) {
-                  setState(() {
-                    state = ButtonState.defaultState;
-                  });
-                }
-              });
-            },
-      icon: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        child: switch (state) {
-          ButtonState.defaultState =>
-            Container(key: const Key('0'), child: widget.icon),
-          ButtonState.error =>
-            Container(key: const Key('0'), child: const Icon(Icons.error)),
-          ButtonState.loading => SizedBox(
-              key: const Key('1'),
-              height: Theme.of(context).iconTheme.size ?? 24.0,
-              width: Theme.of(context).iconTheme.size ?? 24.0,
-              child: const Padding(
-                padding: EdgeInsets.all(2.0),
-                child: CircularProgressIndicator(),
-              ),
+            });
+          };
+  }
+
+  Widget _buildSwitcher(BuildContext context, Widget child) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      child: switch (state) {
+        ButtonState.defaultState =>
+          Container(key: const Key('0'), child: child),
+        ButtonState.error =>
+          Container(key: const Key('0'), child: const Icon(Icons.error)),
+        ButtonState.loading => SizedBox(
+            key: const Key('1'),
+            height: Theme.of(context).iconTheme.size ?? 24.0,
+            width: Theme.of(context).iconTheme.size ?? 24.0,
+            child: const Padding(
+              padding: EdgeInsets.all(2.0),
+              child: CircularProgressIndicator(),
             ),
-          ButtonState.done => Icon(
-              Icons.check,
-              key: const Key('2'),
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-        },
-      ),
-      label: widget.label,
+          ),
+        ButtonState.done => Icon(
+            Icons.check,
+            key: const Key('2'),
+            color: widget.checkColor ?? Theme.of(context).colorScheme.onPrimary,
+          ),
+      },
     );
   }
 }

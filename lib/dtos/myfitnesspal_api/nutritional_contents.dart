@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_annotation_target
 import 'package:bite_trace/dtos/myfitnesspal_api/energy.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -6,7 +7,6 @@ part 'nutritional_contents.g.dart';
 
 @freezed
 class NutritionalContentsDto with _$NutritionalContentsDto {
-
   const factory NutritionalContentsDto({
     double? calcium,
     @JsonKey(defaultValue: 0) required double carbohydrates,

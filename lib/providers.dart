@@ -5,6 +5,9 @@ import 'package:bite_trace/service/auth_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/service/food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
+import 'package:bite_trace/state/account_state.dart';
+import 'package:bite_trace/utils/date_time_extension.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final routerProvider = Provider<AppRouter>((ref) => AppRouter());
@@ -21,27 +24,29 @@ final diaryServiceProvider =
 final snackbarServiceProvider =
     Provider<SnackbarService>((ref) => SnackbarService());
 
-final foodServiceProvider =
+final foodSearchProvider =
     Provider<FitnessPalFoodService>((ref) => FitnessPalFoodService(ref: ref));
 
-final accountDataCreationProvider = StateProvider<AccountData?>((ref) {
-  return null;
-});
-
 final selectedDayProvider = StateProvider<DateTime>((ref) {
-  return DateTime.now();
+  return DateTime.now().atMidday();
 });
 
 final accountDataProvider = FutureProvider<AccountData?>((ref) async {
-  final created = ref.watch(accountDataCreationProvider);
-  if (created != null) {
-    return created;
-  }
   final user = await ref.watch(authServiceProvider).getCurrentUser();
   if (user == null) {
     return null;
   }
   return ref.watch(accountServiceProvider).getAccount(user.userId);
+});
+
+final themeModeProvider = StateProvider<ThemeMode>((ref) {
+  final s = ref.watch(accountStateProvider);
+  final int? idx = switch (s) {
+    (final AccountStateReady r) => r.data.themeModeIdx,
+    (AccountStateInitializing _) => null,
+    (AccountStateError _) => null
+  };
+  return ThemeMode.values[idx ?? ThemeMode.system.index];
 });
 
 final userProvider =

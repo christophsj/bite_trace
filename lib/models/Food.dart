@@ -30,10 +30,12 @@ class Food {
   final String? _description;
   final String? _foodId;
   final int? _chosenServingSize;
+  final double? _chosenServingAmount;
   final bool? _verified;
   final String? _brandName;
   final Nutrients? _nutritionalContents;
   final List<ServingSize>? _servingSizes;
+  final String? _imageUrl;
 
   String? get countryCode {
     return _countryCode;
@@ -68,6 +70,19 @@ class Food {
   int get chosenServingSize {
     try {
       return _chosenServingSize!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  double get chosenServingAmount {
+    try {
+      return _chosenServingAmount!;
     } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
           amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -121,18 +136,24 @@ class Food {
     }
   }
   
-  const Food._internal({countryCode, required description, required foodId, required chosenServingSize, required verified, brandName, required nutritionalContents, required servingSizes}): _countryCode = countryCode, _description = description, _foodId = foodId, _chosenServingSize = chosenServingSize, _verified = verified, _brandName = brandName, _nutritionalContents = nutritionalContents, _servingSizes = servingSizes;
+  String? get imageUrl {
+    return _imageUrl;
+  }
   
-  factory Food({String? countryCode, required String description, required String foodId, required int chosenServingSize, required bool verified, String? brandName, required Nutrients nutritionalContents, required List<ServingSize> servingSizes}) {
+  const Food._internal({countryCode, required description, required foodId, required chosenServingSize, required chosenServingAmount, required verified, brandName, required nutritionalContents, required servingSizes, imageUrl}): _countryCode = countryCode, _description = description, _foodId = foodId, _chosenServingSize = chosenServingSize, _chosenServingAmount = chosenServingAmount, _verified = verified, _brandName = brandName, _nutritionalContents = nutritionalContents, _servingSizes = servingSizes, _imageUrl = imageUrl;
+  
+  factory Food({String? countryCode, required String description, required String foodId, required int chosenServingSize, required double chosenServingAmount, required bool verified, String? brandName, required Nutrients nutritionalContents, required List<ServingSize> servingSizes, String? imageUrl}) {
     return Food._internal(
       countryCode: countryCode,
       description: description,
       foodId: foodId,
       chosenServingSize: chosenServingSize,
+      chosenServingAmount: chosenServingAmount,
       verified: verified,
       brandName: brandName,
       nutritionalContents: nutritionalContents,
-      servingSizes: servingSizes != null ? List<ServingSize>.unmodifiable(servingSizes) : servingSizes);
+      servingSizes: servingSizes != null ? List<ServingSize>.unmodifiable(servingSizes) : servingSizes,
+      imageUrl: imageUrl);
   }
   
   bool equals(Object other) {
@@ -147,10 +168,12 @@ class Food {
       _description == other._description &&
       _foodId == other._foodId &&
       _chosenServingSize == other._chosenServingSize &&
+      _chosenServingAmount == other._chosenServingAmount &&
       _verified == other._verified &&
       _brandName == other._brandName &&
       _nutritionalContents == other._nutritionalContents &&
-      DeepCollectionEquality().equals(_servingSizes, other._servingSizes);
+      DeepCollectionEquality().equals(_servingSizes, other._servingSizes) &&
+      _imageUrl == other._imageUrl;
   }
   
   @override
@@ -165,25 +188,29 @@ class Food {
     buffer.write("description=" + "$_description" + ", ");
     buffer.write("foodId=" + "$_foodId" + ", ");
     buffer.write("chosenServingSize=" + (_chosenServingSize != null ? _chosenServingSize!.toString() : "null") + ", ");
+    buffer.write("chosenServingAmount=" + (_chosenServingAmount != null ? _chosenServingAmount!.toString() : "null") + ", ");
     buffer.write("verified=" + (_verified != null ? _verified!.toString() : "null") + ", ");
     buffer.write("brandName=" + "$_brandName" + ", ");
     buffer.write("nutritionalContents=" + (_nutritionalContents != null ? _nutritionalContents!.toString() : "null") + ", ");
-    buffer.write("servingSizes=" + (_servingSizes != null ? _servingSizes!.toString() : "null"));
+    buffer.write("servingSizes=" + (_servingSizes != null ? _servingSizes!.toString() : "null") + ", ");
+    buffer.write("imageUrl=" + "$_imageUrl");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  Food copyWith({String? countryCode, String? description, String? foodId, int? chosenServingSize, bool? verified, String? brandName, Nutrients? nutritionalContents, List<ServingSize>? servingSizes}) {
+  Food copyWith({String? countryCode, String? description, String? foodId, int? chosenServingSize, double? chosenServingAmount, bool? verified, String? brandName, Nutrients? nutritionalContents, List<ServingSize>? servingSizes, String? imageUrl}) {
     return Food._internal(
       countryCode: countryCode ?? this.countryCode,
       description: description ?? this.description,
       foodId: foodId ?? this.foodId,
       chosenServingSize: chosenServingSize ?? this.chosenServingSize,
+      chosenServingAmount: chosenServingAmount ?? this.chosenServingAmount,
       verified: verified ?? this.verified,
       brandName: brandName ?? this.brandName,
       nutritionalContents: nutritionalContents ?? this.nutritionalContents,
-      servingSizes: servingSizes ?? this.servingSizes);
+      servingSizes: servingSizes ?? this.servingSizes,
+      imageUrl: imageUrl ?? this.imageUrl);
   }
   
   Food copyWithModelFieldValues({
@@ -191,20 +218,24 @@ class Food {
     ModelFieldValue<String>? description,
     ModelFieldValue<String>? foodId,
     ModelFieldValue<int>? chosenServingSize,
+    ModelFieldValue<double>? chosenServingAmount,
     ModelFieldValue<bool>? verified,
     ModelFieldValue<String?>? brandName,
     ModelFieldValue<Nutrients>? nutritionalContents,
-    ModelFieldValue<List<ServingSize>>? servingSizes
+    ModelFieldValue<List<ServingSize>>? servingSizes,
+    ModelFieldValue<String?>? imageUrl
   }) {
     return Food._internal(
       countryCode: countryCode == null ? this.countryCode : countryCode.value,
       description: description == null ? this.description : description.value,
       foodId: foodId == null ? this.foodId : foodId.value,
       chosenServingSize: chosenServingSize == null ? this.chosenServingSize : chosenServingSize.value,
+      chosenServingAmount: chosenServingAmount == null ? this.chosenServingAmount : chosenServingAmount.value,
       verified: verified == null ? this.verified : verified.value,
       brandName: brandName == null ? this.brandName : brandName.value,
       nutritionalContents: nutritionalContents == null ? this.nutritionalContents : nutritionalContents.value,
-      servingSizes: servingSizes == null ? this.servingSizes : servingSizes.value
+      servingSizes: servingSizes == null ? this.servingSizes : servingSizes.value,
+      imageUrl: imageUrl == null ? this.imageUrl : imageUrl.value
     );
   }
   
@@ -213,6 +244,7 @@ class Food {
       _description = json['description'],
       _foodId = json['foodId'],
       _chosenServingSize = (json['chosenServingSize'] as num?)?.toInt(),
+      _chosenServingAmount = (json['chosenServingAmount'] as num?)?.toDouble(),
       _verified = json['verified'],
       _brandName = json['brandName'],
       _nutritionalContents = json['nutritionalContents']?['serializedData'] != null
@@ -223,10 +255,11 @@ class Food {
           .where((e) => e != null)
           .map((e) => ServingSize.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
-        : null;
+        : null,
+      _imageUrl = json['imageUrl'];
   
   Map<String, dynamic> toJson() => {
-    'countryCode': _countryCode, 'description': _description, 'foodId': _foodId, 'chosenServingSize': _chosenServingSize, 'verified': _verified, 'brandName': _brandName, 'nutritionalContents': _nutritionalContents?.toJson(), 'servingSizes': _servingSizes?.map((ServingSize? e) => e?.toJson()).toList()
+    'countryCode': _countryCode, 'description': _description, 'foodId': _foodId, 'chosenServingSize': _chosenServingSize, 'chosenServingAmount': _chosenServingAmount, 'verified': _verified, 'brandName': _brandName, 'nutritionalContents': _nutritionalContents?.toJson(), 'servingSizes': _servingSizes?.map((ServingSize? e) => e?.toJson()).toList(), 'imageUrl': _imageUrl
   };
   
   Map<String, Object?> toMap() => {
@@ -234,10 +267,12 @@ class Food {
     'description': _description,
     'foodId': _foodId,
     'chosenServingSize': _chosenServingSize,
+    'chosenServingAmount': _chosenServingAmount,
     'verified': _verified,
     'brandName': _brandName,
     'nutritionalContents': _nutritionalContents,
-    'servingSizes': _servingSizes
+    'servingSizes': _servingSizes,
+    'imageUrl': _imageUrl
   };
 
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
@@ -269,6 +304,12 @@ class Food {
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'chosenServingAmount',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'verified',
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.bool)
@@ -291,6 +332,12 @@ class Food {
       isRequired: true,
       isArray: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'ServingSize')
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'imageUrl',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
   });
 }

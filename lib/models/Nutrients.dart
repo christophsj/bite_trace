@@ -43,6 +43,14 @@ class Nutrients {
   final double? _vitaminD;
   final double? _transFat;
   final double? _vitaminA;
+  final double? _vitaminE;
+  final double? _vitaminB1;
+  final double? _vitaminB2;
+  final double? _vitaminPP;
+  final double? _vitaminB6;
+  final double? _vitaminB12;
+  final double? _vitaminB9;
+  final double? _vitaminK;
 
   double get calories {
     try {
@@ -152,9 +160,41 @@ class Nutrients {
     return _vitaminA;
   }
   
-  const Nutrients._internal({required calories, required carbohydrates, required protein, required fat, calcium, cholesterol, fiber, iron, monounsaturatedFat, polyunsaturatedFat, potassium, saturatedFat, sodium, sugar, vitaminC, vitaminD, transFat, vitaminA}): _calories = calories, _carbohydrates = carbohydrates, _protein = protein, _fat = fat, _calcium = calcium, _cholesterol = cholesterol, _fiber = fiber, _iron = iron, _monounsaturatedFat = monounsaturatedFat, _polyunsaturatedFat = polyunsaturatedFat, _potassium = potassium, _saturatedFat = saturatedFat, _sodium = sodium, _sugar = sugar, _vitaminC = vitaminC, _vitaminD = vitaminD, _transFat = transFat, _vitaminA = vitaminA;
+  double? get vitaminE {
+    return _vitaminE;
+  }
   
-  factory Nutrients({required double calories, required double carbohydrates, required double protein, required double fat, double? calcium, double? cholesterol, double? fiber, double? iron, double? monounsaturatedFat, double? polyunsaturatedFat, double? potassium, double? saturatedFat, double? sodium, double? sugar, double? vitaminC, double? vitaminD, double? transFat, double? vitaminA}) {
+  double? get vitaminB1 {
+    return _vitaminB1;
+  }
+  
+  double? get vitaminB2 {
+    return _vitaminB2;
+  }
+  
+  double? get vitaminPP {
+    return _vitaminPP;
+  }
+  
+  double? get vitaminB6 {
+    return _vitaminB6;
+  }
+  
+  double? get vitaminB12 {
+    return _vitaminB12;
+  }
+  
+  double? get vitaminB9 {
+    return _vitaminB9;
+  }
+  
+  double? get vitaminK {
+    return _vitaminK;
+  }
+  
+  const Nutrients._internal({required calories, required carbohydrates, required protein, required fat, calcium, cholesterol, fiber, iron, monounsaturatedFat, polyunsaturatedFat, potassium, saturatedFat, sodium, sugar, vitaminC, vitaminD, transFat, vitaminA, vitaminE, vitaminB1, vitaminB2, vitaminPP, vitaminB6, vitaminB12, vitaminB9, vitaminK}): _calories = calories, _carbohydrates = carbohydrates, _protein = protein, _fat = fat, _calcium = calcium, _cholesterol = cholesterol, _fiber = fiber, _iron = iron, _monounsaturatedFat = monounsaturatedFat, _polyunsaturatedFat = polyunsaturatedFat, _potassium = potassium, _saturatedFat = saturatedFat, _sodium = sodium, _sugar = sugar, _vitaminC = vitaminC, _vitaminD = vitaminD, _transFat = transFat, _vitaminA = vitaminA, _vitaminE = vitaminE, _vitaminB1 = vitaminB1, _vitaminB2 = vitaminB2, _vitaminPP = vitaminPP, _vitaminB6 = vitaminB6, _vitaminB12 = vitaminB12, _vitaminB9 = vitaminB9, _vitaminK = vitaminK;
+  
+  factory Nutrients({required double calories, required double carbohydrates, required double protein, required double fat, double? calcium, double? cholesterol, double? fiber, double? iron, double? monounsaturatedFat, double? polyunsaturatedFat, double? potassium, double? saturatedFat, double? sodium, double? sugar, double? vitaminC, double? vitaminD, double? transFat, double? vitaminA, double? vitaminE, double? vitaminB1, double? vitaminB2, double? vitaminPP, double? vitaminB6, double? vitaminB12, double? vitaminB9, double? vitaminK}) {
     return Nutrients._internal(
       calories: calories,
       carbohydrates: carbohydrates,
@@ -173,7 +213,15 @@ class Nutrients {
       vitaminC: vitaminC,
       vitaminD: vitaminD,
       transFat: transFat,
-      vitaminA: vitaminA);
+      vitaminA: vitaminA,
+      vitaminE: vitaminE,
+      vitaminB1: vitaminB1,
+      vitaminB2: vitaminB2,
+      vitaminPP: vitaminPP,
+      vitaminB6: vitaminB6,
+      vitaminB12: vitaminB12,
+      vitaminB9: vitaminB9,
+      vitaminK: vitaminK);
   }
   
   bool equals(Object other) {
@@ -201,7 +249,15 @@ class Nutrients {
       _vitaminC == other._vitaminC &&
       _vitaminD == other._vitaminD &&
       _transFat == other._transFat &&
-      _vitaminA == other._vitaminA;
+      _vitaminA == other._vitaminA &&
+      _vitaminE == other._vitaminE &&
+      _vitaminB1 == other._vitaminB1 &&
+      _vitaminB2 == other._vitaminB2 &&
+      _vitaminPP == other._vitaminPP &&
+      _vitaminB6 == other._vitaminB6 &&
+      _vitaminB12 == other._vitaminB12 &&
+      _vitaminB9 == other._vitaminB9 &&
+      _vitaminK == other._vitaminK;
   }
   
   @override
@@ -229,13 +285,21 @@ class Nutrients {
     buffer.write("vitaminC=" + (_vitaminC != null ? _vitaminC!.toString() : "null") + ", ");
     buffer.write("vitaminD=" + (_vitaminD != null ? _vitaminD!.toString() : "null") + ", ");
     buffer.write("transFat=" + (_transFat != null ? _transFat!.toString() : "null") + ", ");
-    buffer.write("vitaminA=" + (_vitaminA != null ? _vitaminA!.toString() : "null"));
+    buffer.write("vitaminA=" + (_vitaminA != null ? _vitaminA!.toString() : "null") + ", ");
+    buffer.write("vitaminE=" + (_vitaminE != null ? _vitaminE!.toString() : "null") + ", ");
+    buffer.write("vitaminB1=" + (_vitaminB1 != null ? _vitaminB1!.toString() : "null") + ", ");
+    buffer.write("vitaminB2=" + (_vitaminB2 != null ? _vitaminB2!.toString() : "null") + ", ");
+    buffer.write("vitaminPP=" + (_vitaminPP != null ? _vitaminPP!.toString() : "null") + ", ");
+    buffer.write("vitaminB6=" + (_vitaminB6 != null ? _vitaminB6!.toString() : "null") + ", ");
+    buffer.write("vitaminB12=" + (_vitaminB12 != null ? _vitaminB12!.toString() : "null") + ", ");
+    buffer.write("vitaminB9=" + (_vitaminB9 != null ? _vitaminB9!.toString() : "null") + ", ");
+    buffer.write("vitaminK=" + (_vitaminK != null ? _vitaminK!.toString() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  Nutrients copyWith({double? calories, double? carbohydrates, double? protein, double? fat, double? calcium, double? cholesterol, double? fiber, double? iron, double? monounsaturatedFat, double? polyunsaturatedFat, double? potassium, double? saturatedFat, double? sodium, double? sugar, double? vitaminC, double? vitaminD, double? transFat, double? vitaminA}) {
+  Nutrients copyWith({double? calories, double? carbohydrates, double? protein, double? fat, double? calcium, double? cholesterol, double? fiber, double? iron, double? monounsaturatedFat, double? polyunsaturatedFat, double? potassium, double? saturatedFat, double? sodium, double? sugar, double? vitaminC, double? vitaminD, double? transFat, double? vitaminA, double? vitaminE, double? vitaminB1, double? vitaminB2, double? vitaminPP, double? vitaminB6, double? vitaminB12, double? vitaminB9, double? vitaminK}) {
     return Nutrients._internal(
       calories: calories ?? this.calories,
       carbohydrates: carbohydrates ?? this.carbohydrates,
@@ -254,7 +318,15 @@ class Nutrients {
       vitaminC: vitaminC ?? this.vitaminC,
       vitaminD: vitaminD ?? this.vitaminD,
       transFat: transFat ?? this.transFat,
-      vitaminA: vitaminA ?? this.vitaminA);
+      vitaminA: vitaminA ?? this.vitaminA,
+      vitaminE: vitaminE ?? this.vitaminE,
+      vitaminB1: vitaminB1 ?? this.vitaminB1,
+      vitaminB2: vitaminB2 ?? this.vitaminB2,
+      vitaminPP: vitaminPP ?? this.vitaminPP,
+      vitaminB6: vitaminB6 ?? this.vitaminB6,
+      vitaminB12: vitaminB12 ?? this.vitaminB12,
+      vitaminB9: vitaminB9 ?? this.vitaminB9,
+      vitaminK: vitaminK ?? this.vitaminK);
   }
   
   Nutrients copyWithModelFieldValues({
@@ -275,7 +347,15 @@ class Nutrients {
     ModelFieldValue<double?>? vitaminC,
     ModelFieldValue<double?>? vitaminD,
     ModelFieldValue<double?>? transFat,
-    ModelFieldValue<double?>? vitaminA
+    ModelFieldValue<double?>? vitaminA,
+    ModelFieldValue<double?>? vitaminE,
+    ModelFieldValue<double?>? vitaminB1,
+    ModelFieldValue<double?>? vitaminB2,
+    ModelFieldValue<double?>? vitaminPP,
+    ModelFieldValue<double?>? vitaminB6,
+    ModelFieldValue<double?>? vitaminB12,
+    ModelFieldValue<double?>? vitaminB9,
+    ModelFieldValue<double?>? vitaminK
   }) {
     return Nutrients._internal(
       calories: calories == null ? this.calories : calories.value,
@@ -295,7 +375,15 @@ class Nutrients {
       vitaminC: vitaminC == null ? this.vitaminC : vitaminC.value,
       vitaminD: vitaminD == null ? this.vitaminD : vitaminD.value,
       transFat: transFat == null ? this.transFat : transFat.value,
-      vitaminA: vitaminA == null ? this.vitaminA : vitaminA.value
+      vitaminA: vitaminA == null ? this.vitaminA : vitaminA.value,
+      vitaminE: vitaminE == null ? this.vitaminE : vitaminE.value,
+      vitaminB1: vitaminB1 == null ? this.vitaminB1 : vitaminB1.value,
+      vitaminB2: vitaminB2 == null ? this.vitaminB2 : vitaminB2.value,
+      vitaminPP: vitaminPP == null ? this.vitaminPP : vitaminPP.value,
+      vitaminB6: vitaminB6 == null ? this.vitaminB6 : vitaminB6.value,
+      vitaminB12: vitaminB12 == null ? this.vitaminB12 : vitaminB12.value,
+      vitaminB9: vitaminB9 == null ? this.vitaminB9 : vitaminB9.value,
+      vitaminK: vitaminK == null ? this.vitaminK : vitaminK.value
     );
   }
   
@@ -317,10 +405,18 @@ class Nutrients {
       _vitaminC = (json['vitaminC'] as num?)?.toDouble(),
       _vitaminD = (json['vitaminD'] as num?)?.toDouble(),
       _transFat = (json['transFat'] as num?)?.toDouble(),
-      _vitaminA = (json['vitaminA'] as num?)?.toDouble();
+      _vitaminA = (json['vitaminA'] as num?)?.toDouble(),
+      _vitaminE = (json['vitaminE'] as num?)?.toDouble(),
+      _vitaminB1 = (json['vitaminB1'] as num?)?.toDouble(),
+      _vitaminB2 = (json['vitaminB2'] as num?)?.toDouble(),
+      _vitaminPP = (json['vitaminPP'] as num?)?.toDouble(),
+      _vitaminB6 = (json['vitaminB6'] as num?)?.toDouble(),
+      _vitaminB12 = (json['vitaminB12'] as num?)?.toDouble(),
+      _vitaminB9 = (json['vitaminB9'] as num?)?.toDouble(),
+      _vitaminK = (json['vitaminK'] as num?)?.toDouble();
   
   Map<String, dynamic> toJson() => {
-    'calories': _calories, 'carbohydrates': _carbohydrates, 'protein': _protein, 'fat': _fat, 'calcium': _calcium, 'cholesterol': _cholesterol, 'fiber': _fiber, 'iron': _iron, 'monounsaturatedFat': _monounsaturatedFat, 'polyunsaturatedFat': _polyunsaturatedFat, 'potassium': _potassium, 'saturatedFat': _saturatedFat, 'sodium': _sodium, 'sugar': _sugar, 'vitaminC': _vitaminC, 'vitaminD': _vitaminD, 'transFat': _transFat, 'vitaminA': _vitaminA
+    'calories': _calories, 'carbohydrates': _carbohydrates, 'protein': _protein, 'fat': _fat, 'calcium': _calcium, 'cholesterol': _cholesterol, 'fiber': _fiber, 'iron': _iron, 'monounsaturatedFat': _monounsaturatedFat, 'polyunsaturatedFat': _polyunsaturatedFat, 'potassium': _potassium, 'saturatedFat': _saturatedFat, 'sodium': _sodium, 'sugar': _sugar, 'vitaminC': _vitaminC, 'vitaminD': _vitaminD, 'transFat': _transFat, 'vitaminA': _vitaminA, 'vitaminE': _vitaminE, 'vitaminB1': _vitaminB1, 'vitaminB2': _vitaminB2, 'vitaminPP': _vitaminPP, 'vitaminB6': _vitaminB6, 'vitaminB12': _vitaminB12, 'vitaminB9': _vitaminB9, 'vitaminK': _vitaminK
   };
   
   Map<String, Object?> toMap() => {
@@ -341,7 +437,15 @@ class Nutrients {
     'vitaminC': _vitaminC,
     'vitaminD': _vitaminD,
     'transFat': _transFat,
-    'vitaminA': _vitaminA
+    'vitaminA': _vitaminA,
+    'vitaminE': _vitaminE,
+    'vitaminB1': _vitaminB1,
+    'vitaminB2': _vitaminB2,
+    'vitaminPP': _vitaminPP,
+    'vitaminB6': _vitaminB6,
+    'vitaminB12': _vitaminB12,
+    'vitaminB9': _vitaminB9,
+    'vitaminK': _vitaminK
   };
 
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
@@ -452,6 +556,54 @@ class Nutrients {
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'vitaminA',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminE',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminB1',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminB2',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminPP',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminB6',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminB12',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminB9',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'vitaminK',
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
     ));

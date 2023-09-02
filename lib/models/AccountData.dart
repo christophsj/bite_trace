@@ -30,6 +30,7 @@ class AccountData extends amplify_core.Model {
   final String id;
   final NutrientGoals? _nutrientGoals;
   final List<String>? _mealNames;
+  final int? _themeModeIdx;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -63,6 +64,10 @@ class AccountData extends amplify_core.Model {
     return _mealNames;
   }
   
+  int? get themeModeIdx {
+    return _themeModeIdx;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -71,13 +76,14 @@ class AccountData extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const AccountData._internal({required this.id, required nutrientGoals, mealNames, createdAt, updatedAt}): _nutrientGoals = nutrientGoals, _mealNames = mealNames, _createdAt = createdAt, _updatedAt = updatedAt;
+  const AccountData._internal({required this.id, required nutrientGoals, mealNames, themeModeIdx, createdAt, updatedAt}): _nutrientGoals = nutrientGoals, _mealNames = mealNames, _themeModeIdx = themeModeIdx, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory AccountData({String? id, required NutrientGoals nutrientGoals, List<String>? mealNames}) {
+  factory AccountData({String? id, required NutrientGoals nutrientGoals, List<String>? mealNames, int? themeModeIdx}) {
     return AccountData._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       nutrientGoals: nutrientGoals,
-      mealNames: mealNames != null ? List<String>.unmodifiable(mealNames) : mealNames);
+      mealNames: mealNames != null ? List<String>.unmodifiable(mealNames) : mealNames,
+      themeModeIdx: themeModeIdx);
   }
   
   bool equals(Object other) {
@@ -90,7 +96,8 @@ class AccountData extends amplify_core.Model {
     return other is AccountData &&
       id == other.id &&
       _nutrientGoals == other._nutrientGoals &&
-      DeepCollectionEquality().equals(_mealNames, other._mealNames);
+      DeepCollectionEquality().equals(_mealNames, other._mealNames) &&
+      _themeModeIdx == other._themeModeIdx;
   }
   
   @override
@@ -104,6 +111,7 @@ class AccountData extends amplify_core.Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("nutrientGoals=" + (_nutrientGoals != null ? _nutrientGoals!.toString() : "null") + ", ");
     buffer.write("mealNames=" + (_mealNames != null ? _mealNames!.toString() : "null") + ", ");
+    buffer.write("themeModeIdx=" + (_themeModeIdx != null ? _themeModeIdx!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -111,21 +119,24 @@ class AccountData extends amplify_core.Model {
     return buffer.toString();
   }
   
-  AccountData copyWith({NutrientGoals? nutrientGoals, List<String>? mealNames}) {
+  AccountData copyWith({NutrientGoals? nutrientGoals, List<String>? mealNames, int? themeModeIdx}) {
     return AccountData._internal(
       id: id,
       nutrientGoals: nutrientGoals ?? this.nutrientGoals,
-      mealNames: mealNames ?? this.mealNames);
+      mealNames: mealNames ?? this.mealNames,
+      themeModeIdx: themeModeIdx ?? this.themeModeIdx);
   }
   
   AccountData copyWithModelFieldValues({
     ModelFieldValue<NutrientGoals>? nutrientGoals,
-    ModelFieldValue<List<String>>? mealNames
+    ModelFieldValue<List<String>>? mealNames,
+    ModelFieldValue<int?>? themeModeIdx
   }) {
     return AccountData._internal(
       id: id,
       nutrientGoals: nutrientGoals == null ? this.nutrientGoals : nutrientGoals.value,
-      mealNames: mealNames == null ? this.mealNames : mealNames.value
+      mealNames: mealNames == null ? this.mealNames : mealNames.value,
+      themeModeIdx: themeModeIdx == null ? this.themeModeIdx : themeModeIdx.value
     );
   }
   
@@ -135,17 +146,19 @@ class AccountData extends amplify_core.Model {
         ? NutrientGoals.fromJson(new Map<String, dynamic>.from(json['nutrientGoals']['serializedData']))
         : null,
       _mealNames = json['mealNames']?.cast<String>(),
+      _themeModeIdx = (json['themeModeIdx'] as num?)?.toInt(),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'nutrientGoals': _nutrientGoals?.toJson(), 'mealNames': _mealNames, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'nutrientGoals': _nutrientGoals?.toJson(), 'mealNames': _mealNames, 'themeModeIdx': _themeModeIdx, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
     'nutrientGoals': _nutrientGoals,
     'mealNames': _mealNames,
+    'themeModeIdx': _themeModeIdx,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -154,6 +167,7 @@ class AccountData extends amplify_core.Model {
   static final ID = amplify_core.QueryField(fieldName: "id");
   static final NUTRIENTGOALS = amplify_core.QueryField(fieldName: "nutrientGoals");
   static final MEALNAMES = amplify_core.QueryField(fieldName: "mealNames");
+  static final THEMEMODEIDX = amplify_core.QueryField(fieldName: "themeModeIdx");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "AccountData";
     modelSchemaDefinition.pluralName = "AccountData";
@@ -189,6 +203,12 @@ class AccountData extends amplify_core.Model {
       isRequired: false,
       isArray: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: AccountData.THEMEMODEIDX,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

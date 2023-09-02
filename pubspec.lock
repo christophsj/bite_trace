@@ -677,6 +677,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  openfoodfacts:
+    dependency: "direct main"
+    description:
+      name: openfoodfacts
+      sha256: fa136e570e5751286882d4e62bcbfe1173df75f98c12dc7247eb89c7aeba8fa5
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.10.1"
   os_detect:
     dependency: transitive
     description:
