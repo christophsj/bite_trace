@@ -16,56 +16,41 @@ class AccountService extends StateNotifier<AccountState> {
 
   final Ref ref;
 
-  Future<AccountData?> createAccount(AccountData accountData) async {
-    try {
-      final request = ModelMutations.create(accountData);
-      final response = await Amplify.API.mutate(request: request).response;
+  Future<AccountData?> createAccount(AccountData accountData) =>
+      updateAccount(accountData);
 
-      _handleState(response);
-      return response.data;
+  Future<AccountData?> updateAccount(AccountData accountData) async {
+    try {
+      await Amplify.DataStore.save(accountData);
+      _handleState(accountData);
+      return accountData;
     } on ApiException catch (e) {
       safePrint('Mutation failed: $e');
       ref.read(snackbarServiceProvider).showBasic(e.toString());
+      state = AccountState.error(e.message);
       return null;
     }
   }
 
-  Future<void> updateAccount(AccountData accountData) async {
-    try {
-      final request = ModelMutations.update<AccountData>(accountData);
-      final response = await Amplify.API.mutate(request: request).response;
-      safePrint('Response: $response');
-      _handleState(response);
-    } on ApiException catch (e) {
-      safePrint('Mutation failed: $e');
-      ref.read(snackbarServiceProvider).showBasic(e.toString());
-    }
-  }
-
-  void _handleState(GraphQLResponse<AccountData> response) {
-    if (response.data == null) {
-      state = AccountState.error(response.errors.toString());
-    } else {
-      state = AccountState.ready(
-        response.data!,
-      );
-    }
+  void _handleState(AccountData response) {
+    state = AccountState.ready(
+      response,
+    );
   }
 
   Future<AccountData?> getAccount(String uid) async {
     try {
-      final request = ModelQueries.get(
+      final result = await Amplify.DataStore.query(
         AccountData.classType,
-        AccountData.fromJson({'id': uid}).modelIdentifier,
+        where: AccountData.MODEL_IDENTIFIER.eq(
+          AccountDataModelIdentifier(
+            id: uid,
+          ),
+        ),
       );
-      final response = await Amplify.API.query(request: request).response;
-      final resp = response.data;
-      if (resp == null) {
-        safePrint('errors: ${response.errors}');
-      }
-
+      final response = result.first;
       _handleState(response);
-      return resp;
+      return response;
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
       state = AccountState.error(e.toString());

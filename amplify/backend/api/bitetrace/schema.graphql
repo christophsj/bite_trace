@@ -1,6 +1,7 @@
 type DiaryEntry @model @auth(rules: [{ allow: owner }]) {
-  day: AWSDate! @primaryKey
+  day: AWSDate! @primaryKey(sortKeyFields: ["user"])
   meals: [Meal!]
+  user: String!
 }
 type AccountData @model @auth(rules: [{ allow: owner }]) {
   id: ID! @primaryKey

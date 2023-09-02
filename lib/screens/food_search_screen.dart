@@ -263,40 +263,40 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     );
   }
 
-  Builder _buildDropdown() {
-    return Builder(
-      builder: (context) {
-        final theme = Theme.of(context);
-        return DropdownButton(
-          dropdownColor: theme.brightness == Brightness.light
-              ? theme.colorScheme.primary
-              : theme.colorScheme.background,
-          underline: Container(),
-          value: selectedMealIndex,
-          items: widget.log.meals!
-              .map(
-                (e) => DropdownMenuItem(
-                  value: e.index,
-                  child: Text(
-                    e.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: theme.brightness == Brightness.light
-                          ? theme.colorScheme.onPrimary
-                          : theme.colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (i) {
-            setState(() {
-              if (i != null) selectedMealIndex = i;
-            });
-          },
-        );
-      },
-    );
-  }
+  // Widget _buildDropdown() {
+  //   return Builder(
+  //     builder: (context) {
+  //       final theme = Theme.of(context);
+  //       return DropdownButton(
+  //         dropdownColor: theme.brightness == Brightness.light
+  //             ? theme.colorScheme.primary
+  //             : theme.colorScheme.background,
+  //         underline: Container(),
+  //         value: selectedMealIndex,
+  //         items: widget.log.meals!
+  //             .map(
+  //               (e) => DropdownMenuItem(
+  //                 value: e.index,
+  //                 child: Text(
+  //                   e.name,
+  //                   style: TextStyle(
+  //                     fontWeight: FontWeight.w400,
+  //                     fontSize: 18,
+  //                     color: theme.brightness == Brightness.light
+  //                         ? theme.colorScheme.onPrimary
+  //                         : theme.colorScheme.onSurface,
+  //                   ),
+  //                 ),
+  //               ),
+  //             )
+  //             .toList(),
+  //         onChanged: (i) {
+  //           setState(() {
+  //             if (i != null) selectedMealIndex = i;
+  //           });
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 }

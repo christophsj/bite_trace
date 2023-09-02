@@ -74,46 +74,46 @@ class Dashboard extends ConsumerWidget {
     );
   }
 
-  Column _buildBaseGoalFoodExercise(
-    ThemeData theme,
-    BuildContext context,
-    Nutrients n,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSmallIconHeaderValue(
-          Icon(
-            Icons.flag,
-            color: theme.colorScheme.secondary,
-          ),
-          'Base Goal',
-          data.nutrientGoals.calories.toString(),
-          Theme.of(context),
-        ),
-        const SizedBox(height: 8),
-        _buildSmallIconHeaderValue(
-          Icon(
-            Icons.restaurant,
-            color: theme.colorScheme.secondary,
-          ),
-          'Food',
-          n.calories.toInt().toString(),
-          Theme.of(context),
-        ),
-        const SizedBox(height: 8),
-        _buildSmallIconHeaderValue(
-          Icon(
-            Icons.heart_broken,
-            color: theme.colorScheme.secondary,
-          ),
-          'Exercise',
-          '0',
-          Theme.of(context),
-        ),
-      ],
-    );
-  }
+  // Column _buildBaseGoalFoodExercise(
+  //   ThemeData theme,
+  //   BuildContext context,
+  //   Nutrients n,
+  // ) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       _buildSmallIconHeaderValue(
+  //         Icon(
+  //           Icons.flag,
+  //           color: theme.colorScheme.secondary,
+  //         ),
+  //         'Base Goal',
+  //         data.nutrientGoals.calories.toString(),
+  //         Theme.of(context),
+  //       ),
+  //       const SizedBox(height: 8),
+  //       _buildSmallIconHeaderValue(
+  //         Icon(
+  //           Icons.restaurant,
+  //           color: theme.colorScheme.secondary,
+  //         ),
+  //         'Food',
+  //         n.calories.toInt().toString(),
+  //         Theme.of(context),
+  //       ),
+  //       const SizedBox(height: 8),
+  //       _buildSmallIconHeaderValue(
+  //         Icon(
+  //           Icons.heart_broken,
+  //           color: theme.colorScheme.secondary,
+  //         ),
+  //         'Exercise',
+  //         '0',
+  //         Theme.of(context),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildMacroRow(Nutrients n) {
     return Row(

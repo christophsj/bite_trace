@@ -29,9 +29,14 @@ class DiaryService extends StateNotifier<DiaryState> {
     _inDb[dateTime.atMidday()] = inDb;
   }
 
-  Future<String?> getUserId() {
+  Future<String> getUserId() async {
     final auth = ref.read(authServiceProvider);
-    return auth.getCurrentUser().then((value) => value?.userId);
+    final user = await auth.getCurrentUser();
+
+    if (user == null) {
+      throw Exception('User is null');
+    }
+    return user.userId;
   }
 
   Future<void> getLog(DateTime date, {bool tryFromCache = true}) async {
@@ -47,7 +52,10 @@ class DiaryService extends StateNotifier<DiaryState> {
     if (log == null) {
       // does not exist -> empty log
       log = _setDefaultMeals(
-        DiaryEntry(day: TemporalDate(date)),
+        DiaryEntry(
+          day: TemporalDate(date),
+          user: (await ref.read(userProvider.future))!.userId,
+        ),
         ref.read(accountStateProvider).getData()!,
       );
       _inDb[date] = false;
@@ -58,42 +66,39 @@ class DiaryService extends StateNotifier<DiaryState> {
     _updateState(log);
   }
 
-  // Future<List<Food?>> getRecentFoods() async {
-  //   final userId = await getUserId();
-  //   if (userId == null) {
-  //     throw Exception('User id is null');
-  //   }
-  //   final request = ModelQueries.list<DiaryEntry>(
-  //     DiaryEntry.classType,
-  //     sort: [DiaryEntry.DAY.descending()],
-  //     limit: 10,
-  //   );
-
-  //   final response = await Amplify.API.query(request: request).response;
-  //   if (response.data == null) {
-  //     throw Exception(response.errors);
-  //   }
-  //   return response.data!.items;
-  // }
-
-  Future<DiaryEntry?> _queryLogFromDb(DateTime date) async {
-    final request = ModelQueries.list<DiaryEntry>(
+  Future<List<Food>> getRecentFoods({int limitDays = 10}) async {
+    final userId = await getUserId();
+    if (userId == null) {
+      throw Exception('User id is null');
+    }
+    final entries = await Amplify.DataStore.query<DiaryEntry>(
       DiaryEntry.classType,
-      where: DiaryEntry.DAY.eq(TemporalDate(date)),
+      where: DiaryEntry.USER.eq(userId),
+      sortBy: [DiaryEntry.DAY.descending()],
+      pagination: QueryPagination(limit: limitDays),
     );
 
-    final response = await Amplify.API.query(request: request).response;
-    if (response.data == null) {
-      throw Exception(response.errors);
-    }
-    if (response.data!.items.isNotEmpty) {
-      if (response.data!.items[0] == null) {
-        throw Exception('Item received is null: ${response.errors}');
-      }
-      return response.data!.items[0]!;
-    }
+    return entries
+        .map((e) => e.meals!)
+        .expand((e) => e)
+        .map((e) => e.foods)
+        .toList()
+        .expand((e) => e)
+        .toList();
+  }
 
-    return null;
+  Future<DiaryEntry?> _queryLogFromDb(DateTime date) async {
+    final user = await getUserId();
+    final result = await Amplify.DataStore.query(
+      DiaryEntry.classType,
+      where: DiaryEntry.MODEL_IDENTIFIER.eq(
+        DiaryEntryModelIdentifier(
+          day: TemporalDate(date),
+          user: user,
+        ),
+      ),
+    );
+    return result[0];
   }
 
   DiaryEntry _setDefaultMeals(DiaryEntry log, AccountData data) {
@@ -106,28 +111,6 @@ class DiaryService extends StateNotifier<DiaryState> {
     );
   }
 
-  Future<DiaryEntry> _createEntry(DateTime date) async {
-    final accountData = await ref.read(accountDataProvider.future);
-    final meals = accountData?.mealNames ?? Constants.defaultMealNames;
-
-    final mealsList = [
-      for (int i = 0; i < meals.length; i++)
-        Meal(name: meals[i], index: i, foods: [])
-    ];
-    final log = DiaryEntry(
-      day: TemporalDate(date),
-      meals: mealsList,
-    );
-
-    final response = await _updateOrCreate(log);
-
-    if (response.data == null) {
-      throw Exception(response.errors);
-    }
-
-    return response.data!;
-  }
-
   Future<DiaryEntry> addFoodsToMeal(
     DiaryEntry log,
     Meal meal,
@@ -137,10 +120,8 @@ class DiaryService extends StateNotifier<DiaryState> {
       final logWithUpdatedMeal = log.copyWith(
         meals: _addFoods(log, meal, foods),
       );
-      final response = await _updateOrCreate(logWithUpdatedMeal);
-      _updateState(response.data!);
-
-      return response.data!;
+      await _updateOrCreate(logWithUpdatedMeal);
+      return log;
     } on Exception catch (e) {
       ref
           .read(snackbarServiceProvider)
@@ -172,9 +153,8 @@ class DiaryService extends StateNotifier<DiaryState> {
       } else {
         meals[mealIdxToUpdate].foods.removeAt(idx);
       }
-      final response = await _updateOrCreate(log);
-      _updateState(response.data!);
-      return response.data!;
+      await _updateOrCreate(log);
+      return log;
     } on Exception catch (e) {
       ref.read(snackbarServiceProvider).showBasic('Error editing meal: "$e"');
       rethrow;
@@ -195,31 +175,15 @@ class DiaryService extends StateNotifier<DiaryState> {
     return meals;
   }
 
-  Future<GraphQLResponse<DiaryEntry>> _updateOrCreate(DiaryEntry log) async {
-    final response =
-        (inDb(log.day.getDateTime().toLocal())) ? _update(log) : _create(log);
-    final result = await response;
-    safePrint('Response: $result');
-    if (result.data == null) {
-      throw Exception(result.errors);
+  Future<void> _updateOrCreate(DiaryEntry log) async {
+    try {
+      await Amplify.DataStore.save(log);
+      _updateState(log);
+    } on DataStoreException catch (e) {
+      ref
+          .read(snackbarServiceProvider)
+          .showBasic('Error updating model: "${e.message}"');
+      safePrint('Something went wrong updating model: ${e.message}');
     }
-    _updateState(result.data!);
-    return response;
-  }
-
-  Future<GraphQLResponse<DiaryEntry>> _update(
-    DiaryEntry log,
-  ) async {
-    final request = ModelMutations.update(log);
-    final response = await Amplify.API.mutate(request: request).response;
-    return response;
-  }
-
-  Future<GraphQLResponse<DiaryEntry>> _create(
-    DiaryEntry log,
-  ) async {
-    final request = ModelMutations.create(log);
-    final response = await Amplify.API.mutate(request: request).response;
-    return response;
   }
 }

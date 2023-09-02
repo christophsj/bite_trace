@@ -1,6 +1,7 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/amplifyconfiguration.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
@@ -19,9 +20,10 @@ Future<void> main() async {
 Future<void> _configureAmplify() async {
   try {
     final api = AmplifyAPI(modelProvider: ModelProvider.instance);
+    final datastore = AmplifyDataStore(modelProvider: ModelProvider.instance);
     final auth = AmplifyAuthCognito();
 
-    await Amplify.addPlugins([api, auth]);
+    await Amplify.addPlugins([api, auth, datastore]);
     await Amplify.configure(amplifyconfig);
 
     safePrint('Successfully configured');
