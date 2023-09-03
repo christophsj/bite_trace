@@ -38,14 +38,16 @@ class DiaryService extends StateNotifier<DiaryState> {
     return user.userId;
   }
 
-  Future<void> getLog(DateTime date, {bool tryFromCache = true}) async {
+  Future<DiaryEntry> getLog(DateTime date, {bool tryFromCache = true}) async {
     final key = date;
     if (!tryFromCache || state.getEntry(key) == null) {
-      _getLog(key);
+      return _getLog(key);
     }
+
+    return state.getEntry(date)!.entry!;
   }
 
-  Future<void> _getLog(DateTime date) async {
+  Future<DiaryEntry> _getLog(DateTime date) async {
     state.setEntry(date, const DiaryEntryState());
     DiaryEntry? log = await _queryLogFromDb(date);
     if (log == null) {
@@ -63,12 +65,13 @@ class DiaryService extends StateNotifier<DiaryState> {
     }
 
     _updateState(log);
+    return log;
   }
 
   Future<List<Food>> getRecentFoods({
     required String filter,
     int page = 0,
-    int limitDays = 10,
+    int limitDays = 14,
   }) async {
     final userId = await getUserId();
 
@@ -136,6 +139,14 @@ class DiaryService extends StateNotifier<DiaryState> {
           .showBasic('Error adding foods to meal: "$e"');
       rethrow;
     }
+  }
+
+  Future<DiaryEntry> copyMeal(
+    DiaryEntry to,
+    Meal toMeal,
+    Meal fromMeal,
+  ) async {
+    return addFoodsToMeal(to, toMeal, fromMeal.foods);
   }
 
   void _updateState(DiaryEntry log) {
