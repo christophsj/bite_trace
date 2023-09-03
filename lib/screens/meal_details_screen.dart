@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
+import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
@@ -12,8 +13,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 @RoutePage()
-class MealDetailsScreen extends ConsumerStatefulWidget {
-  const MealDetailsScreen({
+class MealDetailsScreen extends ConsumerWidget {
+  MealDetailsScreen({
     required this.log,
     super.key,
     required this.meal,
@@ -22,23 +23,17 @@ class MealDetailsScreen extends ConsumerStatefulWidget {
   final DiaryEntry log;
   final Meal meal;
 
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _MealDetailsState();
-}
-
-class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
   final TextEditingController amount = TextEditingController(text: '1');
 
-  late List<Food> foods;
-
   @override
-  void initState() {
-    super.initState();
-    foods = List.of(widget.meal.foods);
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meal = ref
+        .watch(diaryProvider)
+        .getEntry(log.day.getDateTime())!
+        .entry!
+        .meals![this.meal.index];
 
-  @override
-  Widget build(BuildContext context) {
+    final foods = meal.foods;
     final n = NutrientsExtension.combine(
       foods.map((e) {
         final serving = e.servingSizes[e.chosenServingSize];
@@ -49,7 +44,7 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.meal.name),
+        title: Text(meal.name),
         actions: [
           IconButton(
             onPressed: () => _openCopyMealPopup(context),
@@ -72,22 +67,17 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
                       FoodEntry(
                         food.value,
                         onTapTrailing: () async {
-                          final diary = await ref
-                              .read(diaryServiceProvider)
-                              .editFoodInMeal(
-                                widget.log,
-                                widget.meal,
+                          await ref.read(diaryServiceProvider).editFoodInMeal(
+                                log,
+                                meal,
                                 food.key,
                               );
-                          setState(() {
-                            foods = diary.meals![widget.meal.index].foods;
-                          });
                         },
                         onTap: () {
                           AutoRouter.of(context).push(
                             FoodDetailsRoute(
-                              initialMealIndex: widget.meal.index,
-                              log: widget.log,
+                              initialMealIndex: meal.index,
+                              log: log,
                               food: food.value,
                               foodIdx: food.key,
                             ),
@@ -150,8 +140,8 @@ class _MealDetailsState extends ConsumerState<MealDetailsScreen> {
     showDialog(
       context: context,
       builder: (c) => CopyMealDialog(
-        widget.meal,
-        fromTime: widget.log.day.getDateTime(),
+        meal,
+        fromTime: log.day.getDateTime(),
       ),
     );
   }
@@ -327,7 +317,10 @@ class FoodEntry extends StatelessWidget {
       name: food.description,
       subtitle: '${food.chosenServingAmount}x ${serving.value} ${serving.unit}',
       color: Theme.of(context).colorScheme.secondary,
-      n: food.nutritionalContents,
+      n: food.nutritionalContents.servingFactor(
+        food.servingSizes[food.chosenServingSize].nutritionMultiplier *
+            food.chosenServingAmount,
+      ),
       onTap: onTap,
       trailingIcon: const Icon(Icons.delete),
       onTapTrailing: onTapTrailing,
