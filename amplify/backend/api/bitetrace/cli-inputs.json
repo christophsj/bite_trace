@@ -12,6 +12,25 @@
         "mode": "AMAZON_COGNITO_USER_POOLS",
         "cognitoUserPoolId": "authbitetraced2dea256"
       }
-    ]
+    ],
+    "conflictResolution": {
+      "defaultResolutionStrategy": {
+        "type": "AUTOMERGE"
+      },
+      "perModelResolutionStrategy": [
+        {
+          "resolutionStrategy": {
+            "type": "AUTOMERGE"
+          },
+          "entityName": "DiaryEntry"
+        },
+        {
+          "resolutionStrategy": {
+            "type": "AUTOMERGE"
+          },
+          "entityName": "AccountData"
+        }
+      ]
+    }
   }
 }

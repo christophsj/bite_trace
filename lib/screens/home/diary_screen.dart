@@ -7,6 +7,7 @@ import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
+import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
 import 'package:bite_trace/widgets/error_view.dart';
@@ -165,10 +166,7 @@ class DiarySection extends ConsumerWidget {
               final color = Theme.of(context).colorScheme.secondary;
               final n = NutrientsExtension.combine(
                 meal.foods.map((e) {
-                  final serving = e.servingSizes[e.chosenServingSize];
-                  return e.nutritionalContents.servingFactor(
-                    serving.nutritionMultiplier * e.chosenServingAmount,
-                  );
+                  return e.nutritionalContents.servingFactor(e.servingFactor);
                 }).toList(),
               );
               return FoodListTile(

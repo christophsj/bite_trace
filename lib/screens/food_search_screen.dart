@@ -237,6 +237,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 );
                 if (result != null) {
                   log = result;
+                  query.clear();
                 }
               },
               title: Text(

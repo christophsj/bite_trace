@@ -19,13 +19,12 @@ Future<void> main() async {
 
 Future<void> _configureAmplify() async {
   try {
-    final api = AmplifyAPI(modelProvider: ModelProvider.instance);
-    final datastore = AmplifyDataStore(modelProvider: ModelProvider.instance);
+    final api = AmplifyAPI();
     final auth = AmplifyAuthCognito();
+    final datastore = AmplifyDataStore(modelProvider: ModelProvider.instance);
 
     await Amplify.addPlugins([api, auth, datastore]);
     await Amplify.configure(amplifyconfig);
-
     safePrint('Successfully configured');
   } on Exception catch (e) {
     safePrint('Error configuring Amplify: $e');

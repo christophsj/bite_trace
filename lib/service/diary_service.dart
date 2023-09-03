@@ -78,7 +78,7 @@ class DiaryService extends StateNotifier<DiaryState> {
     final entries = await Amplify.DataStore.query<DiaryEntry>(
       DiaryEntry.classType,
       where: DiaryEntry.ID.eq(userId),
-      sortBy: [DiaryEntry.ID.descending()],
+      sortBy: [DiaryEntry.DAY.descending()],
       pagination: QueryPagination(page: page, limit: limitDays),
     );
 
@@ -96,6 +96,7 @@ class DiaryService extends StateNotifier<DiaryState> {
           (element) =>
               element.description.toLowerCase().contains(filter.toLowerCase()),
         )
+        .toSet()
         .toList();
   }
 
@@ -128,10 +129,8 @@ class DiaryService extends StateNotifier<DiaryState> {
     List<Food> foods,
   ) async {
     try {
-      final logWithUpdatedMeal = log.copyWith(
-        meals: _addFoods(log, meal, foods),
-      );
-      await _updateOrCreate(logWithUpdatedMeal);
+      _addFoods(log, meal, foods);
+      await _updateOrCreate(log);
       return log;
     } on Exception catch (e) {
       ref
@@ -181,7 +180,7 @@ class DiaryService extends StateNotifier<DiaryState> {
   }
 
   List<Meal> _addFoods(DiaryEntry log, Meal meal, List<Food> foods) {
-    final meals = List.of(log.meals!);
+    final meals = log.meals!;
     final mealIdxToUpdate =
         meals.indexWhere((element) => element.name == meal.name);
     if (mealIdxToUpdate < 0) {

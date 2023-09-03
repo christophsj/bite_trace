@@ -103,7 +103,10 @@ class DiaryCalendar extends ConsumerWidget {
                 child: Text(
                   key: Key(selected.toString()),
                   _format(selected),
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -114,7 +117,10 @@ class DiaryCalendar extends ConsumerWidget {
                   },
                   child: const Text('today'),
                 ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.today)),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.calendar_month),
+              ),
             ],
           ),
         ),

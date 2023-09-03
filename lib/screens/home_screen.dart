@@ -15,7 +15,6 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final accountData = ref.watch(accountDataProvider);
-
     return AsyncValueBuilder(
       accountData,
       onloading: () => Scaffold(

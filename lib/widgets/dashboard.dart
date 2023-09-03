@@ -2,6 +2,7 @@ import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/models/Food.dart';
 import 'package:bite_trace/models/Nutrients.dart';
+import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +16,9 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final n = NutrientsExtension.combine(
-      foods.map((e) => e.nutritionalContents).toList(),
+      foods
+          .map((e) => e.nutritionalContents.servingFactor(e.servingFactor))
+          .toList(),
     );
 
     return Padding(

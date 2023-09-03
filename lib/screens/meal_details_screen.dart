@@ -4,6 +4,7 @@ import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
+import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
@@ -36,9 +37,8 @@ class MealDetailsScreen extends ConsumerWidget {
     final foods = meal.foods;
     final n = NutrientsExtension.combine(
       foods.map((e) {
-        final serving = e.servingSizes[e.chosenServingSize];
         return e.nutritionalContents.servingFactor(
-          serving.nutritionMultiplier * e.chosenServingAmount,
+          e.servingFactor,
         );
       }).toList(),
     );
@@ -46,6 +46,15 @@ class MealDetailsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(meal.name),
         actions: [
+          IconButton(
+            onPressed: () => context.pushRoute(
+              FoodSearchRoute(
+                log: log,
+                initialMealIndex: meal.index,
+              ),
+            ),
+            icon: const Icon(Icons.add),
+          ),
           IconButton(
             onPressed: () => _openCopyMealPopup(context),
             icon: const Icon(Icons.copy),
@@ -205,6 +214,8 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
                     setState(() {
                       selectedDate = picked;
                       selectedMeal = null;
+                      selectedLog =
+                          ref.read(diaryServiceProvider).getLog(selectedDate);
                     });
                     ctrl.text = DateFormat.yMd().format(selectedDate);
                   }
@@ -312,15 +323,12 @@ class FoodEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final serving = food.servingSizes[food.chosenServingSize];
+    final serving = food.servingSize;
     return FoodListTile(
       name: food.description,
       subtitle: '${food.chosenServingAmount}x ${serving.value} ${serving.unit}',
       color: Theme.of(context).colorScheme.secondary,
-      n: food.nutritionalContents.servingFactor(
-        food.servingSizes[food.chosenServingSize].nutritionMultiplier *
-            food.chosenServingAmount,
-      ),
+      n: food.nutritionalContents.servingFactor(food.servingFactor),
       onTap: onTap,
       trailingIcon: const Icon(Icons.delete),
       onTapTrailing: onTapTrailing,

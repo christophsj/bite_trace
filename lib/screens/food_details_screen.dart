@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
+import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
@@ -29,8 +30,8 @@ class FoodDetailsScreen extends ConsumerStatefulWidget {
 
 class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
     with TickerProviderStateMixin {
-  int selectedServingIndex = 0;
-  int selectedMealIndex = 0;
+  late int selectedServingIndex;
+  late int selectedMealIndex;
 
   late final TextEditingController amount;
   late final AnimationController _animController;
@@ -38,9 +39,11 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
 
   @override
   void initState() {
+    selectedServingIndex = widget.food.chosenServingSize;
+    selectedMealIndex = widget.initialMealIndex;
+
     final amountValue = widget.food.chosenServingAmount;
-    final multi =
-        widget.food.servingSizes[selectedServingIndex].nutritionMultiplier;
+    final multi = widget.food.multi;
 
     _animController = AnimationController(
       value: 0,
@@ -54,17 +57,17 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
 
     amount = TextEditingController(text: amountValue.toString())
       ..addListener(updateAmountValue);
-    selectedMealIndex = widget.initialMealIndex;
-    selectedServingIndex = widget.food.chosenServingSize;
     _animController.forward();
     super.initState();
   }
 
   void updateAmountValue() {
     final amt = double.tryParse(amount.text);
-    final multi =
-        widget.food.servingSizes[selectedServingIndex].nutritionMultiplier;
-    final end = (amt ?? 0) * multi;
+    final s = widget.food.servingSizes
+            .where((element) => element.index == selectedServingIndex)
+            .firstOrNull ??
+        widget.food.servingSizes.first;
+    final end = (amt ?? 0) * s.nutritionMultiplier;
     _factorAnimation = Tween(
       begin: _factorAnimation.value,
       end: end,
@@ -189,16 +192,13 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                                 decoration: inputDecoration.copyWith(
                                   labelText: 'Serving Size',
                                 ),
-                                items: widget.food.servingSizes
-                                    .asMap()
-                                    .entries
-                                    .map((e) {
+                                items: widget.food.servingSizes.map((e) {
                                   return DropdownMenuItem(
-                                    value: e.key,
+                                    value: e.index,
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Text(
-                                        '${e.value.value} ${e.value.unit}',
+                                        '${e.value} ${e.unit}',
                                         style: dropdownTextStyle,
                                       ),
                                     ),
