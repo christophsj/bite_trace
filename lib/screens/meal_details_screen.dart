@@ -53,11 +53,17 @@ class MealDetailsScreen extends ConsumerWidget {
                 initialMealIndex: meal.index,
               ),
             ),
-            icon: const Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           IconButton(
             onPressed: () => _openCopyMealPopup(context),
-            icon: const Icon(Icons.copy),
+            icon: Icon(
+              Icons.copy,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           )
         ],
       ),
@@ -326,8 +332,7 @@ class FoodEntry extends StatelessWidget {
     final serving = food.servingSize;
     return FoodListTile(
       name: food.description,
-      subtitle: '${food.chosenServingAmount}x ${serving.value} ${serving.unit}',
-      color: Theme.of(context).colorScheme.secondary,
+      subtitle: '${food.chosenServingAmount * serving.value} ${serving.unit}',
       n: food.nutritionalContents.servingFactor(food.servingFactor),
       onTap: onTap,
       trailingIcon: const Icon(Icons.delete),

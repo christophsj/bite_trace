@@ -39,7 +39,13 @@ class AccountScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Card(
-                  child: Padding(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +63,13 @@ class AccountScreen extends ConsumerWidget {
                   ),
                 ),
                 Card(
-                  child: Padding(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
                     padding: const EdgeInsets.all(8.0),
                     child: Builder(
                       builder: (context) {
@@ -157,7 +169,13 @@ class AccountScreen extends ConsumerWidget {
                   ),
                 ),
                 Card(
-                  child: Padding(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +248,13 @@ class AccountScreen extends ConsumerWidget {
                   ),
                 ),
                 Card(
-                  child: Padding(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
                     padding: const EdgeInsets.all(8.0),
                     child: AnimatedElevatedButton(
                       onPressed: authService.signOut,

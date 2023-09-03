@@ -97,10 +97,12 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.food.description),
+        title: Text(
+          '${widget.food.description} ${widget.food.verified ? '✅' : ''}',
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: SingleChildScrollView(
           child: AnimatedBuilder(
             animation: _animController,
@@ -113,13 +115,18 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Card(child: MacrosDisplay(nutrients: nc)),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: MacrosDisplay(nutrients: nc),
+                    ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       child: Column(
                         children: [
                           MicroNutrientsDisplay(
@@ -155,7 +162,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
             },
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
                   children: [
                     Row(
@@ -263,7 +270,9 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                           ),
                           AnimatedElevatedButton(
                             onPressed: onSubmit,
-                            icon: const Icon(Icons.add),
+                            icon: Icon(
+                              widget.foodIdx == null ? Icons.add : Icons.edit,
+                            ),
                             label: widget.foodIdx == null ? 'LOG' : 'EDIT',
                           ),
                         ],

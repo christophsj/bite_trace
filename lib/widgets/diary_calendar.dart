@@ -104,7 +104,7 @@ class DiaryCalendar extends ConsumerWidget {
                   key: Key(selected.toString()),
                   _format(selected),
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -119,17 +119,19 @@ class DiaryCalendar extends ConsumerWidget {
                 ),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.calendar_month),
+                icon: Icon(
+                  Icons.calendar_month,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
         ),
         Material(
-          elevation: 1,
-          child: Padding(
+          child: Container(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: SizedBox(
-              height: 74,
+              height: 72,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemExtent: itemExtent,
@@ -170,7 +172,14 @@ class DiaryCalendar extends ConsumerWidget {
   }
 
   String _format(DateTime selected) {
-    if (selected == DateTime.now().atMidday()) return 'Today';
-    return DateFormat('EEE, d MMMM yyyy').format(selected);
+    final now = DateTime.now();
+    if (selected == now.atMidday()) return 'Today';
+    if (selected == now.subtract(const Duration(days: 1)).atMidday()) {
+      return 'Yesterday';
+    }
+    if (selected == now.add(const Duration(days: 1)).atMidday()) {
+      return 'Tomorrow';
+    }
+    return DateFormat('EEE, d MMM yyyy').format(selected);
   }
 }

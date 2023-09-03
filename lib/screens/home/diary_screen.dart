@@ -163,7 +163,6 @@ class DiarySection extends ConsumerWidget {
             itemCount: meals.length,
             itemBuilder: (context, index) {
               final meal = meals[index];
-              final color = Theme.of(context).colorScheme.secondary;
               final n = NutrientsExtension.combine(
                 meal.foods.map((e) {
                   return e.nutritionalContents.servingFactor(e.servingFactor);
@@ -171,7 +170,6 @@ class DiarySection extends ConsumerWidget {
               );
               return FoodListTile(
                 name: meal.name,
-                color: color,
                 n: n,
                 onTap: () {
                   if (meal.foods.isEmpty) {

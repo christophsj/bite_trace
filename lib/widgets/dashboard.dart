@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/models/Food.dart';
@@ -30,6 +32,12 @@ class Dashboard extends ConsumerWidget {
             elevation: 2,
             child: Container(
               padding: const EdgeInsets.all(12.0),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(4),
+              //   border: Border.all(
+              //     color: Theme.of(context).colorScheme.outlineVariant,
+              //   ),
+              // ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -136,7 +144,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
     required this.goal,
     required this.value,
     this.size,
-    this.color,
+    required this.color,
     this.labelBelow = false,
     this.strokeWidth = 10,
     this.label,
@@ -145,7 +153,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
   final num goal;
   final num value;
   final double? size;
-  final Color? color;
+  final Color color;
   final bool labelBelow;
   final String? label;
   final double strokeWidth;
@@ -173,13 +181,15 @@ class ProgressIndicatorWithValue extends StatelessWidget {
   }
 
   Widget _buildCircle({String? label}) {
+    final c = Color.fromRGBO(
+        color.red, color.green, color.blue, min(progress / 2, 0.3) + 0.7);
     final circle = SizedBox(
       height: size,
       width: size,
       child: CircularProgressIndicator(
         value: progress,
         backgroundColor: Colors.grey[400],
-        color: color,
+        color: c,
         strokeWidth: strokeWidth,
       ),
     );
@@ -203,7 +213,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
       text: TextSpan(
         children: [
           TextSpan(
-            text: '$diff${labelBelow ? '' : '\n'}',
+            text: '${diff.abs()}${labelBelow ? '' : '\n'}',
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,

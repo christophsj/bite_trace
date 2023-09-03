@@ -6,7 +6,9 @@ import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
+import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
+import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -208,13 +210,41 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
             child: Text('No items found.'),
           );
         },
-        itemBuilder: (context, item, index) {
-          final n = item.nutritionalContents;
-          final multi = item.servingSizes[0].nutritionMultiplier;
+        itemBuilder: (context, food, index) {
+          return FoodListTile(
+            name: '${food.description} ${food.verified ? '✅' : ''}',
+            n: food.nutritionalContents,
+            onTap: () async {
+              final result = await AutoRouter.of(context).push<DiaryEntry?>(
+                FoodDetailsRoute(
+                  initialMealIndex: selectedMealIndex,
+                  log: log,
+                  food: food,
+                ),
+              );
+              if (result != null) {
+                log = result;
+                query.clear();
+              }
+            },
+            trailingIcon: const Icon(Icons.delete),
+            onTapTrailing: () async {
+              final selectedMeal = log.meals![selectedMealIndex];
+              log = await ref
+                  .read(diaryServiceProvider)
+                  .addFoodsToMeal(log, selectedMeal, [food]);
+              ref
+                  .read(snackbarServiceProvider)
+                  .showBasic('Added ${food.description}');
+            },
+          );
+
+          final n = food.nutritionalContents;
+          final multi = food.servingSizes[0].nutritionMultiplier;
           final unit =
-              '${item.servingSizes[0].value} ${item.servingSizes[0].unit}';
+              '${food.servingSizes[0].value} ${food.servingSizes[0].unit}';
           final cals =
-              '${(item.nutritionalContents.calories * multi).toInt()} calories';
+              '${(food.nutritionalContents.calories * multi).toInt()} calories';
           return Padding(
             padding:
                 index == 0 ? EdgeInsets.zero : const EdgeInsets.only(top: 6.0),
@@ -232,7 +262,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                   FoodDetailsRoute(
                     initialMealIndex: selectedMealIndex,
                     log: log,
-                    food: item,
+                    food: food,
                   ),
                 );
                 if (result != null) {
@@ -241,7 +271,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 }
               },
               title: Text(
-                '${item.description} ${item.verified ? '✅' : ''}',
+                '${food.description} ${food.verified ? '✅' : ''}',
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -284,10 +314,10 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                   final selectedMeal = log.meals![selectedMealIndex];
                   log = await ref
                       .read(diaryServiceProvider)
-                      .addFoodsToMeal(log, selectedMeal, [item]);
+                      .addFoodsToMeal(log, selectedMeal, [food]);
                   ref
                       .read(snackbarServiceProvider)
-                      .showBasic('Added ${item.description}');
+                      .showBasic('Added ${food.description}');
                 },
                 icon: const Icon(Icons.add),
                 checkColor: Colors.green,
