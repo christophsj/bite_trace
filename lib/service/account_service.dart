@@ -39,8 +39,10 @@ class AccountService extends StateNotifier<AccountState> {
 
   Future<AccountData?> getAccount(String uid) async {
     try {
-      final result = await Amplify.DataStore.query(AccountData.classType,
-          where: AccountData.ID.eq(uid));
+      final result = await Amplify.DataStore.query(
+        AccountData.classType,
+        where: AccountData.ID.eq(uid),
+      );
       if (result.isEmpty) {
         return null;
       }

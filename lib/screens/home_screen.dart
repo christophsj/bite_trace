@@ -40,6 +40,7 @@ Widget _buildLoggedInContent(WidgetRef ref) {
   return AutoTabsRouter(
     routes: const [
       DiaryRoute(),
+      ExerciseRoute(),
       AccountRoute(),
     ],
     transitionBuilder: (context, child, animation) => FadeTransition(
@@ -80,6 +81,10 @@ Widget _buildLoggedInContent(WidgetRef ref) {
             BottomNavigationBarItem(
               icon: Icon(Icons.book),
               label: 'Diary',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.heart_broken_sharp),
+              label: 'Exercise',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_box),
