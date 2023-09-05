@@ -8,6 +8,7 @@ type AccountData @model @auth(rules: [{ allow: public }]) {
   nutrientGoals: NutrientGoals!
   mealNames: [String!]
   themeModeIdx: Int
+  themeColorIdx: Int
 }
 
 type NutrientGoals {

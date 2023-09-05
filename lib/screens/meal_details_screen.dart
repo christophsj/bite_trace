@@ -7,6 +7,7 @@ import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
+import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,17 @@ class MealDetailsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: MacrosDisplay(
+                    nutrients: n,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: Column(
@@ -100,17 +112,6 @@ class MealDetailsScreen extends ConsumerWidget {
                         },
                       ),
                   ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: MacrosDisplay(
-                    nutrients: n,
-                  ),
                 ),
               ),
               const SizedBox(
@@ -208,13 +209,12 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  // show datepicker
+                  final range = ref.read(dateRangeProvider)!;
                   final picked = await showDatePicker(
                     context: context,
                     initialDate: selectedDate,
-                    firstDate:
-                        DateTime.now().subtract(const Duration(days: 100)),
-                    lastDate: DateTime.now().add(const Duration(days: 30)),
+                    firstDate: range[0],
+                    lastDate: range[1],
                   );
                   if (picked != null) {
                     setState(() {

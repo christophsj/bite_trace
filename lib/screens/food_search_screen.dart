@@ -1,13 +1,10 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
-import 'package:bite_trace/utils/food_extension.dart';
-import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -227,7 +224,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 query.clear();
               }
             },
-            trailingIcon: const Icon(Icons.delete),
+            trailingIcon: const Icon(Icons.add),
             onTapTrailing: () async {
               final selectedMeal = log.meals![selectedMealIndex];
               log = await ref
@@ -238,131 +235,8 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                   .showBasic('Added ${food.description}');
             },
           );
-
-          final n = food.nutritionalContents;
-          final multi = food.servingSizes[0].nutritionMultiplier;
-          final unit =
-              '${food.servingSizes[0].value} ${food.servingSizes[0].unit}';
-          final cals =
-              '${(food.nutritionalContents.calories * multi).toInt()} calories';
-          return Padding(
-            padding:
-                index == 0 ? EdgeInsets.zero : const EdgeInsets.only(top: 6.0),
-            child: ListTile(
-              textColor: Theme.of(context).colorScheme.onSurface,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Theme.of(context).primaryColor,
-                ),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              tileColor: Theme.of(context).colorScheme.surface,
-              onTap: () async {
-                final result = await AutoRouter.of(context).push<DiaryEntry?>(
-                  FoodDetailsRoute(
-                    initialMealIndex: selectedMealIndex,
-                    log: log,
-                    food: food,
-                  ),
-                );
-                if (result != null) {
-                  log = result;
-                  query.clear();
-                }
-              },
-              title: Text(
-                '${food.description} ${food.verified ? '✅' : ''}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              subtitle: RichText(
-                maxLines: 1,
-                text: TextSpan(
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: unit,
-                    ),
-                    TextSpan(text: ' - $cals'),
-                    TextSpan(
-                      text: ' ${(n.carbohydrates * multi).toInt()}c ',
-                      style: const TextStyle(
-                        color: CustomColors.carbColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '${(n.fat * multi).toInt()}f ',
-                      style: const TextStyle(
-                        color: CustomColors.fatColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '${(n.protein * multi).toInt()}p ',
-                      style: const TextStyle(
-                        color: CustomColors.proteinColor,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              trailing: AnimatedElevatedButton(
-                onPressed: () async {
-                  final selectedMeal = log.meals![selectedMealIndex];
-                  log = await ref
-                      .read(diaryServiceProvider)
-                      .addFoodsToMeal(log, selectedMeal, [food]);
-                  ref
-                      .read(snackbarServiceProvider)
-                      .showBasic('Added ${food.description}');
-                },
-                icon: const Icon(Icons.add),
-                checkColor: Colors.green,
-              ),
-            ),
-          );
         },
       ),
     );
   }
-
-  // Widget _buildDropdown() {
-  //   return Builder(
-  //     builder: (context) {
-  //       final theme = Theme.of(context);
-  //       return DropdownButton(
-  //         dropdownColor: theme.brightness == Brightness.light
-  //             ? theme.colorScheme.primary
-  //             : theme.colorScheme.background,
-  //         underline: Container(),
-  //         value: selectedMealIndex,
-  //         items: widget.log.meals!
-  //             .map(
-  //               (e) => DropdownMenuItem(
-  //                 value: e.index,
-  //                 child: Text(
-  //                   e.name,
-  //                   style: TextStyle(
-  //                     fontWeight: FontWeight.w400,
-  //                     fontSize: 18,
-  //                     color: theme.brightness == Brightness.light
-  //                         ? theme.colorScheme.onPrimary
-  //                         : theme.colorScheme.onSurface,
-  //                   ),
-  //                 ),
-  //               ),
-  //             )
-  //             .toList(),
-  //         onChanged: (i) {
-  //           setState(() {
-  //             if (i != null) selectedMealIndex = i;
-  //           });
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }

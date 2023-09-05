@@ -1,9 +1,27 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/screens/home/diary_screen.dart';
+import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
+final dateRangeProvider = StateProvider<List<DateTime>?>((ref) {
+  final state = ref.watch(accountDataProvider);
+  if (state.value == null) {
+    return null;
+  }
+
+  final from = (state.value!.createdAt ?? TemporalDateTime.now())
+      .getDateTimeInUtc()
+      .toLocal()
+      .atMidday();
+  final to = DateTime.now()
+      .atMidday()
+      .add(const Duration(days: DiaryScreen.futureDays));
+  return [from, to];
+});
 
 class DiaryCalendar extends ConsumerWidget {
   String _formatDay(DateTime date) {
@@ -86,10 +104,12 @@ class DiaryCalendar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedDayProvider);
+    final dateRange = ref.watch(dateRangeProvider)!;
+
+    final itemCount = dateRange[1].difference(dateRange[0]).inDays + 1;
+
     final now = DateTime.now().atMidday();
     const itemExtent = 56.0;
-    const futureDays = 10;
-    const itemCount = 1000;
     final w = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +138,21 @@ class DiaryCalendar extends ConsumerWidget {
                   child: const Text('today'),
                 ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  final range = ref.read(dateRangeProvider)!;
+                  final day = ref.read(selectedDayProvider);
+                  showDatePicker(
+                    context: context,
+                    initialDate: day,
+                    firstDate: range[0],
+                    lastDate: range[1],
+                  ).then((value) {
+                    if (value != null) {
+                      ref.read(selectedDayProvider.notifier).state =
+                          value.atMidday();
+                    }
+                  });
+                },
                 icon: Icon(
                   Icons.calendar_month,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -140,7 +174,7 @@ class DiaryCalendar extends ConsumerWidget {
                 itemCount: itemCount,
                 controller: ScrollController(
                   initialScrollOffset: (itemExtent *
-                          (futureDays +
+                          (DiaryScreen.futureDays +
                               (now.difference(selected.atMidday()).inDays))) -
                       (w / 2) +
                       (itemExtent / 2),

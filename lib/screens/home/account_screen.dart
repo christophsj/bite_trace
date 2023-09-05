@@ -8,6 +8,7 @@ import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:bite_trace/widgets/nutrition_goals_selector.dart';
 import 'package:bite_trace/widgets/segmented_circle.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -181,67 +182,46 @@ class AccountScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _cardHeader(context, 'Theme'),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            border:
-                                Border.all(color: theme.colorScheme.primary),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: DropdownButton<int>(
-                            style: TextStyle(
-                              color: theme.primaryColor,
-                              fontSize: 16.0,
-                            ),
-                            iconEnabledColor: theme.colorScheme.primary,
-                            underline: Container(),
-                            dropdownColor: theme.colorScheme.background,
-                            selectedItemBuilder: (BuildContext context) {
-                              return ThemeMode.values
-                                  .map((e) => e.name)
-                                  .toList()
-                                  .map<Widget>((String item) {
-                                return Container(
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    item,
-                                    style: TextStyle(
-                                      color: theme.primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                );
-                              }).toList();
-                            },
-                            isExpanded: true,
-                            items: ThemeMode.values
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e.index,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0,
-                                      ),
-                                      child: Text(e.name),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            value: ref.read(themeModeProvider).index,
-                            onChanged: (value) async {
-                              if (value != null) {
-                                ref.read(themeModeProvider.notifier).state =
-                                    ThemeMode.values[value];
-                                if (s.data.themeModeIdx != value) {
-                                  ref
-                                      .read(accountServiceProvider)
-                                      .updateAccount(
-                                        s.data.copyWith(themeModeIdx: value),
-                                      );
-                                }
+                        _buildDropdownForEnum(
+                          values: ThemeMode.values,
+                          theme: theme,
+                          value: ref.read(themeModeProvider),
+                          onChanged: (value) async {
+                            if (value != null) {
+                              ref.read(themeModeProvider.notifier).state =
+                                  ThemeMode.values[value];
+                              if (s.data.themeModeIdx != value) {
+                                ref.read(accountServiceProvider).updateAccount(
+                                      s.data.copyWith(themeModeIdx: value),
+                                    );
                               }
-                            },
-                          ),
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        _buildDropdownForEnum(
+                          values: FlexScheme.values,
+                          theme: theme,
+                          value: ref.read(themeSchemeProvider),
+                          color: (FlexScheme e) {
+                            if (ref.read(themeModeProvider) ==
+                                ThemeMode.light) {
+                              return FlexThemeData.light(scheme: e)
+                                  .primaryColor;
+                            }
+                            return FlexThemeData.dark(scheme: e).primaryColor;
+                          },
+                          onChanged: (value) async {
+                            if (value != null) {
+                              ref.read(themeSchemeProvider.notifier).state =
+                                  FlexScheme.values[value];
+                              ref.read(accountServiceProvider).updateAccount(
+                                    s.data.copyWith(themeColorIdx: value),
+                                  );
+                            }
+                          },
                         )
                       ],
                     ),
@@ -268,6 +248,75 @@ class AccountScreen extends ConsumerWidget {
           ),
         ),
     };
+  }
+
+  Widget _buildDropdownForEnum<T extends Enum>({
+    required ThemeData theme,
+    required List<T> values,
+    required Enum value,
+    required void Function(int?) onChanged,
+    Color Function(T)? color,
+  }) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: theme.colorScheme.primary),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: DropdownButton<int>(
+        style: TextStyle(
+          color: theme.primaryColor,
+          fontSize: 16.0,
+        ),
+        iconEnabledColor: theme.colorScheme.primary,
+        underline: Container(),
+        dropdownColor: theme.colorScheme.background,
+        selectedItemBuilder: (BuildContext context) {
+          return values.map((e) => e.name).map<Widget>((String item) {
+            return Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                item,
+                style: TextStyle(
+                  color: theme.primaryColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+          }).toList();
+        },
+        isExpanded: true,
+        items: values
+            .map(
+              (e) => DropdownMenuItem(
+                value: e.index,
+                child: Builder(
+                  builder: (context) {
+                    return Container(
+                      width: color == null
+                          ? null
+                          : MediaQuery.of(context).size.width,
+                      height: color == null
+                          ? null
+                          : MediaQuery.of(context).size.height,
+                      alignment: color == null ? null : Alignment.center,
+                      color: color == null ? null : color(e),
+                      child: Text(
+                        e.name,
+                        style: color == null
+                            ? null
+                            : TextStyle(color: theme.colorScheme.onPrimary),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
+            .toList(),
+        value: value.index,
+        onChanged: onChanged,
+      ),
+    );
   }
 
   Widget _cardHeader(
@@ -532,7 +581,8 @@ class NutritionGoalsDisplay extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (c) => SimpleDialog(
-        contentPadding: const EdgeInsets.all(20),
+        insetPadding: const EdgeInsets.all(10.0),
+        contentPadding: const EdgeInsets.all(10),
         title: const Text('Macro goals'),
         children: [
           Builder(

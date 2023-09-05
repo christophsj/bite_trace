@@ -8,6 +8,7 @@ import 'package:bite_trace/service/snackbar_service.dart';
 import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final routerProvider = Provider<AppRouter>((ref) => AppRouter());
@@ -47,6 +48,21 @@ final themeModeProvider = StateProvider<ThemeMode>((ref) {
     (AccountStateError _) => null
   };
   return ThemeMode.values[idx ?? ThemeMode.system.index];
+});
+
+final themeSchemeProvider = StateProvider<FlexScheme>((ref) {
+  final s = ref.watch(accountStateProvider);
+  final int? idx = switch (s) {
+    (final AccountStateReady r) => r.data.themeColorIdx,
+    (AccountStateInitializing _) => null,
+    (AccountStateError _) => null
+  };
+
+  if (idx == null) {
+    return FlexScheme.aquaBlue;
+  }
+
+  return FlexScheme.values[idx];
 });
 
 final userProvider =

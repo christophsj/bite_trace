@@ -10,6 +10,7 @@ import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
+import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ class DiaryScreen extends ConsumerStatefulWidget {
 
   static DateTime idxToDate(int index) {
     return DateTime.now()
-        .atMidday()
         .subtract(Duration(days: index - futureDays))
         .atMidday();
   }
@@ -58,10 +58,14 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
         DiaryScreen.dateToIdx(next),
       );
     });
+    final dateRange = ref.watch(dateRangeProvider)!;
+
+    final itemCount = dateRange[1].difference(dateRange[0]).inDays + 1;
     final diaryState = ref.watch(diaryProvider);
     return PageView.builder(
       reverse: true,
       controller: _pageController,
+      itemCount: itemCount,
       itemBuilder: (context, index) {
         final date = DiaryScreen.idxToDate(index);
         final entryState = diaryState.getEntry(date);
@@ -100,26 +104,6 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
             ),
           );
         }
-        // return switch (diaryState) {
-        //   (DiaryStateInitializing _) => const Center(
-        //       child: SizedBox(
-        //         height: 40,
-        //         width: 40,
-        //         child: CircularProgressIndicator(),
-        //       ),
-        //     ),
-        //   (final DiaryStateError s) => ErrorView(error: s.error!),
-        //   (final DiaryStateReady s) => RefreshIndicator(
-        //       onRefresh: () => ref
-        //           .read(diaryServiceProvider)
-        //           .getLog(ref.read(selectedDayProvider)),
-        //       child: ListView(
-        //         children: [
-        //           DiarySection(s.log, data),
-        //         ],
-        //       ),
-        //     ),
-        //};
       },
     );
   }

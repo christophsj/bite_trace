@@ -28,6 +28,7 @@ class FoodListTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: ListTile(
+        dense: true,
         isThreeLine: threeLine,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
@@ -56,7 +57,7 @@ class FoodListTile extends StatelessWidget {
           name,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            fontSize: 17,
+            fontSize: 16,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
