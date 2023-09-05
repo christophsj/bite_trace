@@ -1,7 +1,6 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/screens/home/diary_screen.dart';
-import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

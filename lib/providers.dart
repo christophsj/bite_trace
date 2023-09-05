@@ -7,8 +7,8 @@ import 'package:bite_trace/service/food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
 import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
-import 'package:flutter/material.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final routerProvider = Provider<AppRouter>((ref) => AppRouter());
