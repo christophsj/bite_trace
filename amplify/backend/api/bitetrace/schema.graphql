@@ -1,6 +1,7 @@
 type DiaryEntry @model @auth(rules: [{ allow: public }]) {
   day: AWSDate!
   meals: [Meal!]
+  goals: NutrientGoals
   id: ID! @primaryKey(sortKeyFields: ["day"])
 }
 type AccountData @model @auth(rules: [{ allow: public }]) {

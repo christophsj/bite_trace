@@ -56,6 +56,7 @@ class DiaryService extends StateNotifier<DiaryState> {
         DiaryEntry(
           day: TemporalDate(date),
           id: (await ref.read(userProvider.future))!.userId,
+          goals: ref.read(accountStateProvider).getData()!.nutrientGoals,
         ),
         ref.read(accountStateProvider).getData()!,
       );
@@ -202,6 +203,19 @@ class DiaryService extends StateNotifier<DiaryState> {
           .read(snackbarServiceProvider)
           .showBasic('Error updating model: "${e.message}"');
       safePrint('Something went wrong updating model: ${e.message}');
+    }
+  }
+
+  void updateTodaysGoals(NutrientGoals x) {
+    final today = DateTime.now().atMidday();
+    final entry = state.getEntry(today);
+    if (entry != null && entry.entry != null) {
+      state = state.copyWithEntry(
+        dateTime: today,
+        entry: entry.copyWith(
+          entry: entry.entry!.copyWith(goals: x),
+        ),
+      );
     }
   }
 }

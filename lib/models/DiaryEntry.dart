@@ -30,6 +30,7 @@ class DiaryEntry extends amplify_core.Model {
   final String id;
   final amplify_core.TemporalDate? _day;
   final List<Meal>? _meals;
+  final NutrientGoals? _goals;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -73,6 +74,10 @@ class DiaryEntry extends amplify_core.Model {
     return _meals;
   }
   
+  NutrientGoals? get goals {
+    return _goals;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -81,13 +86,14 @@ class DiaryEntry extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const DiaryEntry._internal({required this.id, required day, meals, createdAt, updatedAt}): _day = day, _meals = meals, _createdAt = createdAt, _updatedAt = updatedAt;
+  const DiaryEntry._internal({required this.id, required day, meals, goals, createdAt, updatedAt}): _day = day, _meals = meals, _goals = goals, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory DiaryEntry({String? id, required amplify_core.TemporalDate day, List<Meal>? meals}) {
+  factory DiaryEntry({String? id, required amplify_core.TemporalDate day, List<Meal>? meals, NutrientGoals? goals}) {
     return DiaryEntry._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       day: day,
-      meals: meals != null ? List<Meal>.unmodifiable(meals) : meals);
+      meals: meals != null ? List<Meal>.unmodifiable(meals) : meals,
+      goals: goals);
   }
   
   bool equals(Object other) {
@@ -100,7 +106,8 @@ class DiaryEntry extends amplify_core.Model {
     return other is DiaryEntry &&
       id == other.id &&
       _day == other._day &&
-      DeepCollectionEquality().equals(_meals, other._meals);
+      DeepCollectionEquality().equals(_meals, other._meals) &&
+      _goals == other._goals;
   }
   
   @override
@@ -114,6 +121,7 @@ class DiaryEntry extends amplify_core.Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("day=" + (_day != null ? _day!.format() : "null") + ", ");
     buffer.write("meals=" + (_meals != null ? _meals!.toString() : "null") + ", ");
+    buffer.write("goals=" + (_goals != null ? _goals!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -121,20 +129,23 @@ class DiaryEntry extends amplify_core.Model {
     return buffer.toString();
   }
   
-  DiaryEntry copyWith({List<Meal>? meals}) {
+  DiaryEntry copyWith({List<Meal>? meals, NutrientGoals? goals}) {
     return DiaryEntry._internal(
       id: id,
       day: day,
-      meals: meals ?? this.meals);
+      meals: meals ?? this.meals,
+      goals: goals ?? this.goals);
   }
   
   DiaryEntry copyWithModelFieldValues({
-    ModelFieldValue<List<Meal>>? meals
+    ModelFieldValue<List<Meal>>? meals,
+    ModelFieldValue<NutrientGoals?>? goals
   }) {
     return DiaryEntry._internal(
       id: id,
       day: day,
-      meals: meals == null ? this.meals : meals.value
+      meals: meals == null ? this.meals : meals.value,
+      goals: goals == null ? this.goals : goals.value
     );
   }
   
@@ -147,17 +158,21 @@ class DiaryEntry extends amplify_core.Model {
           .map((e) => Meal.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
+      _goals = json['goals']?['serializedData'] != null
+        ? NutrientGoals.fromJson(new Map<String, dynamic>.from(json['goals']['serializedData']))
+        : null,
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'day': _day?.format(), 'meals': _meals?.map((Meal? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'day': _day?.format(), 'meals': _meals?.map((Meal? e) => e?.toJson()).toList(), 'goals': _goals?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
     'day': _day,
     'meals': _meals,
+    'goals': _goals,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -166,6 +181,7 @@ class DiaryEntry extends amplify_core.Model {
   static final ID = amplify_core.QueryField(fieldName: "id");
   static final DAY = amplify_core.QueryField(fieldName: "day");
   static final MEALS = amplify_core.QueryField(fieldName: "meals");
+  static final GOALS = amplify_core.QueryField(fieldName: "goals");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "DiaryEntry";
     modelSchemaDefinition.pluralName = "DiaryEntries";
@@ -198,6 +214,12 @@ class DiaryEntry extends amplify_core.Model {
       isRequired: false,
       isArray: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'Meal')
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
+      fieldName: 'goals',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'NutrientGoals')
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

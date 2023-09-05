@@ -54,10 +54,12 @@ class AccountScreen extends ConsumerWidget {
                         _cardHeader(context, 'Goals'),
                         NutritionGoalsDisplay(
                           goals: s.data.nutrientGoals,
-                          onEdit: (x) =>
-                              ref.read(accountServiceProvider).updateAccount(
-                                    s.data.copyWith(nutrientGoals: x),
-                                  ),
+                          onEdit: (x) {
+                            ref.read(accountServiceProvider).updateAccount(
+                                  s.data.copyWith(nutrientGoals: x),
+                                );
+                            ref.read(diaryServiceProvider).updateTodaysGoals(x);
+                          },
                         ),
                       ],
                     ),

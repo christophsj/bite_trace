@@ -137,7 +137,7 @@ class DiarySection extends ConsumerWidget {
     return Column(
       children: [
         Dashboard(
-          data,
+          log.goals ?? ref.read(accountStateProvider).getData()!.nutrientGoals,
           meals.map((e) => e.foods).expand((element) => element).toList(),
         ),
         Card(

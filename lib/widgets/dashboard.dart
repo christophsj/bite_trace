@@ -1,18 +1,16 @@
 import 'dart:math';
 
 import 'package:bite_trace/constants.dart';
-import 'package:bite_trace/models/AccountData.dart';
-import 'package:bite_trace/models/Food.dart';
-import 'package:bite_trace/models/Nutrients.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Dashboard extends ConsumerWidget {
-  const Dashboard(this.data, this.foods, {super.key});
+  const Dashboard(this.goals, this.foods, {super.key});
 
-  final AccountData data;
+  final NutrientGoals goals;
   final List<Food> foods;
 
   @override
@@ -42,7 +40,7 @@ class Dashboard extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ProgressIndicatorWithValue(
-                    goal: data.nutrientGoals.calories,
+                    goal: goals.calories,
                     value: n.calories,
                     size: 100,
                     color: Theme.of(context).colorScheme.primary,
@@ -105,26 +103,14 @@ class Dashboard extends ConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (final macro in [
-          (
-            data.nutrientGoals.carbPerc,
-            n.carbohydrates,
-            CustomColors.carbColor,
-            4,
-            'C'
-          ),
-          (data.nutrientGoals.fatPerc, n.fat, CustomColors.fatColor, 9, 'F'),
-          (
-            data.nutrientGoals.proteinPerc,
-            n.protein,
-            CustomColors.proteinColor,
-            4,
-            'P'
-          ),
+          (goals.carbPerc, n.carbohydrates, CustomColors.carbColor, 4, 'C'),
+          (goals.fatPerc, n.fat, CustomColors.fatColor, 9, 'F'),
+          (goals.proteinPerc, n.protein, CustomColors.proteinColor, 4, 'P'),
         ])
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: ProgressIndicatorWithValue(
-              goal: macro.$1 / macro.$4 * data.nutrientGoals.calories / 100,
+              goal: macro.$1 / macro.$4 * goals.calories / 100,
               value: macro.$2,
               color: macro.$3,
               labelBelow: true,
@@ -182,7 +168,11 @@ class ProgressIndicatorWithValue extends StatelessWidget {
 
   Widget _buildCircle({String? label}) {
     final c = Color.fromRGBO(
-        color.red, color.green, color.blue, min(progress / 2, 0.3) + 0.7);
+      color.red,
+      color.green,
+      color.blue,
+      min(progress / 2, 0.3) + 0.7,
+    );
     final circle = SizedBox(
       height: size,
       width: size,
