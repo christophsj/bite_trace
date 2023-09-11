@@ -87,7 +87,7 @@ class DiaryService extends StateNotifier<DiaryState> {
       _updateState(log);
     }
 
-    return entries
+    final matchingFoods = entries
         .map((e) => e.meals!)
         .expand((e) => e)
         .map((e) => e.foods)
@@ -96,9 +96,18 @@ class DiaryService extends StateNotifier<DiaryState> {
         .where(
           (element) =>
               element.description.toLowerCase().contains(filter.toLowerCase()),
-        )
-        .toSet()
-        .toList();
+        );
+
+    final ids = <String>{};
+    final foods = <Food>[];
+    for (final f in matchingFoods) {
+      if (!ids.contains(f.foodId)) {
+        ids.add(f.foodId);
+        foods.add(f);
+      }
+    }
+
+    return foods;
   }
 
   Future<DiaryEntry?> _queryLogFromDb(DateTime date) async {

@@ -21,6 +21,8 @@ class FoodDtoToFoodMapper {
       servingSizes: servingSizes,
       verified: foodResponse.verified,
       chosenServingAmount: 1,
+      brandName: foodResponse.brandName,
+      countryCode: foodResponse.countryCode,
     );
   }
 

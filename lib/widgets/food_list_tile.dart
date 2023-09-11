@@ -12,6 +12,7 @@ class FoodListTile extends StatelessWidget {
     required this.trailingIcon,
     this.subtitle,
     this.threeLine = false,
+    this.brandName,
   });
 
   final String name;
@@ -21,6 +22,7 @@ class FoodListTile extends StatelessWidget {
   final Widget trailingIcon;
   final String? subtitle;
   final bool threeLine;
+  final String? brandName;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class FoodListTile extends StatelessWidget {
         ),
         title: Text(
           name,
+          maxLines: 1,
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 16,
@@ -62,15 +65,21 @@ class FoodListTile extends StatelessWidget {
           ),
         ),
         subtitle: subtitle != null
-            ? Text(
-                '$subtitle',
-                maxLines: 1,
-                style: subtitleStyle(context),
+            ? _withBrandName(
+                context,
+                Text(
+                  '$subtitle',
+                  maxLines: 1,
+                  style: subtitleStyle(context),
+                ),
               )
-            : Text(
-                '${n.carbohydrates.toInt()}C ${n.fat.toInt()}F ${n.protein.toInt()}P',
-                maxLines: 1,
-                style: subtitleStyle(context),
+            : _withBrandName(
+                context,
+                Text(
+                  '${n.carbohydrates.toInt()}C ${n.fat.toInt()}F ${n.protein.toInt()}P',
+                  maxLines: 1,
+                  style: subtitleStyle(context),
+                ),
               ),
         trailing: AnimatedElevatedButton(
           onPressed: onTapTrailing,
@@ -89,6 +98,27 @@ class FoodListTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _withBrandName(BuildContext context, Widget text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (brandName != null)
+          Flexible(
+            flex: 2,
+            child: Text(
+              '$brandName - ',
+              maxLines: 1,
+              style: subtitleStyle(context),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        Flexible(
+          child: text,
+        ),
+      ],
     );
   }
 

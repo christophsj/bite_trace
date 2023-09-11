@@ -337,6 +337,7 @@ class FoodEntry extends StatelessWidget {
       onTap: onTap,
       trailingIcon: const Icon(Icons.delete),
       onTapTrailing: onTapTrailing,
+      brandName: food.brandName,
     );
   }
 }

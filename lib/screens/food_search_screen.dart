@@ -209,6 +209,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
         },
         itemBuilder: (context, food, index) {
           return FoodListTile(
+            brandName: food.brandName,
             name: '${food.description} ${food.verified ? '✅' : ''}',
             n: food.nutritionalContents,
             onTap: () async {
