@@ -225,6 +225,7 @@ class DiaryService extends StateNotifier<DiaryState> {
           entry: entry.entry!.copyWith(goals: x),
         ),
       );
+      Amplify.DataStore.save(entry.entry!);
     }
   }
 }

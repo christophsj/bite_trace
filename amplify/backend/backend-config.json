@@ -1,28 +1,15 @@
 {
   "api": {
     "bitetrace": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "UserPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "bitetraced2dea256"
-        }
-      ],
+      "dependsOn": [],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-              "userPoolConfig": {
-                "userPoolId": "authbitetraced2dea256"
-              }
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
+              "apiKeyExpirationDate": "2024-09-13T14:46:01.359Z",
+              "apiKeyExpirationDays": 365,
+              "description": "bitetrace-dev"
             },
             "authenticationType": "API_KEY"
           }
