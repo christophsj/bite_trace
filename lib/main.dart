@@ -6,7 +6,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/amplifyconfiguration.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -94,8 +93,8 @@ class BiteTraceApp extends ConsumerWidget {
         title: 'Bite Trace',
         builder: Authenticator.builder(),
         scaffoldMessengerKey: ref.read(snackbarServiceProvider).key,
-        theme: FlexThemeData.light(scheme: ref.watch(themeSchemeProvider)),
-        darkTheme: FlexThemeData.dark(scheme: ref.watch(themeSchemeProvider)),
+        theme: ref.watch(lightThemeProvider),
+        darkTheme: ref.watch(darkThemeProvider),
         themeMode: ref.watch(themeModeProvider),
         scrollBehavior: TouchAndMouseScroll(),
       ),

@@ -1,3 +1,4 @@
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/AccountData.dart';
@@ -141,7 +142,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           Icons.error_outline,
                           color: color,
                           size: 20,
-                        )
+                        ),
                     ],
                   ),
                 ),
@@ -155,6 +156,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               carbPerc: int.parse(carbController.text),
                               fatPerc: int.parse(fatController.text),
                               proteinPerc: int.parse(proteinController.text),
+                              setAt: TemporalDate.now(),
                             );
 
                             final data = AccountData(

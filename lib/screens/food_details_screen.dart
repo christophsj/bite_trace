@@ -331,7 +331,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
         widget.food.copyWith(
           chosenServingSize: selectedServingIndex,
           chosenServingAmount: amt,
-        )
+        ),
       ],
     );
   }

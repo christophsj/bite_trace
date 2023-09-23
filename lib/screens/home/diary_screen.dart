@@ -126,10 +126,22 @@ class _DiaryScreenState extends ConsumerState<DiaryScreen> {
 }
 
 class DiarySection extends ConsumerWidget {
-  const DiarySection(this.log, this.data, {super.key});
+  const DiarySection(this.log, this.accountData, {super.key});
 
   final DiaryEntry log;
-  final AccountData data;
+  final AccountData accountData;
+
+  NutrientGoals _getCurrentGoals() {
+    if (log.goals == null) {
+      return accountData.nutrientGoals;
+    } else if (accountData.nutrientGoals.setAt != null &&
+        log.day
+            .getDateTime()
+            .isAfter(accountData.nutrientGoals.setAt!.getDateTime())) {
+      return accountData.nutrientGoals;
+    }
+    return log.goals!;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -137,7 +149,7 @@ class DiarySection extends ConsumerWidget {
     return Column(
       children: [
         Dashboard(
-          log.goals ?? ref.read(accountStateProvider).getData()!.nutrientGoals,
+          _getCurrentGoals(),
           meals.map((e) => e.foods).expand((element) => element).toList(),
         ),
         Card(

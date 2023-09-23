@@ -65,7 +65,7 @@ class MealDetailsScreen extends ConsumerWidget {
               Icons.copy,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-          )
+          ),
         ],
       ),
       body: Padding(
@@ -309,7 +309,7 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

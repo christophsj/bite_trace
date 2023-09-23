@@ -1,5 +1,5 @@
-import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/Nutrients.dart';
+import 'package:bite_trace/utils/context_extension.dart';
 import 'package:bite_trace/widgets/segmented_circle.dart';
 import 'package:flutter/material.dart';
 
@@ -21,15 +21,15 @@ class MacrosDisplay extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SegmentedCircle(
-                colors: const [
-                  CustomColors.carbColor,
-                  CustomColors.fatColor,
-                  CustomColors.proteinColor,
+                colors: [
+                  context.appColors.carbColor,
+                  context.appColors.fatColor,
+                  context.appColors.proteinColor,
                 ],
                 segmentAngles: [
                   (nutrients.carbohydrates) * 4,
                   (nutrients.fat) * 9,
-                  (nutrients.protein) * 4
+                  (nutrients.protein) * 4,
                 ],
                 vals: const ['C', 'F', 'P'],
               ),
@@ -63,10 +63,13 @@ class MacrosDisplay extends StatelessWidget {
                     for (final entry in {
                       'Carbs': (
                         nutrients.carbohydrates,
-                        CustomColors.carbColor
+                        context.appColors.carbColor
                       ),
-                      'Fats': (nutrients.fat, CustomColors.fatColor),
-                      'Protein': (nutrients.protein, CustomColors.proteinColor),
+                      'Fats': (nutrients.fat, context.appColors.fatColor),
+                      'Protein': (
+                        nutrients.protein,
+                        context.appColors.proteinColor
+                      ),
                     }.entries)
                       Row(
                         children: [

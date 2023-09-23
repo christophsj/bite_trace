@@ -154,7 +154,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 tabs: [
                   ('All', Icons.food_bank),
                   ('Recent', Icons.history),
-                  ('Favorite', Icons.favorite)
+                  ('Favorite', Icons.favorite),
                 ]
                     .map(
                       (e) => Tab(

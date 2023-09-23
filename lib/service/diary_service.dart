@@ -128,7 +128,7 @@ class DiaryService extends StateNotifier<DiaryState> {
     return log.copyWith(
       meals: [
         for (int i = 0; i < mealNames.length; i++)
-          Meal(name: mealNames[i], index: i, foods: [])
+          Meal(name: mealNames[i], index: i, foods: []),
       ],
     );
   }

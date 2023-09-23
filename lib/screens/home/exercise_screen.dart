@@ -49,13 +49,13 @@ class _DiaryScreenState extends ConsumerState<ExerciseScreen> {
     });
   }
 
-  void onPedestrianStatusError(error) {
+  void onPedestrianStatusError(dynamic error) {
     setState(() {
       _status = 'Pedestrian Status not available';
     });
   }
 
-  void onStepCountError(error) {
+  void onStepCountError(dynamic error) {
     setState(() {
       _steps = 'Step Count not available';
     });
@@ -110,7 +110,7 @@ class _DiaryScreenState extends ConsumerState<ExerciseScreen> {
                 ? const TextStyle(fontSize: 30)
                 : const TextStyle(fontSize: 20, color: Colors.red),
           ),
-        )
+        ),
       ],
     );
   }

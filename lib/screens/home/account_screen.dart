@@ -1,9 +1,11 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/state/account_state.dart';
+import 'package:bite_trace/utils/context_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:bite_trace/widgets/nutrition_goals_selector.dart';
@@ -56,7 +58,11 @@ class AccountScreen extends ConsumerWidget {
                           goals: s.data.nutrientGoals,
                           onEdit: (x) {
                             ref.read(accountServiceProvider).updateAccount(
-                                  s.data.copyWith(nutrientGoals: x),
+                                  s.data.copyWith(
+                                    nutrientGoals: x.copyWith(
+                                      setAt: TemporalDate.now(),
+                                    ),
+                                  ),
                                 );
                             ref.read(diaryServiceProvider).updateTodaysGoals(x);
                           },
@@ -157,12 +163,12 @@ class AccountScreen extends ConsumerWidget {
                                               AutoRouter.of(context).pop();
                                             },
                                             child: const Text('Cancel'),
-                                          )
+                                          ),
                                         ],
                                       ),
                                     );
                                   },
-                                )
+                                ),
                               ],
                             ),
                           ],
@@ -206,25 +212,24 @@ class AccountScreen extends ConsumerWidget {
                         _buildDropdownForEnum(
                           values: FlexScheme.values,
                           theme: theme,
-                          value: ref.read(themeSchemeProvider),
-                          color: (FlexScheme e) {
-                            if (ref.read(themeModeProvider) ==
-                                ThemeMode.light) {
-                              return FlexThemeData.light(scheme: e)
-                                  .primaryColor;
-                            }
-                            return FlexThemeData.dark(scheme: e).primaryColor;
+                          value: FlexScheme.values[ref.read(themeIdxProvider)],
+                          colors: (FlexScheme e) {
+                            return [
+                              FlexThemeData.dark(scheme: e).primaryColor,
+                              FlexThemeData.dark(scheme: e)
+                                  .colorScheme
+                                  .secondary,
+                            ];
                           },
                           onChanged: (value) async {
                             if (value != null) {
-                              ref.read(themeSchemeProvider.notifier).state =
-                                  FlexScheme.values[value];
+                              ref.read(themeIdxProvider.notifier).state = value;
                               ref.read(accountServiceProvider).updateAccount(
                                     s.data.copyWith(themeColorIdx: value),
                                   );
                             }
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -257,7 +262,7 @@ class AccountScreen extends ConsumerWidget {
     required List<T> values,
     required Enum value,
     required void Function(int?) onChanged,
-    Color Function(T)? color,
+    List<Color> Function(T)? colors,
   }) {
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -294,20 +299,36 @@ class AccountScreen extends ConsumerWidget {
                 value: e.index,
                 child: Builder(
                   builder: (context) {
-                    return Container(
-                      width: color == null
+                    return SizedBox(
+                      width: colors == null
                           ? null
                           : MediaQuery.of(context).size.width,
-                      height: color == null
+                      height: colors == null
                           ? null
                           : MediaQuery.of(context).size.height,
-                      alignment: color == null ? null : Alignment.center,
-                      color: color == null ? null : color(e),
-                      child: Text(
-                        e.name,
-                        style: color == null
-                            ? null
-                            : TextStyle(color: theme.colorScheme.onPrimary),
+                      child: Row(
+                        children: [
+                          if (colors != null)
+                            Container(
+                              width: 20,
+                              color: colors(e)[1],
+                            ),
+                          Expanded(
+                            child: Container(
+                              alignment:
+                                  colors == null ? null : Alignment.center,
+                              color: colors == null ? null : colors(e)[0],
+                              child: Text(
+                                e.name,
+                                style: colors == null
+                                    ? null
+                                    : TextStyle(
+                                        color: theme.colorScheme.onSecondary,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -515,22 +536,26 @@ class NutritionGoalsDisplay extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SegmentedCircle(
-                colors: const [
-                  CustomColors.carbColor,
-                  CustomColors.fatColor,
-                  CustomColors.proteinColor,
+                colors: [
+                  context.appColors.carbColor,
+                  context.appColors.fatColor,
+                  context.appColors.proteinColor,
                 ],
                 segmentAngles: [
                   goals.carbPerc,
                   goals.fatPerc,
-                  goals.proteinPerc
+                  goals.proteinPerc,
                 ],
                 vals: const ['C', 'F', 'P'],
               ),
               for (final entry in {
-                'Carbs': (goals.carbPerc, CustomColors.carbColor, 4),
-                'Fats': (goals.fatPerc, CustomColors.fatColor, 9),
-                'Protein': (goals.proteinPerc, CustomColors.proteinColor, 4),
+                'Carbs': (goals.carbPerc, context.appColors.carbColor, 4),
+                'Fats': (goals.fatPerc, context.appColors.fatColor, 9),
+                'Protein': (
+                  goals.proteinPerc,
+                  context.appColors.proteinColor,
+                  4
+                ),
               }.entries)
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -610,7 +635,7 @@ class NutritionGoalsDisplay extends ConsumerWidget {
               AutoRouter.of(context).pop();
             },
             child: const Text('Cancel'),
-          )
+          ),
         ],
       ),
     );

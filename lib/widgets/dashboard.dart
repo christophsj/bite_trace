@@ -1,7 +1,5 @@
-import 'dart:math';
-
-import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
+import 'package:bite_trace/utils/context_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +48,7 @@ class Dashboard extends ConsumerWidget {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -98,28 +96,44 @@ class Dashboard extends ConsumerWidget {
   // }
 
   Widget _buildMacroRow(Nutrients n) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        for (final macro in [
-          (goals.carbPerc, n.carbohydrates, CustomColors.carbColor, 4, 'C'),
-          (goals.fatPerc, n.fat, CustomColors.fatColor, 9, 'F'),
-          (goals.proteinPerc, n.protein, CustomColors.proteinColor, 4, 'P'),
-        ])
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: ProgressIndicatorWithValue(
-              goal: macro.$1 / macro.$4 * goals.calories / 100,
-              value: macro.$2,
-              color: macro.$3,
-              labelBelow: true,
-              strokeWidth: 5,
-              label: macro.$5,
-              size: 45,
-            ),
-          ),
-      ],
+    return Builder(
+      builder: (context) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            for (final macro in [
+              (
+                goals.carbPerc,
+                n.carbohydrates,
+                context.appColors.carbColor,
+                4,
+                'C'
+              ),
+              (goals.fatPerc, n.fat, context.appColors.fatColor, 9, 'F'),
+              (
+                goals.proteinPerc,
+                n.protein,
+                context.appColors.proteinColor,
+                4,
+                'P'
+              ),
+            ])
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ProgressIndicatorWithValue(
+                  goal: macro.$1 / macro.$4 * goals.calories / 100,
+                  value: macro.$2,
+                  color: macro.$3,
+                  labelBelow: true,
+                  strokeWidth: 5,
+                  label: macro.$5,
+                  size: 45,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -156,7 +170,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
           const SizedBox(
             height: 6,
           ),
-          _buildLabelBelow(context)
+          _buildLabelBelow(context),
         ],
       );
     }
@@ -167,12 +181,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
   }
 
   Widget _buildCircle({String? label}) {
-    final c = Color.fromRGBO(
-      color.red,
-      color.green,
-      color.blue,
-      min(progress / 2, 0.3) + 0.7,
-    );
+    final c = color;
     final circle = SizedBox(
       height: size,
       width: size,
@@ -215,7 +224,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
             style: TextStyle(
               color: Theme.of(context).colorScheme.onBackground,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -235,7 +244,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
           ),
           TextSpan(
             text: ' / ${goal.toInt()}g',
-          )
+          ),
         ],
       ),
     );

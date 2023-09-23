@@ -26,7 +26,7 @@ class HomeScreen extends ConsumerWidget {
               height: 50,
               width: 50,
               child: CircularProgressIndicator(),
-            )
+            ),
           ],
         ),
       ),

@@ -18,6 +18,7 @@ type NutrientGoals {
   fatPerc: Int!
   proteinPerc: Int!
   otherNutrients: Nutrients
+  setAt: AWSDate
 }
 
 type Meal {

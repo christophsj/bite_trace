@@ -19,7 +19,7 @@ class OpenFoodService {
         parametersList: <Parameter>[
           SearchTerms(terms: [query]),
           PageNumber(page: page),
-          PageSize(size: pageSize)
+          PageSize(size: pageSize),
         ],
         version: ProductQueryVersion.v3,
       ),
