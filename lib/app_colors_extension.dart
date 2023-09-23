@@ -54,19 +54,19 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
   static const List<AppColorsExtension> customColors = [
     AppColorsExtension(
-      carbColor: Color(0xffe74c3c),
-      fatColor: Color(0xff2ecc71),
-      proteinColor: Color(0xfff1c40f),
+      carbColor: Color(0xffCCD32E),
+      fatColor: Color(0xffF6801D),
+      proteinColor: Color(0xffEA2E20),
     ),
     AppColorsExtension(
-      carbColor: Color(0xffffa726),
-      fatColor: Color(0xff00e676),
-      proteinColor: Color(0xffd32f2f),
+      carbColor: Color(0xffEFEF14),
+      fatColor: Color(0xffF8B618),
+      proteinColor: Color(0xffE73B3F),
     ),
     AppColorsExtension(
-      carbColor: Color(0xff8e24aa),
-      fatColor: Color(0xff4caf50),
-      proteinColor: Color(0xffff6f00),
+      carbColor: Color(0xff35E3DA),
+      fatColor: Color(0xffF6B620),
+      proteinColor: Color(0xffDF3B1B),
     ),
     AppColorsExtension(
       carbColor: Color(0xff039be5),

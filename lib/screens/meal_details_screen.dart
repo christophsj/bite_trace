@@ -5,6 +5,7 @@ import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
+import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/diary_calendar.dart';
@@ -338,7 +339,8 @@ class FoodEntry extends StatelessWidget {
     final serving = food.servingSize;
     return FoodListTile(
       name: food.description,
-      subtitle: '${food.chosenServingAmount * serving.value} ${serving.unit}',
+      subtitle:
+          '${(food.chosenServingAmount * serving.value).toStringWithoutTrailingZeros()} ${serving.unit}',
       n: food.nutritionalContents.servingFactor(food.servingFactor),
       onTap: onTap,
       trailingIcon: const Icon(Icons.delete),

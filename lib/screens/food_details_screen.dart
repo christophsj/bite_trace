@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
+import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
@@ -55,9 +56,8 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
       end: amountValue * multi,
     ).animate(_animController);
 
-    final RegExp trailingZerosRegex = RegExp(r'([.]*0)(?!.*\d)');
     amount = TextEditingController(
-      text: amountValue.toString().replaceAll(trailingZerosRegex, ''),
+      text: amountValue.toStringWithoutTrailingZeros(),
     )..addListener(updateAmountValue);
     _animController.forward();
     super.initState();

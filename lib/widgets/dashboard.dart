@@ -169,7 +169,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
           const SizedBox(
             height: 6,
           ),
-          _buildLabelBelow(context),
+          _buildLabelBelow(context, color),
         ],
       );
     }
@@ -229,7 +229,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
     );
   }
 
-  Widget _buildLabelBelow(BuildContext context) {
+  Widget _buildLabelBelow(BuildContext context, Color color) {
     return RichText(
       text: TextSpan(
         style: TextStyle(
@@ -239,7 +239,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
         children: [
           TextSpan(
             text: '${value.toInt()}',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            style: TextStyle(color: color),
           ),
           TextSpan(
             text: ' / ${goal.toInt()}g',
