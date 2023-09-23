@@ -4,7 +4,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/state/diary_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,28 +30,13 @@ class DiaryService extends StateNotifier<DiaryState> {
     _inDb[userId]![dateTime.atMidday()] = inDb;
   }
 
-  Future<String> getUserId() async {
-    final auth = ref.read(authServiceProvider);
-    final friend = ref.read(selectedFriendProvider);
-
-    if (friend != null) {
-      return friend;
-    } else {
-      final user = await auth.getCurrentUser();
-      if (user == null) {
-        throw Exception('User is null');
-      }
-      return user.userId;
-    }
-  }
-
   Future<DiaryEntry> getLog(
     DateTime date, {
     bool tryFromCache = true,
-    String? uid,
+    required String uid,
   }) async {
     final key = date;
-    final userId = uid ?? await getUserId();
+    final userId = uid;
     if (!tryFromCache || state.getEntry(userId, key) == null) {
       return _getLog(userId, key);
     }
@@ -62,7 +46,7 @@ class DiaryService extends StateNotifier<DiaryState> {
 
   Future<DiaryEntry> _getLog(String userId, DateTime date) async {
     state.setEntry(userId, date, const DiaryEntryState());
-    DiaryEntry? log = await _queryLogFromDb(date);
+    DiaryEntry? log = await _queryLogFromDb(userId, date);
     if (log == null) {
       final acc = (await ref.read(accountServiceProvider).getAccount(userId))!;
       // does not exist -> empty log
@@ -84,12 +68,11 @@ class DiaryService extends StateNotifier<DiaryState> {
   }
 
   Future<List<Food>> getRecentFoods({
+    required String userId,
     required String filter,
     int page = 0,
     int limitDays = 14,
   }) async {
-    final userId = await getUserId();
-
     final entries = await Amplify.DataStore.query<DiaryEntry>(
       DiaryEntry.classType,
       where: DiaryEntry.ID.eq(userId),
@@ -124,8 +107,7 @@ class DiaryService extends StateNotifier<DiaryState> {
     return foods;
   }
 
-  Future<DiaryEntry?> _queryLogFromDb(DateTime date) async {
-    final user = await getUserId();
+  Future<DiaryEntry?> _queryLogFromDb(String user, DateTime date) async {
     final result = await Amplify.DataStore.query(
       DiaryEntry.classType,
       where: DiaryEntry.DAY.eq(TemporalDate(date)).and(DiaryEntry.ID.eq(user)),
@@ -230,9 +212,8 @@ class DiaryService extends StateNotifier<DiaryState> {
     }
   }
 
-  Future<void> updateTodaysGoals(NutrientGoals x) async {
+  Future<void> updateTodaysGoals(String uid, NutrientGoals x) async {
     final today = DateTime.now().atMidday();
-    final uid = await getUserId();
     final entry = state.getEntry(uid, today);
     if (entry != null && entry.entry != null) {
       state = state.copyWithEntry(

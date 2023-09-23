@@ -19,6 +19,7 @@ class AppRouter extends $AppRouter {
         AutoRoute(page: RegisterRoute.page),
         AutoRoute(page: FoodSearchRoute.page),
         AutoRoute(page: FoodDetailsRoute.page),
+        AutoRoute(page: FriendsDiaryRoute.page),
         AutoRoute(page: MealDetailsRoute.page),
       ];
 }

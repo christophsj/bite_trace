@@ -1,9 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/screens/home/diary.dart';
+import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/state/account_state.dart';
+import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,39 +33,56 @@ class FriendsScreen extends ConsumerWidget {
         child: Text('You have no friends'),
       );
     }
-    final friendId = ref.watch(selectedFriendProvider);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        DropdownButton(
-          value: friendId,
-          onChanged: (value) {
-            ref.read(selectedFriendProvider.notifier).state = value;
-          },
-          items: data.friends!
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
+        const SizedBox(
+          height: 40,
         ),
-        if (friendId != null)
-          Expanded(
-            child: FutureBuilder(
-              future: ref
-                  .read(accountServiceProvider)
-                  .getAccount(friendId, updateState: false),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Diary(snapshot.data!);
-                }
-                if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                }
-                return const SizedBox(
-                  height: 40,
-                  width: 40,
-                  child: CircularProgressIndicator(),
-                );
-              },
-            ),
+        FutureBuilder(
+          future: Future.wait(
+            data.friends!
+                .map(
+                  (e) => ref.read(accountServiceProvider).getAccount(e),
+                )
+                .toList(),
           ),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final friend in snapshot.data!)
+                        if (friend != null)
+                          AnimatedElevatedButton(
+                            label: friend.name,
+                            showCheckmark: false,
+                            onPressed: () async {
+                              ref.read(selectedFriendProvider.notifier).state =
+                                  friend.id;
+                              await context.pushRoute(
+                                FriendsDiaryRoute(friendId: friend.id),
+                              );
+                              ref.read(selectedFriendProvider.notifier).state =
+                                  null;
+                            },
+                          ),
+                    ],
+                  ),
+                ),
+              );
+            }
+            if (snapshot.hasError) return Text(snapshot.error.toString());
+            return const SizedBox(
+              width: 40,
+              height: 40,
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
       ],
     );
   }

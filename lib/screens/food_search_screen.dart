@@ -110,8 +110,11 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
   Future<void> _fetchRecentPage(int pageKey) async {
     try {
       final foodService = ref.read(diaryServiceProvider);
-      final newItems =
-          await foodService.getRecentFoods(filter: query.text, page: pageKey);
+      final newItems = await foodService.getRecentFoods(
+        userId: log.id,
+        filter: query.text,
+        page: pageKey,
+      );
 
       if (newItems.isEmpty) {
         _recentPagingController.appendLastPage(newItems);

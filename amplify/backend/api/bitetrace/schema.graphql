@@ -10,6 +10,7 @@ type AccountData @model @auth(rules: [{ allow: public }]) {
   mealNames: [String!]
   themeModeIdx: Int
   themeColorIdx: Int
+  name: String!
   friends: [String!]
 }
 

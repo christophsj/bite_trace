@@ -62,7 +62,7 @@ class MealDetailsScreen extends ConsumerWidget {
             ),
           ),
           IconButton(
-            onPressed: () => _openCopyMealPopup(context),
+            onPressed: () => _openCopyMealPopup(context, userId),
             icon: Icon(
               Icons.copy,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -154,13 +154,11 @@ class MealDetailsScreen extends ConsumerWidget {
     return '${item}g';
   }
 
-  void _openCopyMealPopup(BuildContext context) {
+  void _openCopyMealPopup(BuildContext context, String userId) {
     showDialog(
       context: context,
-      builder: (c) => CopyMealDialog(
-        meal,
-        fromTime: log.day.getDateTime(),
-      ),
+      builder: (c) =>
+          CopyMealDialog(meal, fromTime: log.day.getDateTime(), userId: userId),
     );
   }
 }
@@ -170,10 +168,12 @@ class CopyMealDialog extends ConsumerStatefulWidget {
     this.source, {
     super.key,
     required this.fromTime,
+    required this.userId,
   });
 
   final DateTime fromTime;
   final Meal source;
+  final String userId;
 
   @override
   ConsumerState<CopyMealDialog> createState() => _CopyMealDialogState();
@@ -195,7 +195,8 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
       selectedDate = now;
     }
     ctrl = TextEditingController(text: DateFormat.yMd().format(selectedDate));
-    selectedLog = ref.read(diaryServiceProvider).getLog(selectedDate);
+    selectedLog =
+        ref.read(diaryServiceProvider).getLog(selectedDate, uid: widget.userId);
   }
 
   @override
@@ -219,9 +220,7 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
                     lastDate: range[1],
                   );
 
-                  final uid =
-                      (await ref.read(authServiceProvider).getCurrentUser())!
-                          .userId;
+                  final uid = widget.userId;
                   if (picked != null) {
                     setState(() {
                       selectedDate = picked;

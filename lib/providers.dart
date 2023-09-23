@@ -1,3 +1,4 @@
+import 'package:bite_trace/app_colors_extension.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/routing/router.dart';
 import 'package:bite_trace/service/account_service.dart';
@@ -6,7 +7,6 @@ import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/service/food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
 import 'package:bite_trace/state/account_state.dart';
-import 'package:bite_trace/theme_extension.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -65,32 +65,15 @@ final lightThemeProvider = StateProvider<ThemeData>((ref) {
   final idx = ref.watch(themeIdxProvider);
   return FlexThemeData.light(
     scheme: FlexScheme.values[idx],
-    extensions: _extensions(idx),
+    extensions: FlexScheme.values[idx].ext(),
   );
 });
-
-List<ThemeExtension> _extensions(int idx) {
-  return [
-    if (idx == FlexScheme.sakura.index)
-      AppColorsExtension(
-        carbColor: const Color(0xff919FCB),
-        fatColor: const Color(0xff4F91B6),
-        proteinColor: const Color(0xff006C60),
-      ),
-    if (idx == FlexScheme.amber.index)
-      AppColorsExtension(
-        carbColor: const Color(0xff00FF34),
-        fatColor: const Color(0xff004CFF),
-        proteinColor: const Color(0xffFF00CB),
-      ),
-  ];
-}
 
 final darkThemeProvider = StateProvider<ThemeData>((ref) {
   final idx = ref.watch(themeIdxProvider);
   return FlexThemeData.dark(
     scheme: FlexScheme.values[idx],
-    extensions: _extensions(idx),
+    extensions: FlexScheme.values[idx].ext(),
   );
 });
 

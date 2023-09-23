@@ -164,6 +164,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               nutrientGoals: n,
                               mealNames: Constants.defaultMealNames,
                               friends: [],
+                              name: (await authService.getCurrentUser())!
+                                  .username,
                             );
                             await accountService.createAccount(data);
                             ref.read(routerProvider).push(const HomeRoute());

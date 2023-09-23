@@ -50,12 +50,10 @@ Widget _buildLoggedInContent(WidgetRef ref) {
     ),
     builder: (context, child) {
       final tabsRouter = AutoTabsRouter.of(context);
-
       return Scaffold(
         body: child,
         appBar: [
           DiaryRoute.name,
-          FriendsRoute.name,
         ].contains(AutoRouter.of(context).childControllers[0].current.name)
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(

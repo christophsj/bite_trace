@@ -1,5 +1,6 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:bite_trace/app_colors_extension.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
@@ -64,7 +65,9 @@ class AccountScreen extends ConsumerWidget {
                                     ),
                                   ),
                                 );
-                            ref.read(diaryServiceProvider).updateTodaysGoals(x);
+                            ref
+                                .read(diaryServiceProvider)
+                                .updateTodaysGoals(s.data.id, x);
                           },
                         ),
                       ],
@@ -214,11 +217,21 @@ class AccountScreen extends ConsumerWidget {
                           theme: theme,
                           value: FlexScheme.values[ref.read(themeIdxProvider)],
                           colors: (FlexScheme e) {
+                            final exts = e.ext();
+                            final addColors = <Color>[];
+                            if (exts.isNotEmpty &&
+                                exts[0] is AppColorsExtension) {
+                              final x = exts[0] as AppColorsExtension;
+                              addColors.add(x.carbColor);
+                              addColors.add(x.fatColor);
+                              addColors.add(x.proteinColor);
+                            }
                             return [
                               FlexThemeData.dark(scheme: e).primaryColor,
                               FlexThemeData.dark(scheme: e)
                                   .colorScheme
                                   .secondary,
+                              ...addColors,
                             ];
                           },
                           onChanged: (value) async {
@@ -310,9 +323,23 @@ class AccountScreen extends ConsumerWidget {
                         children: [
                           if (colors != null)
                             Container(
-                              width: 20,
+                              width: 40,
                               color: colors(e)[1],
                             ),
+                          if (colors != null && colors(e).length > 4) ...[
+                            Container(
+                              width: 20,
+                              color: colors(e)[2],
+                            ),
+                            Container(
+                              width: 20,
+                              color: colors(e)[3],
+                            ),
+                            Container(
+                              width: 20,
+                              color: colors(e)[4],
+                            ),
+                          ],
                           Expanded(
                             child: Container(
                               alignment:

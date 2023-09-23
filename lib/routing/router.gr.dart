@@ -8,45 +8,46 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:auto_route/auto_route.dart' as _i10;
-import 'package:bite_trace/models/ModelProvider.dart' as _i11;
+import 'package:auto_route/auto_route.dart' as _i11;
+import 'package:bite_trace/models/ModelProvider.dart' as _i12;
 import 'package:bite_trace/screens/food_details_screen.dart' as _i4;
 import 'package:bite_trace/screens/food_search_screen.dart' as _i5;
+import 'package:bite_trace/screens/friends_diary_screen.dart' as _i6;
 import 'package:bite_trace/screens/home/account_screen.dart' as _i1;
 import 'package:bite_trace/screens/home/diary_screen.dart' as _i2;
 import 'package:bite_trace/screens/home/exercise_screen.dart' as _i3;
-import 'package:bite_trace/screens/home/friends_screen.dart' as _i6;
-import 'package:bite_trace/screens/home_screen.dart' as _i7;
-import 'package:bite_trace/screens/meal_details_screen.dart' as _i8;
-import 'package:bite_trace/screens/register_screen.dart' as _i9;
-import 'package:flutter/material.dart' as _i12;
+import 'package:bite_trace/screens/home/friends_screen.dart' as _i7;
+import 'package:bite_trace/screens/home_screen.dart' as _i8;
+import 'package:bite_trace/screens/meal_details_screen.dart' as _i9;
+import 'package:bite_trace/screens/register_screen.dart' as _i10;
+import 'package:flutter/material.dart' as _i13;
 
-abstract class $AppRouter extends _i10.RootStackRouter {
+abstract class $AppRouter extends _i11.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
-  final Map<String, _i10.PageFactory> pagesMap = {
+  final Map<String, _i11.PageFactory> pagesMap = {
     AccountRoute.name: (routeData) {
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i1.AccountScreen(),
       );
     },
     DiaryRoute.name: (routeData) {
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i2.DiaryScreen(),
       );
     },
     ExerciseRoute.name: (routeData) {
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i3.ExerciseScreen(),
       );
     },
     FoodDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<FoodDetailsRouteArgs>();
-      return _i10.AutoRoutePage<_i11.DiaryEntry?>(
+      return _i11.AutoRoutePage<_i12.DiaryEntry?>(
         routeData: routeData,
         child: _i4.FoodDetailsScreen(
           initialMealIndex: args.initialMealIndex,
@@ -59,7 +60,7 @@ abstract class $AppRouter extends _i10.RootStackRouter {
     },
     FoodSearchRoute.name: (routeData) {
       final args = routeData.argsAs<FoodSearchRouteArgs>();
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i5.FoodSearchScreen(
           log: args.log,
@@ -68,23 +69,33 @@ abstract class $AppRouter extends _i10.RootStackRouter {
         ),
       );
     },
-    FriendsRoute.name: (routeData) {
-      return _i10.AutoRoutePage<dynamic>(
+    FriendsDiaryRoute.name: (routeData) {
+      final args = routeData.argsAs<FriendsDiaryRouteArgs>();
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i6.FriendsScreen(),
+        child: _i6.FriendsDiaryScreen(
+          args.friendId,
+          key: args.key,
+        ),
+      );
+    },
+    FriendsRoute.name: (routeData) {
+      return _i11.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: _i7.FriendsScreen(),
       );
     },
     HomeRoute.name: (routeData) {
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i7.HomeScreen(),
+        child: const _i8.HomeScreen(),
       );
     },
     MealDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<MealDetailsRouteArgs>();
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i8.MealDetailsScreen(
+        child: _i9.MealDetailsScreen(
           userId: args.userId,
           log: args.log,
           key: args.key,
@@ -93,9 +104,9 @@ abstract class $AppRouter extends _i10.RootStackRouter {
       );
     },
     RegisterRoute.name: (routeData) {
-      return _i10.AutoRoutePage<dynamic>(
+      return _i11.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i9.RegisterScreen(),
+        child: const _i10.RegisterScreen(),
       );
     },
   };
@@ -103,8 +114,8 @@ abstract class $AppRouter extends _i10.RootStackRouter {
 
 /// generated route for
 /// [_i1.AccountScreen]
-class AccountRoute extends _i10.PageRouteInfo<void> {
-  const AccountRoute({List<_i10.PageRouteInfo>? children})
+class AccountRoute extends _i11.PageRouteInfo<void> {
+  const AccountRoute({List<_i11.PageRouteInfo>? children})
       : super(
           AccountRoute.name,
           initialChildren: children,
@@ -112,13 +123,13 @@ class AccountRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'AccountRoute';
 
-  static const _i10.PageInfo<void> page = _i10.PageInfo<void>(name);
+  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i2.DiaryScreen]
-class DiaryRoute extends _i10.PageRouteInfo<void> {
-  const DiaryRoute({List<_i10.PageRouteInfo>? children})
+class DiaryRoute extends _i11.PageRouteInfo<void> {
+  const DiaryRoute({List<_i11.PageRouteInfo>? children})
       : super(
           DiaryRoute.name,
           initialChildren: children,
@@ -126,13 +137,13 @@ class DiaryRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'DiaryRoute';
 
-  static const _i10.PageInfo<void> page = _i10.PageInfo<void>(name);
+  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i3.ExerciseScreen]
-class ExerciseRoute extends _i10.PageRouteInfo<void> {
-  const ExerciseRoute({List<_i10.PageRouteInfo>? children})
+class ExerciseRoute extends _i11.PageRouteInfo<void> {
+  const ExerciseRoute({List<_i11.PageRouteInfo>? children})
       : super(
           ExerciseRoute.name,
           initialChildren: children,
@@ -140,19 +151,19 @@ class ExerciseRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'ExerciseRoute';
 
-  static const _i10.PageInfo<void> page = _i10.PageInfo<void>(name);
+  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i4.FoodDetailsScreen]
-class FoodDetailsRoute extends _i10.PageRouteInfo<FoodDetailsRouteArgs> {
+class FoodDetailsRoute extends _i11.PageRouteInfo<FoodDetailsRouteArgs> {
   FoodDetailsRoute({
     required int initialMealIndex,
-    required _i11.DiaryEntry log,
-    required _i11.Food food,
+    required _i12.DiaryEntry log,
+    required _i12.Food food,
     int? foodIdx,
-    _i12.Key? key,
-    List<_i10.PageRouteInfo>? children,
+    _i13.Key? key,
+    List<_i11.PageRouteInfo>? children,
   }) : super(
           FoodDetailsRoute.name,
           args: FoodDetailsRouteArgs(
@@ -167,8 +178,8 @@ class FoodDetailsRoute extends _i10.PageRouteInfo<FoodDetailsRouteArgs> {
 
   static const String name = 'FoodDetailsRoute';
 
-  static const _i10.PageInfo<FoodDetailsRouteArgs> page =
-      _i10.PageInfo<FoodDetailsRouteArgs>(name);
+  static const _i11.PageInfo<FoodDetailsRouteArgs> page =
+      _i11.PageInfo<FoodDetailsRouteArgs>(name);
 }
 
 class FoodDetailsRouteArgs {
@@ -182,13 +193,13 @@ class FoodDetailsRouteArgs {
 
   final int initialMealIndex;
 
-  final _i11.DiaryEntry log;
+  final _i12.DiaryEntry log;
 
-  final _i11.Food food;
+  final _i12.Food food;
 
   final int? foodIdx;
 
-  final _i12.Key? key;
+  final _i13.Key? key;
 
   @override
   String toString() {
@@ -198,12 +209,12 @@ class FoodDetailsRouteArgs {
 
 /// generated route for
 /// [_i5.FoodSearchScreen]
-class FoodSearchRoute extends _i10.PageRouteInfo<FoodSearchRouteArgs> {
+class FoodSearchRoute extends _i11.PageRouteInfo<FoodSearchRouteArgs> {
   FoodSearchRoute({
-    required _i11.DiaryEntry log,
+    required _i12.DiaryEntry log,
     required int initialMealIndex,
-    _i12.Key? key,
-    List<_i10.PageRouteInfo>? children,
+    _i13.Key? key,
+    List<_i11.PageRouteInfo>? children,
   }) : super(
           FoodSearchRoute.name,
           args: FoodSearchRouteArgs(
@@ -216,8 +227,8 @@ class FoodSearchRoute extends _i10.PageRouteInfo<FoodSearchRouteArgs> {
 
   static const String name = 'FoodSearchRoute';
 
-  static const _i10.PageInfo<FoodSearchRouteArgs> page =
-      _i10.PageInfo<FoodSearchRouteArgs>(name);
+  static const _i11.PageInfo<FoodSearchRouteArgs> page =
+      _i11.PageInfo<FoodSearchRouteArgs>(name);
 }
 
 class FoodSearchRouteArgs {
@@ -227,11 +238,11 @@ class FoodSearchRouteArgs {
     this.key,
   });
 
-  final _i11.DiaryEntry log;
+  final _i12.DiaryEntry log;
 
   final int initialMealIndex;
 
-  final _i12.Key? key;
+  final _i13.Key? key;
 
   @override
   String toString() {
@@ -240,9 +251,47 @@ class FoodSearchRouteArgs {
 }
 
 /// generated route for
-/// [_i6.FriendsScreen]
-class FriendsRoute extends _i10.PageRouteInfo<void> {
-  const FriendsRoute({List<_i10.PageRouteInfo>? children})
+/// [_i6.FriendsDiaryScreen]
+class FriendsDiaryRoute extends _i11.PageRouteInfo<FriendsDiaryRouteArgs> {
+  FriendsDiaryRoute({
+    required String friendId,
+    _i13.Key? key,
+    List<_i11.PageRouteInfo>? children,
+  }) : super(
+          FriendsDiaryRoute.name,
+          args: FriendsDiaryRouteArgs(
+            friendId: friendId,
+            key: key,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'FriendsDiaryRoute';
+
+  static const _i11.PageInfo<FriendsDiaryRouteArgs> page =
+      _i11.PageInfo<FriendsDiaryRouteArgs>(name);
+}
+
+class FriendsDiaryRouteArgs {
+  const FriendsDiaryRouteArgs({
+    required this.friendId,
+    this.key,
+  });
+
+  final String friendId;
+
+  final _i13.Key? key;
+
+  @override
+  String toString() {
+    return 'FriendsDiaryRouteArgs{friendId: $friendId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [_i7.FriendsScreen]
+class FriendsRoute extends _i11.PageRouteInfo<void> {
+  const FriendsRoute({List<_i11.PageRouteInfo>? children})
       : super(
           FriendsRoute.name,
           initialChildren: children,
@@ -250,13 +299,13 @@ class FriendsRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'FriendsRoute';
 
-  static const _i10.PageInfo<void> page = _i10.PageInfo<void>(name);
+  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i7.HomeScreen]
-class HomeRoute extends _i10.PageRouteInfo<void> {
-  const HomeRoute({List<_i10.PageRouteInfo>? children})
+/// [_i8.HomeScreen]
+class HomeRoute extends _i11.PageRouteInfo<void> {
+  const HomeRoute({List<_i11.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
           initialChildren: children,
@@ -264,18 +313,18 @@ class HomeRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static const _i10.PageInfo<void> page = _i10.PageInfo<void>(name);
+  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i8.MealDetailsScreen]
-class MealDetailsRoute extends _i10.PageRouteInfo<MealDetailsRouteArgs> {
+/// [_i9.MealDetailsScreen]
+class MealDetailsRoute extends _i11.PageRouteInfo<MealDetailsRouteArgs> {
   MealDetailsRoute({
     required String userId,
-    required _i11.DiaryEntry log,
-    _i12.Key? key,
-    required _i11.Meal meal,
-    List<_i10.PageRouteInfo>? children,
+    required _i12.DiaryEntry log,
+    _i13.Key? key,
+    required _i12.Meal meal,
+    List<_i11.PageRouteInfo>? children,
   }) : super(
           MealDetailsRoute.name,
           args: MealDetailsRouteArgs(
@@ -289,8 +338,8 @@ class MealDetailsRoute extends _i10.PageRouteInfo<MealDetailsRouteArgs> {
 
   static const String name = 'MealDetailsRoute';
 
-  static const _i10.PageInfo<MealDetailsRouteArgs> page =
-      _i10.PageInfo<MealDetailsRouteArgs>(name);
+  static const _i11.PageInfo<MealDetailsRouteArgs> page =
+      _i11.PageInfo<MealDetailsRouteArgs>(name);
 }
 
 class MealDetailsRouteArgs {
@@ -303,11 +352,11 @@ class MealDetailsRouteArgs {
 
   final String userId;
 
-  final _i11.DiaryEntry log;
+  final _i12.DiaryEntry log;
 
-  final _i12.Key? key;
+  final _i13.Key? key;
 
-  final _i11.Meal meal;
+  final _i12.Meal meal;
 
   @override
   String toString() {
@@ -316,9 +365,9 @@ class MealDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i9.RegisterScreen]
-class RegisterRoute extends _i10.PageRouteInfo<void> {
-  const RegisterRoute({List<_i10.PageRouteInfo>? children})
+/// [_i10.RegisterScreen]
+class RegisterRoute extends _i11.PageRouteInfo<void> {
+  const RegisterRoute({List<_i11.PageRouteInfo>? children})
       : super(
           RegisterRoute.name,
           initialChildren: children,
@@ -326,5 +375,5 @@ class RegisterRoute extends _i10.PageRouteInfo<void> {
 
   static const String name = 'RegisterRoute';
 
-  static const _i10.PageInfo<void> page = _i10.PageInfo<void>(name);
+  static const _i11.PageInfo<void> page = _i11.PageInfo<void>(name);
 }

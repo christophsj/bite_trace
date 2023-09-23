@@ -37,7 +37,7 @@ class AccountService extends StateNotifier<AccountState> {
     );
   }
 
-  Future<AccountData?> getAccount(String uid, {bool updateState = true}) async {
+  Future<AccountData?> getAccount(String uid) async {
     try {
       final result = await Amplify.DataStore.query(
         AccountData.classType,
@@ -47,6 +47,8 @@ class AccountService extends StateNotifier<AccountState> {
         return null;
       }
       final response = result.first;
+      final updateState =
+          (await ref.read(authServiceProvider).getCurrentUser())?.userId == uid;
       if (updateState) {
         _handleState(response);
       }

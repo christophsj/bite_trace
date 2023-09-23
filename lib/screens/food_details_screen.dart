@@ -55,8 +55,10 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
       end: amountValue * multi,
     ).animate(_animController);
 
-    amount = TextEditingController(text: amountValue.toString())
-      ..addListener(updateAmountValue);
+    final RegExp trailingZerosRegex = RegExp(r'([.]*0)(?!.*\d)');
+    amount = TextEditingController(
+      text: amountValue.toString().replaceAll(trailingZerosRegex, ''),
+    )..addListener(updateAmountValue);
     _animController.forward();
     super.initState();
   }
