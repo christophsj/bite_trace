@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class MealDetailsScreen extends ConsumerWidget {
   MealDetailsScreen({
+    required this.userId,
     required this.log,
     super.key,
     required this.meal,
@@ -24,6 +25,7 @@ class MealDetailsScreen extends ConsumerWidget {
 
   final DiaryEntry log;
   final Meal meal;
+  final String userId;
 
   final TextEditingController amount = TextEditingController(text: '1');
 
@@ -31,7 +33,7 @@ class MealDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meal = ref
         .watch(diaryProvider)
-        .getEntry(log.day.getDateTime())!
+        .getEntry(userId, log.day.getDateTime())!
         .entry!
         .meals![this.meal.index];
 
@@ -216,12 +218,17 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
                     firstDate: range[0],
                     lastDate: range[1],
                   );
+
+                  final uid =
+                      (await ref.read(authServiceProvider).getCurrentUser())!
+                          .userId;
                   if (picked != null) {
                     setState(() {
                       selectedDate = picked;
                       selectedMeal = null;
-                      selectedLog =
-                          ref.read(diaryServiceProvider).getLog(selectedDate);
+                      selectedLog = ref
+                          .read(diaryServiceProvider)
+                          .getLog(selectedDate, uid: uid);
                     });
                     ctrl.text = DateFormat.yMd().format(selectedDate);
                   }

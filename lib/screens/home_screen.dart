@@ -41,6 +41,7 @@ Widget _buildLoggedInContent(WidgetRef ref) {
     routes: const [
       DiaryRoute(),
       ExerciseRoute(),
+      FriendsRoute(),
       AccountRoute(),
     ],
     transitionBuilder: (context, child, animation) => FadeTransition(
@@ -52,8 +53,10 @@ Widget _buildLoggedInContent(WidgetRef ref) {
 
       return Scaffold(
         body: child,
-        appBar: AutoRouter.of(context).childControllers[0].current.name ==
-                'DiaryRoute'
+        appBar: [
+          DiaryRoute.name,
+          FriendsRoute.name,
+        ].contains(AutoRouter.of(context).childControllers[0].current.name)
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(
                   130,
@@ -77,6 +80,7 @@ Widget _buildLoggedInContent(WidgetRef ref) {
           onTap: (index) {
             tabsRouter.setActiveIndex(index);
           },
+          type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.book),
@@ -85,6 +89,10 @@ Widget _buildLoggedInContent(WidgetRef ref) {
             BottomNavigationBarItem(
               icon: Icon(Icons.heart_broken_sharp),
               label: 'Exercise',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.people),
+              label: 'Friends',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_box),

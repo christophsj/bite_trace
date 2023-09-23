@@ -32,6 +32,7 @@ class AccountData extends amplify_core.Model {
   final List<String>? _mealNames;
   final int? _themeModeIdx;
   final int? _themeColorIdx;
+  final List<String>? _friends;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -73,6 +74,10 @@ class AccountData extends amplify_core.Model {
     return _themeColorIdx;
   }
   
+  List<String>? get friends {
+    return _friends;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -81,15 +86,16 @@ class AccountData extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const AccountData._internal({required this.id, required nutrientGoals, mealNames, themeModeIdx, themeColorIdx, createdAt, updatedAt}): _nutrientGoals = nutrientGoals, _mealNames = mealNames, _themeModeIdx = themeModeIdx, _themeColorIdx = themeColorIdx, _createdAt = createdAt, _updatedAt = updatedAt;
+  const AccountData._internal({required this.id, required nutrientGoals, mealNames, themeModeIdx, themeColorIdx, friends, createdAt, updatedAt}): _nutrientGoals = nutrientGoals, _mealNames = mealNames, _themeModeIdx = themeModeIdx, _themeColorIdx = themeColorIdx, _friends = friends, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory AccountData({String? id, required NutrientGoals nutrientGoals, List<String>? mealNames, int? themeModeIdx, int? themeColorIdx}) {
+  factory AccountData({String? id, required NutrientGoals nutrientGoals, List<String>? mealNames, int? themeModeIdx, int? themeColorIdx, List<String>? friends}) {
     return AccountData._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       nutrientGoals: nutrientGoals,
       mealNames: mealNames != null ? List<String>.unmodifiable(mealNames) : mealNames,
       themeModeIdx: themeModeIdx,
-      themeColorIdx: themeColorIdx);
+      themeColorIdx: themeColorIdx,
+      friends: friends != null ? List<String>.unmodifiable(friends) : friends);
   }
   
   bool equals(Object other) {
@@ -104,7 +110,8 @@ class AccountData extends amplify_core.Model {
       _nutrientGoals == other._nutrientGoals &&
       DeepCollectionEquality().equals(_mealNames, other._mealNames) &&
       _themeModeIdx == other._themeModeIdx &&
-      _themeColorIdx == other._themeColorIdx;
+      _themeColorIdx == other._themeColorIdx &&
+      DeepCollectionEquality().equals(_friends, other._friends);
   }
   
   @override
@@ -120,6 +127,7 @@ class AccountData extends amplify_core.Model {
     buffer.write("mealNames=" + (_mealNames != null ? _mealNames!.toString() : "null") + ", ");
     buffer.write("themeModeIdx=" + (_themeModeIdx != null ? _themeModeIdx!.toString() : "null") + ", ");
     buffer.write("themeColorIdx=" + (_themeColorIdx != null ? _themeColorIdx!.toString() : "null") + ", ");
+    buffer.write("friends=" + (_friends != null ? _friends!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -127,27 +135,30 @@ class AccountData extends amplify_core.Model {
     return buffer.toString();
   }
   
-  AccountData copyWith({NutrientGoals? nutrientGoals, List<String>? mealNames, int? themeModeIdx, int? themeColorIdx}) {
+  AccountData copyWith({NutrientGoals? nutrientGoals, List<String>? mealNames, int? themeModeIdx, int? themeColorIdx, List<String>? friends}) {
     return AccountData._internal(
       id: id,
       nutrientGoals: nutrientGoals ?? this.nutrientGoals,
       mealNames: mealNames ?? this.mealNames,
       themeModeIdx: themeModeIdx ?? this.themeModeIdx,
-      themeColorIdx: themeColorIdx ?? this.themeColorIdx);
+      themeColorIdx: themeColorIdx ?? this.themeColorIdx,
+      friends: friends ?? this.friends);
   }
   
   AccountData copyWithModelFieldValues({
     ModelFieldValue<NutrientGoals>? nutrientGoals,
     ModelFieldValue<List<String>>? mealNames,
     ModelFieldValue<int?>? themeModeIdx,
-    ModelFieldValue<int?>? themeColorIdx
+    ModelFieldValue<int?>? themeColorIdx,
+    ModelFieldValue<List<String>>? friends
   }) {
     return AccountData._internal(
       id: id,
       nutrientGoals: nutrientGoals == null ? this.nutrientGoals : nutrientGoals.value,
       mealNames: mealNames == null ? this.mealNames : mealNames.value,
       themeModeIdx: themeModeIdx == null ? this.themeModeIdx : themeModeIdx.value,
-      themeColorIdx: themeColorIdx == null ? this.themeColorIdx : themeColorIdx.value
+      themeColorIdx: themeColorIdx == null ? this.themeColorIdx : themeColorIdx.value,
+      friends: friends == null ? this.friends : friends.value
     );
   }
   
@@ -159,11 +170,12 @@ class AccountData extends amplify_core.Model {
       _mealNames = json['mealNames']?.cast<String>(),
       _themeModeIdx = (json['themeModeIdx'] as num?)?.toInt(),
       _themeColorIdx = (json['themeColorIdx'] as num?)?.toInt(),
+      _friends = json['friends']?.cast<String>(),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'nutrientGoals': _nutrientGoals?.toJson(), 'mealNames': _mealNames, 'themeModeIdx': _themeModeIdx, 'themeColorIdx': _themeColorIdx, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'nutrientGoals': _nutrientGoals?.toJson(), 'mealNames': _mealNames, 'themeModeIdx': _themeModeIdx, 'themeColorIdx': _themeColorIdx, 'friends': _friends, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -172,6 +184,7 @@ class AccountData extends amplify_core.Model {
     'mealNames': _mealNames,
     'themeModeIdx': _themeModeIdx,
     'themeColorIdx': _themeColorIdx,
+    'friends': _friends,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -182,6 +195,7 @@ class AccountData extends amplify_core.Model {
   static final MEALNAMES = amplify_core.QueryField(fieldName: "mealNames");
   static final THEMEMODEIDX = amplify_core.QueryField(fieldName: "themeModeIdx");
   static final THEMECOLORIDX = amplify_core.QueryField(fieldName: "themeColorIdx");
+  static final FRIENDS = amplify_core.QueryField(fieldName: "friends");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "AccountData";
     modelSchemaDefinition.pluralName = "AccountData";
@@ -226,6 +240,13 @@ class AccountData extends amplify_core.Model {
       key: AccountData.THEMECOLORIDX,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: AccountData.FRIENDS,
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

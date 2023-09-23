@@ -1,6 +1,6 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/screens/home/diary_screen.dart';
+import 'package:bite_trace/screens/home/diary.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,9 +20,8 @@ final dateRangeProvider = StateProvider<List<DateTime>?>((ref) {
     // if for some reason created at is not availabe, make last 14 days available
     from = from.subtract(const Duration(days: 14));
   }
-  final to = DateTime.now()
-      .atMidday()
-      .add(const Duration(days: DiaryScreen.futureDays));
+  final to =
+      DateTime.now().atMidday().add(const Duration(days: Diary.futureDays));
   return [from, to];
 });
 
@@ -177,13 +176,13 @@ class DiaryCalendar extends ConsumerWidget {
                 itemCount: itemCount,
                 controller: ScrollController(
                   initialScrollOffset: (itemExtent *
-                          (DiaryScreen.futureDays +
+                          (Diary.futureDays +
                               (now.difference(selected.atMidday()).inDays))) -
                       (w / 2) +
                       (itemExtent / 2),
                 ),
                 itemBuilder: (context, index) {
-                  final e = DiaryScreen.idxToDate(index);
+                  final e = Diary.idxToDate(index);
                   return _weekdayButton(e, selected, () {
                     ref.read(selectedDayProvider.notifier).state = e;
                   });

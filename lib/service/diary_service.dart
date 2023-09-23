@@ -18,51 +18,65 @@ class DiaryService extends StateNotifier<DiaryState> {
   DiaryService({required this.ref}) : super(DiaryState());
   final Ref ref;
 
-  final Map<DateTime, bool> _inDb = {};
+  final Map<String, Map<DateTime, bool>> _inDb = {};
 
-  bool inDb(DateTime dateTime) {
-    return _inDb[dateTime.atMidday()] ?? true;
+  bool inDb(String userId, DateTime dateTime) {
+    return _inDb[userId]?[dateTime.atMidday()] ?? true;
   }
 
-  void setInDb(DateTime dateTime, bool inDb) {
-    _inDb[dateTime.atMidday()] = inDb;
+  void setInDb(String userId, DateTime dateTime, bool inDb) {
+    if (_inDb[userId] == null) {
+      _inDb[userId] = {};
+    }
+    _inDb[userId]![dateTime.atMidday()] = inDb;
   }
 
   Future<String> getUserId() async {
     final auth = ref.read(authServiceProvider);
-    final user = await auth.getCurrentUser();
+    final friend = ref.read(selectedFriendProvider);
 
-    if (user == null) {
-      throw Exception('User is null');
+    if (friend != null) {
+      return friend;
+    } else {
+      final user = await auth.getCurrentUser();
+      if (user == null) {
+        throw Exception('User is null');
+      }
+      return user.userId;
     }
-    return user.userId;
   }
 
-  Future<DiaryEntry> getLog(DateTime date, {bool tryFromCache = true}) async {
+  Future<DiaryEntry> getLog(
+    DateTime date, {
+    bool tryFromCache = true,
+    String? uid,
+  }) async {
     final key = date;
-    if (!tryFromCache || state.getEntry(key) == null) {
-      return _getLog(key);
+    final userId = uid ?? await getUserId();
+    if (!tryFromCache || state.getEntry(userId, key) == null) {
+      return _getLog(userId, key);
     }
 
-    return state.getEntry(date)!.entry!;
+    return state.getEntry(userId, date)!.entry!;
   }
 
-  Future<DiaryEntry> _getLog(DateTime date) async {
-    state.setEntry(date, const DiaryEntryState());
+  Future<DiaryEntry> _getLog(String userId, DateTime date) async {
+    state.setEntry(userId, date, const DiaryEntryState());
     DiaryEntry? log = await _queryLogFromDb(date);
     if (log == null) {
+      final acc = (await ref.read(accountServiceProvider).getAccount(userId))!;
       // does not exist -> empty log
       log = _setDefaultMeals(
         DiaryEntry(
           day: TemporalDate(date),
-          id: (await ref.read(userProvider.future))!.userId,
-          goals: ref.read(accountStateProvider).getData()!.nutrientGoals,
+          id: userId,
+          goals: acc.nutrientGoals,
         ),
-        ref.read(accountStateProvider).getData()!,
+        acc,
       );
-      _inDb[date] = false;
+      setInDb(userId, date, false);
     } else {
-      _inDb[date] = true;
+      setInDb(userId, date, true);
     }
 
     _updateState(log);
@@ -158,9 +172,10 @@ class DiaryService extends StateNotifier<DiaryState> {
     return addFoodsToMeal(to, toMeal, fromMeal.foods);
   }
 
-  void _updateState(DiaryEntry log) {
+  Future<void> _updateState(DiaryEntry log) async {
     safePrint('Updating state at ${log.id}');
     state = state.copyWithEntry(
+      userId: log.id,
       dateTime: log.day.getDateTime().toLocal(),
       entry: DiaryEntryState(entry: log),
     );
@@ -215,11 +230,13 @@ class DiaryService extends StateNotifier<DiaryState> {
     }
   }
 
-  void updateTodaysGoals(NutrientGoals x) {
+  Future<void> updateTodaysGoals(NutrientGoals x) async {
     final today = DateTime.now().atMidday();
-    final entry = state.getEntry(today);
+    final uid = await getUserId();
+    final entry = state.getEntry(uid, today);
     if (entry != null && entry.entry != null) {
       state = state.copyWithEntry(
+        userId: uid,
         dateTime: today,
         entry: entry.copyWith(
           entry: entry.entry!.copyWith(goals: x),

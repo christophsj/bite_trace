@@ -3,16 +3,15 @@ import 'package:bite_trace/utils/context_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Dashboard extends ConsumerWidget {
+class Dashboard extends StatelessWidget {
   const Dashboard(this.goals, this.foods, {super.key});
 
   final NutrientGoals goals;
   final List<Food> foods;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final n = NutrientsExtension.combine(
       foods
           .map((e) => e.nutritionalContents.servingFactor(e.servingFactor))

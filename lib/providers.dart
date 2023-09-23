@@ -96,3 +96,7 @@ final darkThemeProvider = StateProvider<ThemeData>((ref) {
 
 final userProvider =
     FutureProvider((ref) => ref.watch(authServiceProvider).getCurrentUser());
+
+final selectedFriendProvider = StateProvider<String?>((ref) {
+  return null;
+});
