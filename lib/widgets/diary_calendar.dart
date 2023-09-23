@@ -208,14 +208,6 @@ class DiaryCalendar extends ConsumerWidget {
   }
 
   String _format(DateTime selected) {
-    final now = DateTime.now();
-    if (selected == now.atMidday()) return 'Today';
-    if (selected == now.subtract(const Duration(days: 1)).atMidday()) {
-      return 'Yesterday';
-    }
-    if (selected == now.add(const Duration(days: 1)).atMidday()) {
-      return 'Tomorrow';
-    }
-    return DateFormat('EEE, d MMM yyyy').format(selected);
+    return selected.dateForCalendar();
   }
 }

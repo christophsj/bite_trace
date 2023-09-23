@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/screens/home/diary.dart';
+import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +31,10 @@ class _FriendsDiaryScreenState extends ConsumerState<FriendsDiaryScreen> {
       appBar: AppBar(
         title: FutureBuilder(
           future: f,
-          builder: (context, snapshot) => Text(snapshot.data?.name ?? ''),
+          builder: (context, snapshot) => Text(
+            '${snapshot.data?.name ?? ''} - ${ref.watch(selectedDayProvider).dateForCalendar()}',
+            maxLines: 1,
+          ),
         ),
       ),
       body: FutureBuilder(
