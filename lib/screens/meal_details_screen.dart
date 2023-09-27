@@ -63,7 +63,10 @@ class MealDetailsScreen extends ConsumerWidget {
             ),
           ),
           IconButton(
-            onPressed: () => _openCopyMealPopup(context, userId),
+            onPressed: () async => _openCopyMealPopup(
+              context,
+              (await ref.read(authServiceProvider).getCurrentUser())!.userId,
+            ),
             icon: Icon(
               Icons.copy,
               color: Theme.of(context).colorScheme.onSurfaceVariant,

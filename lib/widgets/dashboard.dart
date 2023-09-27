@@ -213,7 +213,9 @@ class ProgressIndicatorWithValue extends StatelessWidget {
           TextSpan(
             text: '${diff.abs()}${labelBelow ? '' : '\n'}',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              color: diff < 0
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
               fontSize: 17,
             ),

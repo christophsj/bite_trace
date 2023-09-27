@@ -551,7 +551,10 @@ class NutritionGoalsDisplay extends ConsumerWidget {
             ),
             controller: ctrl,
             keyboardType: TextInputType.number,
-            onEditingComplete: () => onEditingComplete(ref),
+            onEditingComplete: () {
+              onEditingComplete(ref);
+              FocusScope.of(context).unfocus();
+            },
           ),
         ),
         const SizedBox(

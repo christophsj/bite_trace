@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class DiaryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accountState = ref.read(accountStateProvider);
+    final accountState = ref.watch(accountStateProvider);
     return switch (accountState) {
       (AccountStateInitializing _) => const Center(
           child: SizedBox(

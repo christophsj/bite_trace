@@ -144,9 +144,9 @@ class DiarySection extends ConsumerWidget {
     if (log.goals == null) {
       return accountData.nutrientGoals;
     } else if (accountData.nutrientGoals.setAt != null &&
-        log.day
+        !log.day
             .getDateTime()
-            .isAfter(accountData.nutrientGoals.setAt!.getDateTime())) {
+            .isBefore(accountData.nutrientGoals.setAt!.getDateTime())) {
       return accountData.nutrientGoals;
     }
     return log.goals!;
