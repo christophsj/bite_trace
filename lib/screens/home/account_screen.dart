@@ -7,13 +7,15 @@ import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/utils/context_extension.dart';
+import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:bite_trace/widgets/nutrition_goals_selector.dart';
 import 'package:bite_trace/widgets/segmented_circle.dart';
+import 'package:bite_trace/widgets/string_list_editor_widget.dart';
+import 'package:bite_trace/widgets/weekly_goals_selector.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 @RoutePage()
@@ -51,26 +53,172 @@ class AccountScreen extends ConsumerWidget {
                       ),
                     ),
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _cardHeader(context, 'Goals'),
-                        NutritionGoalsDisplay(
-                          goals: s.data.nutrientGoals,
-                          onEdit: (x) {
-                            ref.read(accountServiceProvider).updateAccount(
-                                  s.data.copyWith(
-                                    nutrientGoals: x.copyWith(
-                                      setAt: TemporalDate.now(),
-                                    ),
-                                  ),
+                    child: Builder(
+                      builder: (context) {
+                        NutrientGoalsConfig selected =
+                            s.data.nutrientGoal!.getWeeklyGoals().firstWhere(
+                                  (element) => (element.days ?? [])
+                                      .contains(DateTime.now().weekday - 1),
                                 );
-                            ref
-                                .read(diaryServiceProvider)
-                                .updateTodaysGoals(s.data.id, x);
+                        return StatefulBuilder(
+                          builder: (context, setstate) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    _cardHeader(context, 'Goals'),
+                                    const Spacer(),
+                                    if (!s.data.nutrientGoal!.isDailyGoal())
+                                      _buildAddButton(ref, s, context),
+                                    const Text('More Routines'),
+                                    _buildSwitch(context, s, ref),
+                                  ],
+                                ),
+                                AnimatedSize(
+                                  duration: const Duration(milliseconds: 300),
+                                  child: Builder(
+                                    builder: (context) {
+                                      if (s.data.nutrientGoal!.isDailyGoal()) {
+                                        return Container();
+                                      }
+                                      return WeeklyGoalsSelector(
+                                        nutrientGoal: s.data.nutrientGoal!,
+                                        selected: selected,
+                                        onSelect: (p0) {
+                                          setstate(() {
+                                            selected = p0;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ),
+
+                                const SizedBox(height: 16),
+                                NutritionGoalsDisplay(
+                                  goals: s.data.nutrientGoal!.isDailyGoal()
+                                      ? s.data.nutrientGoal!.daily!
+                                      : selected.goals,
+                                  onEdit: (newGoals) {
+                                    AccountData accountData;
+                                    if (s.data.nutrientGoal!.isDailyGoal()) {
+                                      accountData = s.data.copyWith(
+                                        nutrientGoal:
+                                            s.data.nutrientGoal!.copyWith(
+                                          setAt: TemporalDate.now(),
+                                          daily: newGoals,
+                                        ),
+                                      );
+                                    } else {
+                                      final weeklyGoals =
+                                          s.data.nutrientGoal!.getWeeklyGoals();
+                                      final idx = weeklyGoals.indexOf(selected);
+                                      weeklyGoals[idx] =
+                                          selected.copyWith(goals: newGoals);
+                                      accountData = s.data.copyWith(
+                                        nutrientGoal:
+                                            s.data.nutrientGoal!.copyWith(
+                                          setAt: TemporalDate.now(),
+                                          weekly: weeklyGoals,
+                                        ),
+                                      );
+                                    }
+                                    ref
+                                        .read(accountServiceProvider)
+                                        .updateAccount(accountData);
+                                    ref
+                                        .read(diaryServiceProvider)
+                                        .updateTodaysGoals(s.data.id, newGoals);
+
+                                    ref
+                                        .read(snackbarServiceProvider)
+                                        .showBasic('Updated goals');
+                                  },
+                                ),
+                                // AnimatedSize(
+                                //   duration: const Duration(milliseconds: 300),
+                                //   child: Builder(
+                                //     builder: (context) {
+                                //       if (s.data.nutrientGoal!.isDailyGoal()) {
+                                //         return Container();
+                                //       }
+                                //       final theme = Theme.of(context);
+                                //       final monday =
+                                //           DateTime.fromMillisecondsSinceEpoch(
+                                //         1000000000,
+                                //       ).toUtc();
+                                //       return Padding(
+                                //         padding: const EdgeInsets.symmetric(
+                                //           vertical: 8.0,
+                                //         ),
+                                //         child: Row(
+                                //           children: [
+                                //             for (int i = 0; i < 7; i++)
+                                //               Expanded(
+                                //                 child: ConstrainedBox(
+                                //                   constraints:
+                                //                       const BoxConstraints(
+                                //                     minHeight: 40,
+                                //                   ),
+                                //                   child: Material(
+                                //                     borderRadius:
+                                //                         BorderRadius.circular(
+                                //                       2.0,
+                                //                     ),
+                                //                     color: selected == i
+                                //                         ? theme
+                                //                             .colorScheme.primary
+                                //                         : theme.colorScheme
+                                //                             .secondary,
+                                //                     child: InkWell(
+                                //                       onTap: () {
+                                //                         setstate(
+                                //                           () {
+                                //                             selected = i;
+                                //                           },
+                                //                         );
+                                //                       },
+                                //                       child: Center(
+                                //                         child: Text(
+                                //                           DateFormat(
+                                //                             DateFormat
+                                //                                 .ABBR_WEEKDAY,
+                                //                           ).format(
+                                //                             monday.add(
+                                //                               Duration(days: i),
+                                //                             ),
+                                //                           ),
+                                //                           style: TextStyle(
+                                //                             fontWeight:
+                                //                                 selected == i
+                                //                                     ? FontWeight
+                                //                                         .bold
+                                //                                     : FontWeight
+                                //                                         .normal,
+                                //                             color: Theme.of(
+                                //                               context,
+                                //                             )
+                                //                                 .colorScheme
+                                //                                 .onPrimary,
+                                //                           ),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                 ),
+                                //               ),
+                                //           ],
+                                //         ),
+                                //       );
+                                //     },
+                                //   ),
+                                // ),
+                              ],
+                            );
                           },
-                        ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -270,6 +418,64 @@ class AccountScreen extends ConsumerWidget {
     };
   }
 
+  IconButton _buildAddButton(
+      WidgetRef ref, AccountStateReady s, BuildContext context) {
+    return IconButton(
+      splashRadius: 20,
+      onPressed: () {
+        ref.read(accountServiceProvider).updateGoals(
+              s.data.nutrientGoal!.copyWith(
+                weekly: [
+                  ...s.data.nutrientGoal!.weekly ?? [],
+                  NutrientGoalsConfig(
+                    goals: s.data.nutrientGoal!.daily!,
+                    name: 'New Goal',
+                    days: [],
+                  ),
+                ],
+              ),
+            );
+      },
+      style: IconButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minimumSize: Size.zero,
+        padding: const EdgeInsets.all(0.0),
+      ),
+      icon: Icon(
+        Icons.add,
+        size: 22,
+        color: Theme.of(context).colorScheme.secondary,
+      ),
+    );
+  }
+
+  Widget _buildSwitch(
+    BuildContext context,
+    AccountStateReady s,
+    WidgetRef ref,
+  ) {
+    return Switch(
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      value: !s.data.nutrientGoal!.isDailyGoal(),
+      onChanged: (isWeekly) {
+        AccountData newData = s.data.copyWith(
+          nutrientGoal: s.data.nutrientGoal!.copyWith(
+            setAt: TemporalDate.now(),
+            isDaily: !isWeekly,
+          ),
+        );
+        if (isWeekly) {
+          newData = newData.copyWith(
+            nutrientGoal: newData.nutrientGoal!.copyWith(
+              weekly: s.data.nutrientGoal!.getWeeklyGoals(),
+            ),
+          );
+        }
+        ref.read(accountServiceProvider).updateAccount(newData);
+      },
+    );
+  }
+
   Widget _buildDropdownForEnum<T extends Enum>({
     required ThemeData theme,
     required List<T> values,
@@ -371,10 +577,11 @@ class AccountScreen extends ConsumerWidget {
 
   Widget _cardHeader(
     BuildContext context,
-    String text,
-  ) {
+    String text, {
+    double bottomPadding = 10,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10, top: 8.0),
+      padding: EdgeInsets.only(bottom: bottomPadding, top: 8.0),
       child: Text(
         text,
         style: TextStyle(
@@ -382,120 +589,6 @@ class AccountScreen extends ConsumerWidget {
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.primary,
         ),
-      ),
-    );
-  }
-}
-
-class StringListEditorWidget extends StatefulWidget {
-  const StringListEditorWidget({
-    required this.initialStrings,
-    required this.onSubmit,
-  });
-  final List<String> initialStrings;
-  final Function(List<String>) onSubmit;
-
-  @override
-  _StringListEditorWidgetState createState() => _StringListEditorWidgetState();
-}
-
-class _StringListEditorWidgetState extends State<StringListEditorWidget> {
-  final List<TextEditingController> list = [];
-  late final GlobalKey<FormState> _formKey = GlobalKey();
-
-  @override
-  void initState() {
-    list.addAll(
-      widget.initialStrings.map((e) => TextEditingController(text: e)),
-    );
-    super.initState();
-  }
-
-  void _addString() {
-    setState(() {
-      list.add(TextEditingController(text: 'new meal'));
-    });
-  }
-
-  void _deleteString(int index) {
-    final ctrl = list[index];
-    setState(() {
-      list.removeAt(index);
-    });
-    ctrl.dispose();
-  }
-
-  @override
-  void dispose() {
-    for (final c in list) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          for (int index = 0; index < list.length; index++)
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    validator: (String? s) {
-                      if (s == null || s.isEmpty) {
-                        return 'Empty text not allowed';
-                      }
-                      if (list
-                              .where((element) => element.text == s)
-                              .toList()
-                              .length >
-                          1) {
-                        return 'Must be unique';
-                      }
-                      return null;
-                    },
-                    controller: list[index],
-                    maxLength: 50,
-                    decoration: const InputDecoration(counterText: ''),
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  ),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => _deleteString(index),
-                ),
-              ],
-            ),
-          const SizedBox(
-            height: 16,
-          ),
-          TextButton.icon(
-            onPressed: _addString,
-            icon: const Icon(Icons.add),
-            label: const Text(
-              'Add Meal',
-            ),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          ElevatedButton.icon(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                widget.onSubmit(list.map((e) => e.text).toList());
-                AutoRouter.of(context).pop();
-              }
-            },
-            icon: const Icon(Icons.done_rounded),
-            label: const Text('Submit'),
-          ),
-        ],
       ),
     );
   }
@@ -552,7 +645,6 @@ class NutritionGoalsDisplay extends ConsumerWidget {
             controller: ctrl,
             keyboardType: TextInputType.number,
             onEditingComplete: () {
-              onEditingComplete(ref);
               FocusScope.of(context).unfocus();
             },
           ),

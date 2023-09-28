@@ -1,9 +1,10 @@
 import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
+import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';

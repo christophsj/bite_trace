@@ -1,8 +1,7 @@
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/constants.dart';
-import 'package:bite_trace/models/AccountData.dart';
-import 'package:bite_trace/models/NutrientGoals.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
 import 'package:flutter/material.dart';
@@ -156,12 +155,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               carbPerc: int.parse(carbController.text),
                               fatPerc: int.parse(fatController.text),
                               proteinPerc: int.parse(proteinController.text),
-                              setAt: TemporalDate.now(),
                             );
 
                             final data = AccountData(
-                              id: (await authService.getCurrentUser())!.userId,
                               nutrientGoals: n,
+                              id: (await authService.getCurrentUser())!.userId,
+                              nutrientGoal: NutrientGoal(
+                                daily: n,
+                                setAt: TemporalDate.now(),
+                              ),
                               mealNames: Constants.defaultMealNames,
                               friends: [],
                               name: (await authService.getCurrentUser())!

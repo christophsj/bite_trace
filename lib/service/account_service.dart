@@ -1,5 +1,4 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/state/account_state.dart';
@@ -17,6 +16,13 @@ class AccountService extends StateNotifier<AccountState> {
 
   Future<AccountData?> createAccount(AccountData accountData) =>
       updateAccount(accountData);
+
+  Future<void> updateGoals(NutrientGoal nutrientGoal) async {
+    final accountData = state.getData()!.copyWith(
+          nutrientGoal: nutrientGoal,
+        );
+    await updateAccount(accountData);
+  }
 
   Future<AccountData?> updateAccount(AccountData accountData) async {
     try {
@@ -46,7 +52,14 @@ class AccountService extends StateNotifier<AccountState> {
       if (result.isEmpty) {
         return null;
       }
-      final response = result.first;
+      final accountData = result.first;
+      final response = accountData.nutrientGoal != null
+          ? accountData
+          : accountData.copyWith(
+              nutrientGoal: NutrientGoal(
+                daily: accountData.nutrientGoals,
+              ),
+            );
       final updateState =
           (await ref.read(authServiceProvider).getCurrentUser())?.userId == uid;
       if (updateState) {

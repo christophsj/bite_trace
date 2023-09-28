@@ -7,6 +7,7 @@ import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
+import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
 import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/error_view.dart';
@@ -142,12 +143,12 @@ class DiarySection extends ConsumerWidget {
 
   NutrientGoals _getCurrentGoals() {
     if (log.goals == null) {
-      return accountData.nutrientGoals;
-    } else if (accountData.nutrientGoals.setAt != null &&
+      return accountData.nutrientGoal!.getCurrentGoal(log.day.getDateTime());
+    } else if (accountData.nutrientGoal!.setAt != null &&
         !log.day
             .getDateTime()
-            .isBefore(accountData.nutrientGoals.setAt!.getDateTime())) {
-      return accountData.nutrientGoals;
+            .isBefore(accountData.nutrientGoal!.setAt!.getDateTime())) {
+      return accountData.nutrientGoal!.getCurrentGoal(log.day.getDateTime());
     }
     return log.goals!;
   }

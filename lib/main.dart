@@ -22,10 +22,11 @@ Future<void> _configureAmplify() async {
     final datastore = AmplifyDataStore(
       modelProvider: ModelProvider.instance,
     );
-    final api = AmplifyAPI();
+    final api = AmplifyAPI(
+      modelProvider: ModelProvider.instance,
+    );
 
     await Amplify.addPlugins([api, auth, datastore]);
-
     await Amplify.configure(amplifyconfig);
     safePrint('Successfully configured');
   } on Exception catch (e) {

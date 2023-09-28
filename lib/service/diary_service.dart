@@ -6,6 +6,7 @@ import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/state/diary_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
+import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final diaryProvider = StateNotifierProvider<DiaryService, DiaryState>((ref) {
@@ -54,7 +55,7 @@ class DiaryService extends StateNotifier<DiaryState> {
         DiaryEntry(
           day: TemporalDate(date),
           id: userId,
-          goals: acc.nutrientGoals,
+          goals: acc.nutrientGoal!.getCurrentGoal(date),
         ),
         acc,
       );
