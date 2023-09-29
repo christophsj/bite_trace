@@ -137,6 +137,19 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
               pinned: true,
               titleSpacing: 1,
               toolbarHeight: 60,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    context.pushRoute(
+                      BarcodeScanRoute(
+                        log: log,
+                        selectedMealIndex: selectedMealIndex,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.camera_alt),
+                ),
+              ],
               title: TextField(
                 autofocus: true,
                 controller: query,

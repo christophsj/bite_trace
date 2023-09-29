@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
+import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
@@ -311,6 +312,13 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
           .read(snackbarServiceProvider)
           .showBasic('Logged ${widget.food.description}');
       ref.read(routerProvider).pop<DiaryEntry?>(res);
+      ref.read(routerProvider).popUntil((route) {
+        return [
+          HomeRoute.name,
+          MealDetailsRoute.name,
+          FoodSearchRoute.name,
+        ].contains(route.settings.name);
+      });
     }
   }
 

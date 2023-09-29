@@ -18,7 +18,7 @@ class ProductToFoodMapper {
         ServingSize(
           index: 0,
           nutritionMultiplier: 1,
-          unit: '100g',
+          unit: 'g',
           value: 100,
         ),
       ],

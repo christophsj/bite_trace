@@ -5,6 +5,7 @@ import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/service/auth_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/service/food_service.dart';
+import 'package:bite_trace/service/open_food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
 import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
@@ -28,6 +29,9 @@ final snackbarServiceProvider =
 
 final foodSearchProvider =
     Provider<FitnessPalFoodService>((ref) => FitnessPalFoodService(ref: ref));
+
+final openFoodServiceProvider =
+    Provider<OpenFoodService>((ref) => OpenFoodService(ref: ref));
 
 final selectedDayProvider = StateProvider<DateTime>((ref) {
   return DateTime.now().atMidday();

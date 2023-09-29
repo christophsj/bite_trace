@@ -419,7 +419,10 @@ class AccountScreen extends ConsumerWidget {
   }
 
   IconButton _buildAddButton(
-      WidgetRef ref, AccountStateReady s, BuildContext context) {
+    WidgetRef ref,
+    AccountStateReady s,
+    BuildContext context,
+  ) {
     return IconButton(
       splashRadius: 20,
       onPressed: () {
@@ -439,7 +442,7 @@ class AccountScreen extends ConsumerWidget {
       style: IconButton.styleFrom(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         minimumSize: Size.zero,
-        padding: const EdgeInsets.all(0.0),
+        padding: EdgeInsets.zero,
       ),
       icon: Icon(
         Icons.add,
