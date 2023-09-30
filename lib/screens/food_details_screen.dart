@@ -147,9 +147,15 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                                   entry.key,
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                Text(
-                                  entry.value ?? 'N/A',
-                                  style: const TextStyle(fontSize: 16),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    entry.value ?? 'N/A',
+                                    style: const TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.right,
+                                  ),
                                 ),
                               ],
                             ),

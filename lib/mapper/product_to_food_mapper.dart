@@ -4,10 +4,14 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 class ProductToFoodMapper {
   static Food productToFood(
     Product product,
-    double amount,
   ) {
+    final perServing = _getPerServingSize(product);
     return Food(
-      description: product.productName ?? '<missing-description>',
+      description: product.productName ??
+          product.productNameInLanguages?[OpenFoodFactsLanguage.ENGLISH] ??
+          product.productNameInLanguages?[OpenFoodFactsLanguage.GERMAN] ??
+          product.productNameInLanguages?.entries.firstOrNull?.value ??
+          '<missing-name>',
       foodId: product.barcode ?? '<missing-bardcode>',
       countryCode: product.countries,
       nutritionalContents:
@@ -15,16 +19,47 @@ class ProductToFoodMapper {
       brandName: product.brands,
       imageUrl: product.imageFrontSmallUrl,
       servingSizes: [
+        if (perServing != null) perServing,
         ServingSize(
-          index: 0,
+          index: perServing == null ? 0 : 1,
+          nutritionMultiplier: 0.01,
+          unit: 'g',
+          value: 1,
+        ),
+        ServingSize(
+          index: perServing == null ? 1 : 2,
           nutritionMultiplier: 1,
           unit: 'g',
           value: 100,
         ),
       ],
       chosenServingSize: 0,
-      chosenServingAmount: 1,
+      chosenServingAmount: perServing == null ? 100 : 1,
       verified: false,
+    );
+  }
+
+  static ServingSize? _getPerServingSize(Product p) {
+    if (p.nutriments == null) return null;
+
+    final nutriments = p.nutriments!;
+    final v1 =
+        nutriments.getValue(Nutrient.energyKCal, PerSize.oneHundredGrams);
+    final v2 = nutriments.getValue(Nutrient.energyKCal, PerSize.serving);
+    if (v1 == null || v2 == null) {
+      return null;
+    }
+
+    if (p.servingQuantity == null) {
+      return null;
+    }
+
+    final factor = v2 / v1;
+    return ServingSize(
+      index: 0,
+      nutritionMultiplier: factor,
+      unit: 'g',
+      value: p.servingQuantity!,
     );
   }
 

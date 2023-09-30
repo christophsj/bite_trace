@@ -30,8 +30,7 @@ class _FoodDetailsState extends ConsumerState<BarcodeScanScreen>
 
   @override
   void initState() {
-    // search = ref.read(openFoodServiceProvider).searchByBarcode();
-    search = Future.value([Product(productName: '123')]);
+    search = ref.read(openFoodServiceProvider).searchByBarcode();
     super.initState();
   }
 
@@ -68,17 +67,23 @@ class _FoodDetailsState extends ConsumerState<BarcodeScanScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         for (final p in snapshot.data!)
-                          ElevatedButton(
-                            onPressed: () {
-                              context.pushRoute(
-                                FoodDetailsRoute(
-                                  initialMealIndex: widget.selectedMealIndex,
-                                  log: widget.log,
-                                  food: ProductToFoodMapper.productToFood(p, 1),
-                                ),
+                          Builder(
+                            builder: (context) {
+                              final f = ProductToFoodMapper.productToFood(p);
+                              return ElevatedButton(
+                                onPressed: () {
+                                  context.pushRoute(
+                                    FoodDetailsRoute(
+                                      initialMealIndex:
+                                          widget.selectedMealIndex,
+                                      log: widget.log,
+                                      food: f,
+                                    ),
+                                  );
+                                },
+                                child: Text('View ${f.description}'),
                               );
                             },
-                            child: Text('View ${p.productName}'),
                           ),
                         IconButton(
                           icon: const Row(
