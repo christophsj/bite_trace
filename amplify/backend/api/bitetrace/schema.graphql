@@ -7,8 +7,7 @@ type DiaryEntry @model @auth(rules: [{ allow: public }]) {
 
 type AccountData @model @auth(rules: [{ allow: public }]) {
   id: ID! @primaryKey
-  nutrientGoals: NutrientGoals!
-  nutrientGoal: NutrientGoal
+  nutrientGoal: NutrientGoal!
   mealNames: [String!]
   themeModeIdx: Int
   themeColorIdx: Int
@@ -22,9 +21,9 @@ type MyFood @model @auth(rules: [{ allow: public }]) {
 }
 
 type NutrientGoal {
-  isDaily: Boolean
-  daily: NutrientGoals
-  weekly: [NutrientGoalsConfig!]
+  isDaily: Boolean!
+  daily: NutrientGoals!
+  weekly: [NutrientGoalsConfig!]!
   setAt: AWSDate
 }
 

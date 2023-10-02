@@ -54,9 +54,10 @@ final themeModeProvider = StateProvider<ThemeMode>((ref) {
   final int? idx = switch (s) {
     (final AccountStateReady r) => r.data.themeModeIdx,
     (AccountStateInitializing _) => null,
-    (AccountStateError _) => null
+    (AccountStateError _) => null,
+    (AccountStateLoggedOut _) => null
   };
-  return ThemeMode.values[idx ?? ThemeMode.system.index];
+  return ThemeMode.values[idx ?? ThemeMode.dark.index];
 });
 
 final themeIdxProvider = StateProvider<int>((ref) {
@@ -64,7 +65,8 @@ final themeIdxProvider = StateProvider<int>((ref) {
   final int? idx = switch (s) {
     (final AccountStateReady r) => r.data.themeColorIdx,
     (AccountStateInitializing _) => null,
-    (AccountStateError _) => null
+    (AccountStateError _) => null,
+    (AccountStateLoggedOut _) => null
   };
   return idx ?? 0;
 });

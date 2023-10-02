@@ -1,22 +1,23 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/screens/home/diary.dart';
+import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 final dateRangeProvider = StateProvider<List<DateTime>?>((ref) {
-  final state = ref.watch(accountDataProvider);
-  if (state.value == null) {
+  final state = ref.watch(accountStateProvider);
+  if (state.getData() == null) {
     return null;
   }
 
-  DateTime from = (state.value!.createdAt ?? TemporalDateTime.now())
+  DateTime from = (state.getData()!.createdAt ?? TemporalDateTime.now())
       .getDateTimeInUtc()
       .toLocal()
       .atMidday();
-  if (state.value!.createdAt == null) {
+  if (state.getData()!.createdAt == null) {
     // if for some reason created at is not availabe, make last 14 days available
     from = from.subtract(const Duration(days: 14));
   }

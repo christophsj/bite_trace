@@ -23,6 +23,7 @@ class FriendsScreen extends ConsumerWidget {
           ),
         ),
       (final AccountStateError s) => ErrorView(error: s),
+      (final AccountStateLoggedOut s) => ErrorView(error: s),
       (final AccountStateReady s) => _userDataReady(s.data, ref)
     };
   }

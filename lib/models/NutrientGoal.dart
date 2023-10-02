@@ -31,25 +31,52 @@ class NutrientGoal {
   final List<NutrientGoalsConfig>? _weekly;
   final amplify_core.TemporalDate? _setAt;
 
-  bool? get isDaily {
-    return _isDaily;
+  bool get isDaily {
+    try {
+      return _isDaily!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
-  NutrientGoals? get daily {
-    return _daily;
+  NutrientGoals get daily {
+    try {
+      return _daily!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
-  List<NutrientGoalsConfig>? get weekly {
-    return _weekly;
+  List<NutrientGoalsConfig> get weekly {
+    try {
+      return _weekly!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   amplify_core.TemporalDate? get setAt {
     return _setAt;
   }
   
-  const NutrientGoal._internal({isDaily, daily, weekly, setAt}): _isDaily = isDaily, _daily = daily, _weekly = weekly, _setAt = setAt;
+  const NutrientGoal._internal({required isDaily, required daily, required weekly, setAt}): _isDaily = isDaily, _daily = daily, _weekly = weekly, _setAt = setAt;
   
-  factory NutrientGoal({bool? isDaily, NutrientGoals? daily, List<NutrientGoalsConfig>? weekly, amplify_core.TemporalDate? setAt}) {
+  factory NutrientGoal({required bool isDaily, required NutrientGoals daily, required List<NutrientGoalsConfig> weekly, amplify_core.TemporalDate? setAt}) {
     return NutrientGoal._internal(
       isDaily: isDaily,
       daily: daily,
@@ -97,8 +124,8 @@ class NutrientGoal {
   }
   
   NutrientGoal copyWithModelFieldValues({
-    ModelFieldValue<bool?>? isDaily,
-    ModelFieldValue<NutrientGoals?>? daily,
+    ModelFieldValue<bool>? isDaily,
+    ModelFieldValue<NutrientGoals>? daily,
     ModelFieldValue<List<NutrientGoalsConfig>>? weekly,
     ModelFieldValue<amplify_core.TemporalDate?>? setAt
   }) {
@@ -140,19 +167,19 @@ class NutrientGoal {
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
       fieldName: 'isDaily',
-      isRequired: false,
+      isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.bool)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
       fieldName: 'daily',
-      isRequired: false,
+      isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'NutrientGoals')
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
       fieldName: 'weekly',
-      isRequired: false,
+      isRequired: true,
       isArray: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'NutrientGoalsConfig')
     ));

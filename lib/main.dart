@@ -31,6 +31,7 @@ Future<void> _configureAmplify() async {
     await Amplify.addPlugins([api, auth, datastore]);
     await Amplify.configure(amplifyconfig);
     safePrint('Successfully configured');
+    await Amplify.DataStore.clear();
   } on Exception catch (e) {
     safePrint('Error configuring Amplify: $e');
   }

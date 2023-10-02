@@ -20,6 +20,7 @@ class DiaryScreen extends ConsumerWidget {
           ),
         ),
       (final AccountStateError s) => ErrorView(error: s),
+      (final AccountStateLoggedOut s) => ErrorView(error: s),
       (final AccountStateReady s) => Diary(s.data)
     };
   }

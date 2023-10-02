@@ -5,8 +5,13 @@ import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard(this.goals, this.foods,
-      {super.key, this.verticalPadding = 14, this.elevation = 2});
+  const Dashboard(
+    this.goals,
+    this.foods, {
+    super.key,
+    this.verticalPadding = 14,
+    this.elevation = 2,
+  });
 
   final NutrientGoals goals;
   final List<Food> foods;

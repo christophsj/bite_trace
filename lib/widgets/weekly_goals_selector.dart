@@ -32,8 +32,7 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                     ref.read(accountServiceProvider).updateGoals(
                           nutrientGoal.copyWith(
                             weekly: [
-                              ...nutrientGoal.weekly!
-                                  .where((element) => element != e),
+                              ...nutrientGoal.weekly.where((element) => element != e),
                               e.copyWith(name: s),
                             ],
                           ),
@@ -42,8 +41,7 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                     ref.read(accountServiceProvider).updateGoals(
                           nutrientGoal.copyWith(
                             weekly: [
-                              ...nutrientGoal.weekly!
-                                  .where((element) => element != e),
+                              ...nutrientGoal.weekly.where((element) => element != e),
                             ],
                           ),
                         );
@@ -90,20 +88,20 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                                 }
                                 final days = <int>[...e.days ?? <int>[], data]
                                   ..sort();
-                                final idx = nutrientGoal.weekly!.indexOf(e);
-                                final prevIdx = nutrientGoal.weekly!.indexWhere(
+                                final idx = nutrientGoal.weekly.indexOf(e);
+                                final prevIdx = nutrientGoal.weekly.indexWhere(
                                   (element) =>
                                       element.days?.contains(data) == true,
                                 );
 
-                                nutrientGoal.weekly![prevIdx] =
-                                    nutrientGoal.weekly![prevIdx].copyWith(
-                                  days: nutrientGoal.weekly![prevIdx].days!
+                                nutrientGoal.weekly[prevIdx] =
+                                    nutrientGoal.weekly[prevIdx].copyWith(
+                                  days: nutrientGoal.weekly[prevIdx].days!
                                       .where((element) => element != data)
                                       .toList(),
                                 );
 
-                                nutrientGoal.weekly![idx] =
+                                nutrientGoal.weekly[idx] =
                                     e.copyWith(days: days);
 
                                 ref

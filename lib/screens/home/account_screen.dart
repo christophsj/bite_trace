@@ -38,6 +38,7 @@ class AccountScreen extends ConsumerWidget {
           ),
         ),
       (final AccountStateError s) => ErrorView(error: s),
+      (final AccountStateLoggedOut s) => ErrorView(error: s),
       (final AccountStateReady s) => SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
@@ -56,7 +57,7 @@ class AccountScreen extends ConsumerWidget {
                     child: Builder(
                       builder: (context) {
                         NutrientGoalsConfig selected =
-                            s.data.nutrientGoal!.getWeeklyGoals().firstWhere(
+                            s.data.nutrientGoal.getWeeklyGoals().firstWhere(
                                   (element) => (element.days ?? [])
                                       .contains(DateTime.now().weekday - 1),
                                 );
@@ -69,7 +70,7 @@ class AccountScreen extends ConsumerWidget {
                                   children: [
                                     _cardHeader(context, 'Goals'),
                                     const Spacer(),
-                                    if (!s.data.nutrientGoal!.isDailyGoal())
+                                    if (!s.data.nutrientGoal.isDailyGoal())
                                       _buildAddButton(ref, s, context),
                                     const Text('More Routines'),
                                     _buildSwitch(context, s, ref),
@@ -79,11 +80,11 @@ class AccountScreen extends ConsumerWidget {
                                   duration: const Duration(milliseconds: 300),
                                   child: Builder(
                                     builder: (context) {
-                                      if (s.data.nutrientGoal!.isDailyGoal()) {
+                                      if (s.data.nutrientGoal.isDailyGoal()) {
                                         return Container();
                                       }
                                       return WeeklyGoalsSelector(
-                                        nutrientGoal: s.data.nutrientGoal!,
+                                        nutrientGoal: s.data.nutrientGoal,
                                         selected: selected,
                                         onSelect: (p0) {
                                           setstate(() {
@@ -97,28 +98,28 @@ class AccountScreen extends ConsumerWidget {
 
                                 const SizedBox(height: 16),
                                 NutritionGoalsDisplay(
-                                  goals: s.data.nutrientGoal!.isDailyGoal()
-                                      ? s.data.nutrientGoal!.daily!
+                                  goals: s.data.nutrientGoal.isDailyGoal()
+                                      ? s.data.nutrientGoal.daily
                                       : selected.goals,
                                   onEdit: (newGoals) {
                                     AccountData accountData;
-                                    if (s.data.nutrientGoal!.isDailyGoal()) {
+                                    if (s.data.nutrientGoal.isDailyGoal()) {
                                       accountData = s.data.copyWith(
                                         nutrientGoal:
-                                            s.data.nutrientGoal!.copyWith(
+                                            s.data.nutrientGoal.copyWith(
                                           setAt: TemporalDate.now(),
                                           daily: newGoals,
                                         ),
                                       );
                                     } else {
                                       final weeklyGoals =
-                                          s.data.nutrientGoal!.getWeeklyGoals();
+                                          s.data.nutrientGoal.getWeeklyGoals();
                                       final idx = weeklyGoals.indexOf(selected);
                                       weeklyGoals[idx] =
                                           selected.copyWith(goals: newGoals);
                                       accountData = s.data.copyWith(
                                         nutrientGoal:
-                                            s.data.nutrientGoal!.copyWith(
+                                            s.data.nutrientGoal.copyWith(
                                           setAt: TemporalDate.now(),
                                           weekly: weeklyGoals,
                                         ),
@@ -427,11 +428,11 @@ class AccountScreen extends ConsumerWidget {
       splashRadius: 20,
       onPressed: () {
         ref.read(accountServiceProvider).updateGoals(
-              s.data.nutrientGoal!.copyWith(
+              s.data.nutrientGoal.copyWith(
                 weekly: [
-                  ...s.data.nutrientGoal!.weekly ?? [],
+                  ...s.data.nutrientGoal.weekly,
                   NutrientGoalsConfig(
-                    goals: s.data.nutrientGoal!.daily!,
+                    goals: s.data.nutrientGoal.daily,
                     name: 'New Goal',
                     days: [],
                   ),
@@ -459,18 +460,18 @@ class AccountScreen extends ConsumerWidget {
   ) {
     return Switch(
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      value: !s.data.nutrientGoal!.isDailyGoal(),
+      value: !s.data.nutrientGoal.isDailyGoal(),
       onChanged: (isWeekly) {
         AccountData newData = s.data.copyWith(
-          nutrientGoal: s.data.nutrientGoal!.copyWith(
+          nutrientGoal: s.data.nutrientGoal.copyWith(
             setAt: TemporalDate.now(),
             isDaily: !isWeekly,
           ),
         );
         if (isWeekly) {
           newData = newData.copyWith(
-            nutrientGoal: newData.nutrientGoal!.copyWith(
-              weekly: s.data.nutrientGoal!.getWeeklyGoals(),
+            nutrientGoal: newData.nutrientGoal.copyWith(
+              weekly: s.data.nutrientGoal.getWeeklyGoals(),
             ),
           );
         }

@@ -10,8 +10,11 @@ final accountStateProvider =
 });
 
 class AccountService extends StateNotifier<AccountState> {
-  AccountService({required this.ref}) : super(const AccountState.updating());
+  AccountService({required this.ref})
+      : initialAccountData = ref.read(accountDataProvider.future),
+        super(const AccountState.updating());
 
+  final Future<AccountData?> initialAccountData;
   final Ref ref;
 
   Future<AccountData?> createAccount(AccountData accountData) =>
@@ -37,10 +40,14 @@ class AccountService extends StateNotifier<AccountState> {
     }
   }
 
-  void _handleState(AccountData response) {
-    state = AccountState.ready(
-      response,
-    );
+  void _handleState(AccountData? response) {
+    if (response == null) {
+      state = const AccountState.loggedOut();
+    } else {
+      state = AccountState.ready(
+        response,
+      );
+    }
   }
 
   Future<AccountData?> getAccount(String uid) async {
@@ -49,23 +56,13 @@ class AccountService extends StateNotifier<AccountState> {
         AccountData.classType,
         where: AccountData.ID.eq(uid),
       );
-      if (result.isEmpty) {
-        return null;
-      }
-      final accountData = result.first;
-      final response = accountData.nutrientGoal != null
-          ? accountData
-          : accountData.copyWith(
-              nutrientGoal: NutrientGoal(
-                daily: accountData.nutrientGoals,
-              ),
-            );
       final updateState =
           (await ref.read(authServiceProvider).getCurrentUser())?.userId == uid;
+      final accountData = result.isEmpty ? null : result.first;
       if (updateState) {
-        _handleState(response);
+        _handleState(accountData);
       }
-      return response;
+      return accountData;
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
       state = AccountState.error(e.toString());

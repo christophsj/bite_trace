@@ -1,13 +1,10 @@
 import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/routing/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-@RoutePage()
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -158,10 +155,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             );
 
                             final data = AccountData(
-                              nutrientGoals: n,
                               id: (await authService.getCurrentUser())!.userId,
                               nutrientGoal: NutrientGoal(
                                 daily: n,
+                                isDaily: true,
+                                weekly: [
+                                  NutrientGoalsConfig(
+                                    name: 'Default',
+                                    goals: n,
+                                    days: [0, 1, 2, 3, 4, 5, 6],
+                                  ),
+                                ],
                                 setAt: TemporalDate.now(),
                               ),
                               mealNames: Constants.defaultMealNames,
@@ -170,7 +174,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   .username,
                             );
                             await accountService.createAccount(data);
-                            ref.read(routerProvider).push(const HomeRoute());
                           }
                         },
                   child: const Text('Finish'),

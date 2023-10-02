@@ -147,12 +147,12 @@ class DiarySection extends ConsumerWidget {
 
   static NutrientGoals getValidGoals(DiaryEntry log, AccountData accountData) {
     if (log.goals == null) {
-      return accountData.nutrientGoal!.getCurrentGoal(log.day.getDateTime());
-    } else if (accountData.nutrientGoal!.setAt != null &&
+      return accountData.nutrientGoal.getCurrentGoal(log.day.getDateTime());
+    } else if (accountData.nutrientGoal.setAt != null &&
         !log.day
             .getDateTime()
-            .isBefore(accountData.nutrientGoal!.setAt!.getDateTime())) {
-      return accountData.nutrientGoal!.getCurrentGoal(log.day.getDateTime());
+            .isBefore(accountData.nutrientGoal.setAt!.getDateTime())) {
+      return accountData.nutrientGoal.getCurrentGoal(log.day.getDateTime());
     }
     return log.goals!;
   }

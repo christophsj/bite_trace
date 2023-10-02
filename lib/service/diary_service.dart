@@ -55,7 +55,7 @@ class DiaryService extends StateNotifier<DiaryState> {
         DiaryEntry(
           day: TemporalDate(date),
           id: userId,
-          goals: acc.nutrientGoal!.getCurrentGoal(date),
+          goals: acc.nutrientGoal.getCurrentGoal(date),
         ),
         acc,
       );
