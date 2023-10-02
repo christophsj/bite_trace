@@ -142,6 +142,10 @@ class DiarySection extends ConsumerWidget {
   final AccountData accountData;
 
   NutrientGoals _getCurrentGoals() {
+    return getValidGoals(log, accountData);
+  }
+
+  static NutrientGoals getValidGoals(DiaryEntry log, AccountData accountData) {
     if (log.goals == null) {
       return accountData.nutrientGoal!.getCurrentGoal(log.day.getDateTime());
     } else if (accountData.nutrientGoal!.setAt != null &&

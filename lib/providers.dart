@@ -5,6 +5,7 @@ import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/service/auth_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/service/food_service.dart';
+import 'package:bite_trace/service/home_widget_service.dart';
 import 'package:bite_trace/service/open_food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
 import 'package:bite_trace/state/account_state.dart';
@@ -32,6 +33,9 @@ final foodSearchProvider =
 
 final openFoodServiceProvider =
     Provider<OpenFoodService>((ref) => OpenFoodService(ref: ref));
+
+final homeWidgetServiceProvider =
+    Provider<HomeWidgetService>((ref) => HomeWidgetService(ref: ref));
 
 final selectedDayProvider = StateProvider<DateTime>((ref) {
   return DateTime.now().atMidday();

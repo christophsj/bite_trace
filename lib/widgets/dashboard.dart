@@ -5,10 +5,13 @@ import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard(this.goals, this.foods, {super.key});
+  const Dashboard(this.goals, this.foods,
+      {super.key, this.verticalPadding = 14, this.elevation = 2});
 
   final NutrientGoals goals;
   final List<Food> foods;
+  final double verticalPadding;
+  final double elevation;
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +22,12 @@ class Dashboard extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14.0),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Card(
-            elevation: 2,
+            elevation: elevation,
             child: Container(
               padding: const EdgeInsets.all(12.0),
               // decoration: BoxDecoration(

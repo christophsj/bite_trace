@@ -9,10 +9,12 @@ import 'package:bite_trace/providers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _configureAmplify();
+  HomeWidget.setAppGroupId('HOME_WIDGET');
   runApp(const ProviderScope(child: BiteTraceApp()));
 }
 
@@ -38,6 +40,7 @@ class BiteTraceApp extends ConsumerWidget {
   const BiteTraceApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(homeWidgetServiceProvider);
     return Authenticator(
       authenticatorBuilder: (context, state) {
         switch (state.currentStep) {
