@@ -4,9 +4,9 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/state/diary_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
+import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final diaryProvider = StateNotifierProvider<DiaryService, DiaryState>((ref) {
@@ -18,50 +18,50 @@ class DiaryService extends StateNotifier<DiaryState> {
   DiaryService({required this.ref}) : super(DiaryState());
   final Ref ref;
 
-  final Map<DateTime, bool> _inDb = {};
+  final Map<String, Map<DateTime, bool>> _inDb = {};
 
-  bool inDb(DateTime dateTime) {
-    return _inDb[dateTime.atMidday()] ?? true;
+  bool inDb(String userId, DateTime dateTime) {
+    return _inDb[userId]?[dateTime.atMidday()] ?? true;
   }
 
-  void setInDb(DateTime dateTime, bool inDb) {
-    _inDb[dateTime.atMidday()] = inDb;
-  }
-
-  Future<String> getUserId() async {
-    final auth = ref.read(authServiceProvider);
-    final user = await auth.getCurrentUser();
-
-    if (user == null) {
-      throw Exception('User is null');
+  void setInDb(String userId, DateTime dateTime, bool inDb) {
+    if (_inDb[userId] == null) {
+      _inDb[userId] = {};
     }
-    return user.userId;
+    _inDb[userId]![dateTime.atMidday()] = inDb;
   }
 
-  Future<DiaryEntry> getLog(DateTime date, {bool tryFromCache = true}) async {
+  Future<DiaryEntry> getLog(
+    DateTime date, {
+    bool tryFromCache = true,
+    required String uid,
+  }) async {
     final key = date;
-    if (!tryFromCache || state.getEntry(key) == null) {
-      return _getLog(key);
+    final userId = uid;
+    if (!tryFromCache || state.getEntry(userId, key) == null) {
+      return _getLog(userId, key);
     }
 
-    return state.getEntry(date)!.entry!;
+    return state.getEntry(userId, date)!.entry!;
   }
 
-  Future<DiaryEntry> _getLog(DateTime date) async {
-    state.setEntry(date, const DiaryEntryState());
-    DiaryEntry? log = await _queryLogFromDb(date);
+  Future<DiaryEntry> _getLog(String userId, DateTime date) async {
+    state.setEntry(userId, date, const DiaryEntryState());
+    DiaryEntry? log = await _queryLogFromDb(userId, date);
     if (log == null) {
+      final acc = (await ref.read(accountServiceProvider).getAccount(userId))!;
       // does not exist -> empty log
       log = _setDefaultMeals(
         DiaryEntry(
           day: TemporalDate(date),
-          id: (await ref.read(userProvider.future))!.userId,
+          id: userId,
+          goals: acc.nutrientGoal.getCurrentGoal(date),
         ),
-        ref.read(accountStateProvider).getData()!,
+        acc,
       );
-      _inDb[date] = false;
+      setInDb(userId, date, false);
     } else {
-      _inDb[date] = true;
+      setInDb(userId, date, true);
     }
 
     _updateState(log);
@@ -69,12 +69,11 @@ class DiaryService extends StateNotifier<DiaryState> {
   }
 
   Future<List<Food>> getRecentFoods({
+    required String userId,
     required String filter,
     int page = 0,
     int limitDays = 14,
   }) async {
-    final userId = await getUserId();
-
     final entries = await Amplify.DataStore.query<DiaryEntry>(
       DiaryEntry.classType,
       where: DiaryEntry.ID.eq(userId),
@@ -86,7 +85,7 @@ class DiaryService extends StateNotifier<DiaryState> {
       _updateState(log);
     }
 
-    return entries
+    final matchingFoods = entries
         .map((e) => e.meals!)
         .expand((e) => e)
         .map((e) => e.foods)
@@ -95,13 +94,21 @@ class DiaryService extends StateNotifier<DiaryState> {
         .where(
           (element) =>
               element.description.toLowerCase().contains(filter.toLowerCase()),
-        )
-        .toSet()
-        .toList();
+        );
+
+    final ids = <String>{};
+    final foods = <Food>[];
+    for (final f in matchingFoods) {
+      if (!ids.contains(f.foodId)) {
+        ids.add(f.foodId);
+        foods.add(f);
+      }
+    }
+
+    return foods;
   }
 
-  Future<DiaryEntry?> _queryLogFromDb(DateTime date) async {
-    final user = await getUserId();
+  Future<DiaryEntry?> _queryLogFromDb(String user, DateTime date) async {
     final result = await Amplify.DataStore.query(
       DiaryEntry.classType,
       where: DiaryEntry.DAY.eq(TemporalDate(date)).and(DiaryEntry.ID.eq(user)),
@@ -118,7 +125,7 @@ class DiaryService extends StateNotifier<DiaryState> {
     return log.copyWith(
       meals: [
         for (int i = 0; i < mealNames.length; i++)
-          Meal(name: mealNames[i], index: i, foods: [])
+          Meal(name: mealNames[i], index: i, foods: []),
       ],
     );
   }
@@ -148,9 +155,10 @@ class DiaryService extends StateNotifier<DiaryState> {
     return addFoodsToMeal(to, toMeal, fromMeal.foods);
   }
 
-  void _updateState(DiaryEntry log) {
+  Future<void> _updateState(DiaryEntry log) async {
     safePrint('Updating state at ${log.id}');
     state = state.copyWithEntry(
+      userId: log.id,
       dateTime: log.day.getDateTime().toLocal(),
       entry: DiaryEntryState(entry: log),
     );
@@ -202,6 +210,21 @@ class DiaryService extends StateNotifier<DiaryState> {
           .read(snackbarServiceProvider)
           .showBasic('Error updating model: "${e.message}"');
       safePrint('Something went wrong updating model: ${e.message}');
+    }
+  }
+
+  Future<void> updateTodaysGoals(String uid, NutrientGoals x) async {
+    final today = DateTime.now().atMidday();
+    final entry = state.getEntry(uid, today);
+    if (entry != null && entry.entry != null) {
+      state = state.copyWithEntry(
+        userId: uid,
+        dateTime: today,
+        entry: entry.copyWith(
+          entry: entry.entry!.copyWith(goals: x),
+        ),
+      );
+      Amplify.DataStore.save(entry.entry!);
     }
   }
 }

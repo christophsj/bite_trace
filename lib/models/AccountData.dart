@@ -28,9 +28,13 @@ import 'package:collection/collection.dart';
 class AccountData extends amplify_core.Model {
   static const classType = const _AccountDataModelType();
   final String id;
-  final NutrientGoals? _nutrientGoals;
+  final NutrientGoal? _nutrientGoal;
   final List<String>? _mealNames;
   final int? _themeModeIdx;
+  final int? _themeColorIdx;
+  final String? _name;
+  final List<String>? _friends;
+  final List<MyFood>? _food;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -47,9 +51,9 @@ class AccountData extends amplify_core.Model {
       );
   }
   
-  NutrientGoals get nutrientGoals {
+  NutrientGoal get nutrientGoal {
     try {
-      return _nutrientGoals!;
+      return _nutrientGoal!;
     } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
           amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -68,6 +72,31 @@ class AccountData extends amplify_core.Model {
     return _themeModeIdx;
   }
   
+  int? get themeColorIdx {
+    return _themeColorIdx;
+  }
+  
+  String get name {
+    try {
+      return _name!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  List<String>? get friends {
+    return _friends;
+  }
+  
+  List<MyFood>? get food {
+    return _food;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -76,14 +105,18 @@ class AccountData extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const AccountData._internal({required this.id, required nutrientGoals, mealNames, themeModeIdx, createdAt, updatedAt}): _nutrientGoals = nutrientGoals, _mealNames = mealNames, _themeModeIdx = themeModeIdx, _createdAt = createdAt, _updatedAt = updatedAt;
+  const AccountData._internal({required this.id, required nutrientGoal, mealNames, themeModeIdx, themeColorIdx, required name, friends, food, createdAt, updatedAt}): _nutrientGoal = nutrientGoal, _mealNames = mealNames, _themeModeIdx = themeModeIdx, _themeColorIdx = themeColorIdx, _name = name, _friends = friends, _food = food, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory AccountData({String? id, required NutrientGoals nutrientGoals, List<String>? mealNames, int? themeModeIdx}) {
+  factory AccountData({String? id, required NutrientGoal nutrientGoal, List<String>? mealNames, int? themeModeIdx, int? themeColorIdx, required String name, List<String>? friends, List<MyFood>? food}) {
     return AccountData._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
-      nutrientGoals: nutrientGoals,
+      nutrientGoal: nutrientGoal,
       mealNames: mealNames != null ? List<String>.unmodifiable(mealNames) : mealNames,
-      themeModeIdx: themeModeIdx);
+      themeModeIdx: themeModeIdx,
+      themeColorIdx: themeColorIdx,
+      name: name,
+      friends: friends != null ? List<String>.unmodifiable(friends) : friends,
+      food: food != null ? List<MyFood>.unmodifiable(food) : food);
   }
   
   bool equals(Object other) {
@@ -95,9 +128,13 @@ class AccountData extends amplify_core.Model {
     if (identical(other, this)) return true;
     return other is AccountData &&
       id == other.id &&
-      _nutrientGoals == other._nutrientGoals &&
+      _nutrientGoal == other._nutrientGoal &&
       DeepCollectionEquality().equals(_mealNames, other._mealNames) &&
-      _themeModeIdx == other._themeModeIdx;
+      _themeModeIdx == other._themeModeIdx &&
+      _themeColorIdx == other._themeColorIdx &&
+      _name == other._name &&
+      DeepCollectionEquality().equals(_friends, other._friends) &&
+      DeepCollectionEquality().equals(_food, other._food);
   }
   
   @override
@@ -109,9 +146,12 @@ class AccountData extends amplify_core.Model {
     
     buffer.write("AccountData {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("nutrientGoals=" + (_nutrientGoals != null ? _nutrientGoals!.toString() : "null") + ", ");
+    buffer.write("nutrientGoal=" + (_nutrientGoal != null ? _nutrientGoal!.toString() : "null") + ", ");
     buffer.write("mealNames=" + (_mealNames != null ? _mealNames!.toString() : "null") + ", ");
     buffer.write("themeModeIdx=" + (_themeModeIdx != null ? _themeModeIdx!.toString() : "null") + ", ");
+    buffer.write("themeColorIdx=" + (_themeColorIdx != null ? _themeColorIdx!.toString() : "null") + ", ");
+    buffer.write("name=" + "$_name" + ", ");
+    buffer.write("friends=" + (_friends != null ? _friends!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -119,55 +159,86 @@ class AccountData extends amplify_core.Model {
     return buffer.toString();
   }
   
-  AccountData copyWith({NutrientGoals? nutrientGoals, List<String>? mealNames, int? themeModeIdx}) {
+  AccountData copyWith({NutrientGoal? nutrientGoal, List<String>? mealNames, int? themeModeIdx, int? themeColorIdx, String? name, List<String>? friends, List<MyFood>? food}) {
     return AccountData._internal(
       id: id,
-      nutrientGoals: nutrientGoals ?? this.nutrientGoals,
+      nutrientGoal: nutrientGoal ?? this.nutrientGoal,
       mealNames: mealNames ?? this.mealNames,
-      themeModeIdx: themeModeIdx ?? this.themeModeIdx);
+      themeModeIdx: themeModeIdx ?? this.themeModeIdx,
+      themeColorIdx: themeColorIdx ?? this.themeColorIdx,
+      name: name ?? this.name,
+      friends: friends ?? this.friends,
+      food: food ?? this.food);
   }
   
   AccountData copyWithModelFieldValues({
-    ModelFieldValue<NutrientGoals>? nutrientGoals,
+    ModelFieldValue<NutrientGoal>? nutrientGoal,
     ModelFieldValue<List<String>>? mealNames,
-    ModelFieldValue<int?>? themeModeIdx
+    ModelFieldValue<int?>? themeModeIdx,
+    ModelFieldValue<int?>? themeColorIdx,
+    ModelFieldValue<String>? name,
+    ModelFieldValue<List<String>>? friends,
+    ModelFieldValue<List<MyFood>>? food
   }) {
     return AccountData._internal(
       id: id,
-      nutrientGoals: nutrientGoals == null ? this.nutrientGoals : nutrientGoals.value,
+      nutrientGoal: nutrientGoal == null ? this.nutrientGoal : nutrientGoal.value,
       mealNames: mealNames == null ? this.mealNames : mealNames.value,
-      themeModeIdx: themeModeIdx == null ? this.themeModeIdx : themeModeIdx.value
+      themeModeIdx: themeModeIdx == null ? this.themeModeIdx : themeModeIdx.value,
+      themeColorIdx: themeColorIdx == null ? this.themeColorIdx : themeColorIdx.value,
+      name: name == null ? this.name : name.value,
+      friends: friends == null ? this.friends : friends.value,
+      food: food == null ? this.food : food.value
     );
   }
   
   AccountData.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _nutrientGoals = json['nutrientGoals']?['serializedData'] != null
-        ? NutrientGoals.fromJson(new Map<String, dynamic>.from(json['nutrientGoals']['serializedData']))
+      _nutrientGoal = json['nutrientGoal']?['serializedData'] != null
+        ? NutrientGoal.fromJson(new Map<String, dynamic>.from(json['nutrientGoal']['serializedData']))
         : null,
       _mealNames = json['mealNames']?.cast<String>(),
       _themeModeIdx = (json['themeModeIdx'] as num?)?.toInt(),
+      _themeColorIdx = (json['themeColorIdx'] as num?)?.toInt(),
+      _name = json['name'],
+      _friends = json['friends']?.cast<String>(),
+      _food = json['food'] is List
+        ? (json['food'] as List)
+          .where((e) => e?['serializedData'] != null)
+          .map((e) => MyFood.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
+        : null,
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'nutrientGoals': _nutrientGoals?.toJson(), 'mealNames': _mealNames, 'themeModeIdx': _themeModeIdx, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'nutrientGoal': _nutrientGoal?.toJson(), 'mealNames': _mealNames, 'themeModeIdx': _themeModeIdx, 'themeColorIdx': _themeColorIdx, 'name': _name, 'friends': _friends, 'food': _food?.map((MyFood? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
-    'nutrientGoals': _nutrientGoals,
+    'nutrientGoal': _nutrientGoal,
     'mealNames': _mealNames,
     'themeModeIdx': _themeModeIdx,
+    'themeColorIdx': _themeColorIdx,
+    'name': _name,
+    'friends': _friends,
+    'food': _food,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
 
   static final amplify_core.QueryModelIdentifier<AccountDataModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<AccountDataModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
-  static final NUTRIENTGOALS = amplify_core.QueryField(fieldName: "nutrientGoals");
+  static final NUTRIENTGOAL = amplify_core.QueryField(fieldName: "nutrientGoal");
   static final MEALNAMES = amplify_core.QueryField(fieldName: "mealNames");
   static final THEMEMODEIDX = amplify_core.QueryField(fieldName: "themeModeIdx");
+  static final THEMECOLORIDX = amplify_core.QueryField(fieldName: "themeColorIdx");
+  static final NAME = amplify_core.QueryField(fieldName: "name");
+  static final FRIENDS = amplify_core.QueryField(fieldName: "friends");
+  static final FOOD = amplify_core.QueryField(
+    fieldName: "food",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'MyFood'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "AccountData";
     modelSchemaDefinition.pluralName = "AccountData";
@@ -190,9 +261,9 @@ class AccountData extends amplify_core.Model {
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
-      fieldName: 'nutrientGoals',
+      fieldName: 'nutrientGoal',
       isRequired: true,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'NutrientGoals')
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'NutrientGoal')
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
@@ -206,6 +277,32 @@ class AccountData extends amplify_core.Model {
       key: AccountData.THEMEMODEIDX,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: AccountData.THEMECOLORIDX,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: AccountData.NAME,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: AccountData.FRIENDS,
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: AccountData.FOOD,
+      isRequired: true,
+      ofModelName: 'MyFood',
+      associatedKey: MyFood.ACCOUNTDATAFOODID
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

@@ -2,10 +2,5 @@
   "AppSyncApiName": "bitetrace",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthCognitoUserPoolId": {
-    "Fn::GetAtt": [
-      "authbitetraced2dea256",
-      "Outputs.UserPoolId"
-    ]
-  }
+  "AuthModeLastUpdated": "2023-09-14T14:46:05.344Z"
 }

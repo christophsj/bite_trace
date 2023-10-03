@@ -1,20 +1,25 @@
-import 'package:bite_trace/constants.dart';
-import 'package:bite_trace/models/AccountData.dart';
-import 'package:bite_trace/models/Food.dart';
-import 'package:bite_trace/models/Nutrients.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
+import 'package:bite_trace/utils/context_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Dashboard extends ConsumerWidget {
-  const Dashboard(this.data, this.foods, {super.key});
+class Dashboard extends StatelessWidget {
+  const Dashboard(
+    this.goals,
+    this.foods, {
+    super.key,
+    this.verticalPadding = 14,
+    this.elevation = 2,
+  });
 
-  final AccountData data;
+  final NutrientGoals goals;
   final List<Food> foods;
+  final double verticalPadding;
+  final double elevation;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final n = NutrientsExtension.combine(
       foods
           .map((e) => e.nutritionalContents.servingFactor(e.servingFactor))
@@ -22,19 +27,25 @@ class Dashboard extends ConsumerWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14.0),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Card(
-            elevation: 2,
+            elevation: elevation,
             child: Container(
               padding: const EdgeInsets.all(12.0),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(4),
+              //   border: Border.all(
+              //     color: Theme.of(context).colorScheme.outlineVariant,
+              //   ),
+              // ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ProgressIndicatorWithValue(
-                    goal: data.nutrientGoals.calories,
+                    goal: goals.calories,
                     value: n.calories,
                     size: 100,
                     color: Theme.of(context).colorScheme.primary,
@@ -44,7 +55,7 @@ class Dashboard extends ConsumerWidget {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -92,40 +103,44 @@ class Dashboard extends ConsumerWidget {
   // }
 
   Widget _buildMacroRow(Nutrients n) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        for (final macro in [
-          (
-            data.nutrientGoals.carbPerc,
-            n.carbohydrates,
-            CustomColors.carbColor,
-            4,
-            'C'
-          ),
-          (data.nutrientGoals.fatPerc, n.fat, CustomColors.fatColor, 9, 'F'),
-          (
-            data.nutrientGoals.proteinPerc,
-            n.protein,
-            CustomColors.proteinColor,
-            4,
-            'P'
-          ),
-        ])
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: ProgressIndicatorWithValue(
-              goal: macro.$1 / macro.$4 * data.nutrientGoals.calories / 100,
-              value: macro.$2,
-              color: macro.$3,
-              labelBelow: true,
-              strokeWidth: 5,
-              label: macro.$5,
-              size: 45,
-            ),
-          ),
-      ],
+    return Builder(
+      builder: (context) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            for (final macro in [
+              (
+                goals.carbPerc,
+                n.carbohydrates,
+                context.appColors.carbColor,
+                4,
+                'C'
+              ),
+              (goals.fatPerc, n.fat, context.appColors.fatColor, 9, 'F'),
+              (
+                goals.proteinPerc,
+                n.protein,
+                context.appColors.proteinColor,
+                4,
+                'P'
+              ),
+            ])
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ProgressIndicatorWithValue(
+                  goal: macro.$1 / macro.$4 * goals.calories / 100,
+                  value: macro.$2,
+                  color: macro.$3,
+                  labelBelow: true,
+                  strokeWidth: 5,
+                  label: macro.$5,
+                  size: 45,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -136,7 +151,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
     required this.goal,
     required this.value,
     this.size,
-    this.color,
+    required this.color,
     this.labelBelow = false,
     this.strokeWidth = 10,
     this.label,
@@ -145,7 +160,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
   final num goal;
   final num value;
   final double? size;
-  final Color? color;
+  final Color color;
   final bool labelBelow;
   final String? label;
   final double strokeWidth;
@@ -162,7 +177,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
           const SizedBox(
             height: 6,
           ),
-          _buildLabelBelow(context)
+          _buildLabelBelow(context, color),
         ],
       );
     }
@@ -173,13 +188,14 @@ class ProgressIndicatorWithValue extends StatelessWidget {
   }
 
   Widget _buildCircle({String? label}) {
+    final c = color;
     final circle = SizedBox(
       height: size,
       width: size,
       child: CircularProgressIndicator(
         value: progress,
         backgroundColor: Colors.grey[400],
-        color: color,
+        color: c,
         strokeWidth: strokeWidth,
       ),
     );
@@ -203,9 +219,11 @@ class ProgressIndicatorWithValue extends StatelessWidget {
       text: TextSpan(
         children: [
           TextSpan(
-            text: '$diff${labelBelow ? '' : '\n'}',
+            text: '${diff.abs()}${labelBelow ? '' : '\n'}',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
+              color: diff < 0
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
               fontSize: 17,
             ),
@@ -215,13 +233,13 @@ class ProgressIndicatorWithValue extends StatelessWidget {
             style: TextStyle(
               color: Theme.of(context).colorScheme.onBackground,
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLabelBelow(BuildContext context) {
+  Widget _buildLabelBelow(BuildContext context, Color color) {
     return RichText(
       text: TextSpan(
         style: TextStyle(
@@ -231,11 +249,11 @@ class ProgressIndicatorWithValue extends StatelessWidget {
         children: [
           TextSpan(
             text: '${value.toInt()}',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            style: TextStyle(color: color),
           ),
           TextSpan(
             text: ' / ${goal.toInt()}g',
-          )
+          ),
         ],
       ),
     );

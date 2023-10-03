@@ -22,9 +22,12 @@
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'AccountData.dart';
 import 'DiaryEntry.dart';
+import 'MyFood.dart';
 import 'Food.dart';
 import 'Meal.dart';
+import 'NutrientGoal.dart';
 import 'NutrientGoals.dart';
+import 'NutrientGoalsConfig.dart';
 import 'Nutrients.dart';
 import 'ServingSize.dart';
 
@@ -32,17 +35,20 @@ export 'AccountData.dart';
 export 'DiaryEntry.dart';
 export 'Food.dart';
 export 'Meal.dart';
+export 'MyFood.dart';
+export 'NutrientGoal.dart';
 export 'NutrientGoals.dart';
+export 'NutrientGoalsConfig.dart';
 export 'Nutrients.dart';
 export 'ServingSize.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "9b3e114ae963f21cbae8aaf57ba20793";
+  String version = "2a088d480d09c546ccb7b5d40452566a";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema, MyFood.schema];
   @override
-  List<amplify_core.ModelSchema> customTypeSchemas = [Food.schema, Meal.schema, NutrientGoals.schema, Nutrients.schema, ServingSize.schema];
+  List<amplify_core.ModelSchema> customTypeSchemas = [Food.schema, Meal.schema, NutrientGoal.schema, NutrientGoals.schema, NutrientGoalsConfig.schema, Nutrients.schema, ServingSize.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
@@ -53,6 +59,8 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return AccountData.classType;
       case "DiaryEntry":
         return DiaryEntry.classType;
+      case "MyFood":
+        return MyFood.classType;
       default:
         throw Exception("Failed to find model in model provider for model name: " + modelName);
     }

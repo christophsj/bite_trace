@@ -30,6 +30,7 @@ class NutrientGoals {
   final int? _fatPerc;
   final int? _proteinPerc;
   final Nutrients? _otherNutrients;
+  final amplify_core.TemporalDate? _setAt;
 
   int get calories {
     try {
@@ -87,15 +88,20 @@ class NutrientGoals {
     return _otherNutrients;
   }
   
-  const NutrientGoals._internal({required calories, required carbPerc, required fatPerc, required proteinPerc, otherNutrients}): _calories = calories, _carbPerc = carbPerc, _fatPerc = fatPerc, _proteinPerc = proteinPerc, _otherNutrients = otherNutrients;
+  amplify_core.TemporalDate? get setAt {
+    return _setAt;
+  }
   
-  factory NutrientGoals({required int calories, required int carbPerc, required int fatPerc, required int proteinPerc, Nutrients? otherNutrients}) {
+  const NutrientGoals._internal({required calories, required carbPerc, required fatPerc, required proteinPerc, otherNutrients, setAt}): _calories = calories, _carbPerc = carbPerc, _fatPerc = fatPerc, _proteinPerc = proteinPerc, _otherNutrients = otherNutrients, _setAt = setAt;
+  
+  factory NutrientGoals({required int calories, required int carbPerc, required int fatPerc, required int proteinPerc, Nutrients? otherNutrients, amplify_core.TemporalDate? setAt}) {
     return NutrientGoals._internal(
       calories: calories,
       carbPerc: carbPerc,
       fatPerc: fatPerc,
       proteinPerc: proteinPerc,
-      otherNutrients: otherNutrients);
+      otherNutrients: otherNutrients,
+      setAt: setAt);
   }
   
   bool equals(Object other) {
@@ -110,7 +116,8 @@ class NutrientGoals {
       _carbPerc == other._carbPerc &&
       _fatPerc == other._fatPerc &&
       _proteinPerc == other._proteinPerc &&
-      _otherNutrients == other._otherNutrients;
+      _otherNutrients == other._otherNutrients &&
+      _setAt == other._setAt;
   }
   
   @override
@@ -125,19 +132,21 @@ class NutrientGoals {
     buffer.write("carbPerc=" + (_carbPerc != null ? _carbPerc!.toString() : "null") + ", ");
     buffer.write("fatPerc=" + (_fatPerc != null ? _fatPerc!.toString() : "null") + ", ");
     buffer.write("proteinPerc=" + (_proteinPerc != null ? _proteinPerc!.toString() : "null") + ", ");
-    buffer.write("otherNutrients=" + (_otherNutrients != null ? _otherNutrients!.toString() : "null"));
+    buffer.write("otherNutrients=" + (_otherNutrients != null ? _otherNutrients!.toString() : "null") + ", ");
+    buffer.write("setAt=" + (_setAt != null ? _setAt!.format() : "null"));
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  NutrientGoals copyWith({int? calories, int? carbPerc, int? fatPerc, int? proteinPerc, Nutrients? otherNutrients}) {
+  NutrientGoals copyWith({int? calories, int? carbPerc, int? fatPerc, int? proteinPerc, Nutrients? otherNutrients, amplify_core.TemporalDate? setAt}) {
     return NutrientGoals._internal(
       calories: calories ?? this.calories,
       carbPerc: carbPerc ?? this.carbPerc,
       fatPerc: fatPerc ?? this.fatPerc,
       proteinPerc: proteinPerc ?? this.proteinPerc,
-      otherNutrients: otherNutrients ?? this.otherNutrients);
+      otherNutrients: otherNutrients ?? this.otherNutrients,
+      setAt: setAt ?? this.setAt);
   }
   
   NutrientGoals copyWithModelFieldValues({
@@ -145,14 +154,16 @@ class NutrientGoals {
     ModelFieldValue<int>? carbPerc,
     ModelFieldValue<int>? fatPerc,
     ModelFieldValue<int>? proteinPerc,
-    ModelFieldValue<Nutrients?>? otherNutrients
+    ModelFieldValue<Nutrients?>? otherNutrients,
+    ModelFieldValue<amplify_core.TemporalDate?>? setAt
   }) {
     return NutrientGoals._internal(
       calories: calories == null ? this.calories : calories.value,
       carbPerc: carbPerc == null ? this.carbPerc : carbPerc.value,
       fatPerc: fatPerc == null ? this.fatPerc : fatPerc.value,
       proteinPerc: proteinPerc == null ? this.proteinPerc : proteinPerc.value,
-      otherNutrients: otherNutrients == null ? this.otherNutrients : otherNutrients.value
+      otherNutrients: otherNutrients == null ? this.otherNutrients : otherNutrients.value,
+      setAt: setAt == null ? this.setAt : setAt.value
     );
   }
   
@@ -163,10 +174,11 @@ class NutrientGoals {
       _proteinPerc = (json['proteinPerc'] as num?)?.toInt(),
       _otherNutrients = json['otherNutrients']?['serializedData'] != null
         ? Nutrients.fromJson(new Map<String, dynamic>.from(json['otherNutrients']['serializedData']))
-        : null;
+        : null,
+      _setAt = json['setAt'] != null ? amplify_core.TemporalDate.fromString(json['setAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'calories': _calories, 'carbPerc': _carbPerc, 'fatPerc': _fatPerc, 'proteinPerc': _proteinPerc, 'otherNutrients': _otherNutrients?.toJson()
+    'calories': _calories, 'carbPerc': _carbPerc, 'fatPerc': _fatPerc, 'proteinPerc': _proteinPerc, 'otherNutrients': _otherNutrients?.toJson(), 'setAt': _setAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -174,7 +186,8 @@ class NutrientGoals {
     'carbPerc': _carbPerc,
     'fatPerc': _fatPerc,
     'proteinPerc': _proteinPerc,
-    'otherNutrients': _otherNutrients
+    'otherNutrients': _otherNutrients,
+    'setAt': _setAt
   };
 
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
@@ -209,6 +222,12 @@ class NutrientGoals {
       fieldName: 'otherNutrients',
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'Nutrients')
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'setAt',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.date)
     ));
   });
 }

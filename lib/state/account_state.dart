@@ -2,6 +2,7 @@ import 'package:bite_trace/models/ModelProvider.dart';
 
 sealed class AccountState {
   const factory AccountState.updating() = AccountStateInitializing;
+  const factory AccountState.loggedOut() = AccountStateLoggedOut;
   const factory AccountState.ready(AccountData data) = AccountStateReady;
   const factory AccountState.error(String? errorText) = AccountStateError;
 
@@ -10,6 +11,15 @@ sealed class AccountState {
 
 class AccountStateInitializing implements AccountState {
   const AccountStateInitializing();
+
+  @override
+  AccountData? getData() {
+    return null;
+  }
+}
+
+class AccountStateLoggedOut implements AccountState {
+  const AccountStateLoggedOut();
 
   @override
   AccountData? getData() {

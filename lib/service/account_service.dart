@@ -1,5 +1,4 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/state/account_state.dart';
@@ -11,12 +10,22 @@ final accountStateProvider =
 });
 
 class AccountService extends StateNotifier<AccountState> {
-  AccountService({required this.ref}) : super(const AccountState.updating());
+  AccountService({required this.ref})
+      : initialAccountData = ref.read(accountDataProvider.future),
+        super(const AccountState.updating());
 
+  final Future<AccountData?> initialAccountData;
   final Ref ref;
 
   Future<AccountData?> createAccount(AccountData accountData) =>
       updateAccount(accountData);
+
+  Future<void> updateGoals(NutrientGoal nutrientGoal) async {
+    final accountData = state.getData()!.copyWith(
+          nutrientGoal: nutrientGoal,
+        );
+    await updateAccount(accountData);
+  }
 
   Future<AccountData?> updateAccount(AccountData accountData) async {
     try {
@@ -31,10 +40,14 @@ class AccountService extends StateNotifier<AccountState> {
     }
   }
 
-  void _handleState(AccountData response) {
-    state = AccountState.ready(
-      response,
-    );
+  void _handleState(AccountData? response) {
+    if (response == null) {
+      state = const AccountState.loggedOut();
+    } else {
+      state = AccountState.ready(
+        response,
+      );
+    }
   }
 
   Future<AccountData?> getAccount(String uid) async {
@@ -43,12 +56,13 @@ class AccountService extends StateNotifier<AccountState> {
         AccountData.classType,
         where: AccountData.ID.eq(uid),
       );
-      if (result.isEmpty) {
-        return null;
+      final updateState =
+          (await ref.read(authServiceProvider).getCurrentUser())?.userId == uid;
+      final accountData = result.isEmpty ? null : result.first;
+      if (updateState) {
+        _handleState(accountData);
       }
-      final response = result.first;
-      _handleState(response);
-      return response;
+      return accountData;
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
       state = AccountState.error(e.toString());

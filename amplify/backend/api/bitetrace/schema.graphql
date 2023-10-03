@@ -1,13 +1,36 @@
 type DiaryEntry @model @auth(rules: [{ allow: public }]) {
   day: AWSDate!
   meals: [Meal!]
+  goals: NutrientGoals
   id: ID! @primaryKey(sortKeyFields: ["day"])
 }
+
 type AccountData @model @auth(rules: [{ allow: public }]) {
   id: ID! @primaryKey
-  nutrientGoals: NutrientGoals!
+  nutrientGoal: NutrientGoal!
   mealNames: [String!]
   themeModeIdx: Int
+  themeColorIdx: Int
+  name: String!
+  friends: [String!]
+  food: [MyFood!] @hasMany
+}
+
+type MyFood @model @auth(rules: [{ allow: public }]) {
+  food: Food!
+}
+
+type NutrientGoal {
+  isDaily: Boolean!
+  daily: NutrientGoals!
+  weekly: [NutrientGoalsConfig!]!
+  setAt: AWSDate
+}
+
+type NutrientGoalsConfig {
+  name: String!
+  days: [Int!]
+  goals: NutrientGoals!
 }
 
 type NutrientGoals {
@@ -16,6 +39,7 @@ type NutrientGoals {
   fatPerc: Int!
   proteinPerc: Int!
   otherNutrients: Nutrients
+  setAt: AWSDate
 }
 
 type Meal {

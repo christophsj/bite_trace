@@ -29,25 +29,32 @@ class DiaryEntryState {
 
 class DiaryState {
   DiaryState({
-    Map<DateTime, DiaryEntryState>? entries,
+    Map<String, Map<DateTime, DiaryEntryState>>? entries,
   }) : _entries = entries ?? {};
 
-  final Map<DateTime, DiaryEntryState> _entries;
+  final Map<String, Map<DateTime, DiaryEntryState>> _entries;
 
-  DiaryEntryState? getEntry(DateTime date) {
-    return _entries[date.atMidday()];
+  DiaryEntryState? getEntry(String userId, DateTime date) {
+    return _entries[userId]?[date.atMidday()];
   }
 
-  void setEntry(DateTime date, DiaryEntryState entry) {
-    _entries[date.atMidday()] = entry;
+  void setEntry(String userId, DateTime date, DiaryEntryState entry) {
+    if (_entries[userId] == null) {
+      _entries[userId] = {};
+    }
+    _entries[userId]![date.atMidday()] = entry;
   }
 
   DiaryState copyWithEntry({
+    required String userId,
     required DateTime dateTime,
     required DiaryEntryState entry,
   }) {
     return DiaryState(
-      entries: {..._entries, dateTime.atMidday(): entry},
+      entries: {
+        ..._entries,
+        userId: {..._entries[userId] ?? {}, dateTime.atMidday(): entry},
+      },
     );
   }
 }

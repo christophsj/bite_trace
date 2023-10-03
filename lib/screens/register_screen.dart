@@ -1,13 +1,10 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:bite_trace/constants.dart';
-import 'package:bite_trace/models/AccountData.dart';
-import 'package:bite_trace/models/NutrientGoals.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/routing/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-@RoutePage()
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -99,21 +96,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   validator: macroValidator,
                   controller: carbController,
                   decoration:
-                      const InputDecoration(labelText: 'Carbohydrate Goal'),
+                      const InputDecoration(labelText: 'Carbohydrate Goal (%)'),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
                   validator: macroValidator,
                   controller: fatController,
-                  decoration: const InputDecoration(labelText: 'Fat Goal'),
+                  decoration: const InputDecoration(labelText: 'Fat Goal (%)'),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: proteinController,
                   validator: macroValidator,
-                  decoration: const InputDecoration(labelText: 'Protein Goal'),
+                  decoration:
+                      const InputDecoration(labelText: 'Protein Goal (%)'),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 20),
@@ -141,7 +139,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           Icons.error_outline,
                           color: color,
                           size: 20,
-                        )
+                        ),
                     ],
                   ),
                 ),
@@ -159,11 +157,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
                             final data = AccountData(
                               id: (await authService.getCurrentUser())!.userId,
-                              nutrientGoals: n,
+                              nutrientGoal: NutrientGoal(
+                                daily: n,
+                                isDaily: true,
+                                weekly: [
+                                  NutrientGoalsConfig(
+                                    name: 'Default',
+                                    goals: n,
+                                    days: [0, 1, 2, 3, 4, 5, 6],
+                                  ),
+                                ],
+                                setAt: TemporalDate.now(),
+                              ),
                               mealNames: Constants.defaultMealNames,
+                              friends: [],
+                              name: (await authService.getCurrentUser())!
+                                  .username,
                             );
                             await accountService.createAccount(data);
-                            ref.read(routerProvider).push(const HomeRoute());
                           }
                         },
                   child: const Text('Finish'),

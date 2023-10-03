@@ -5,31 +5,36 @@ import 'package:flutter/material.dart';
 class FoodListTile extends StatelessWidget {
   const FoodListTile({
     super.key,
-    required this.color,
     required this.n,
     required this.onTap,
     required this.name,
     required this.onTapTrailing,
     required this.trailingIcon,
     this.subtitle,
+    this.threeLine = false,
+    this.brandName,
   });
 
   final String name;
-  final Color color;
   final Nutrients n;
   final void Function() onTap;
   final void Function() onTapTrailing;
   final Widget trailingIcon;
   final String? subtitle;
+  final bool threeLine;
+  final String? brandName;
 
   @override
   Widget build(BuildContext context) {
+    final Color color = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: ListTile(
-        shape: BeveledRectangleBorder(
+        dense: true,
+        isThreeLine: threeLine,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
-          side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         onTap: onTap,
         leading: Column(
@@ -52,25 +57,28 @@ class FoodListTile extends StatelessWidget {
         ),
         title: Text(
           name,
+          maxLines: 1,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            fontSize: 17,
-            color: Theme.of(context).colorScheme.primary,
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: subtitle != null
-            ? Text(
-                '$subtitle',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.secondary,
+            ? _withBrandName(
+                context,
+                Text(
+                  '$subtitle',
+                  maxLines: 1,
+                  style: subtitleStyle(context),
                 ),
               )
-            : Text(
-                '${n.carbohydrates.toInt()}C ${n.fat.toInt()}F ${n.protein.toInt()}P',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.secondary,
+            : _withBrandName(
+                context,
+                Text(
+                  '${n.carbohydrates.toInt()}C ${n.fat.toInt()}F ${n.protein.toInt()}P',
+                  maxLines: 1,
+                  style: subtitleStyle(context),
                 ),
               ),
         trailing: AnimatedElevatedButton(
@@ -81,14 +89,43 @@ class FoodListTile extends StatelessWidget {
             minimumSize: const Size(34, 34),
             padding: EdgeInsets.zero,
           ),
+          showCheckmark: false,
           icon: IconTheme(
             data: IconTheme.of(context).copyWith(
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             child: trailingIcon,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _withBrandName(BuildContext context, Widget text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (brandName != null)
+          Flexible(
+            flex: 2,
+            child: Text(
+              '$brandName - ',
+              maxLines: 1,
+              style: subtitleStyle(context),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        Flexible(
+          child: text,
+        ),
+      ],
+    );
+  }
+
+  TextStyle subtitleStyle(BuildContext context) {
+    return TextStyle(
+      fontSize: 13,
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
     );
   }
 }

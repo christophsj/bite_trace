@@ -5,8 +5,10 @@ import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
+import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
+import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ import 'package:intl/intl.dart';
 @RoutePage()
 class MealDetailsScreen extends ConsumerWidget {
   MealDetailsScreen({
+    required this.userId,
     required this.log,
     super.key,
     required this.meal,
@@ -23,6 +26,7 @@ class MealDetailsScreen extends ConsumerWidget {
 
   final DiaryEntry log;
   final Meal meal;
+  final String userId;
 
   final TextEditingController amount = TextEditingController(text: '1');
 
@@ -30,7 +34,7 @@ class MealDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meal = ref
         .watch(diaryProvider)
-        .getEntry(log.day.getDateTime())!
+        .getEntry(userId, log.day.getDateTime())!
         .entry!
         .meals![this.meal.index];
 
@@ -53,12 +57,21 @@ class MealDetailsScreen extends ConsumerWidget {
                 initialMealIndex: meal.index,
               ),
             ),
-            icon: const Icon(Icons.add),
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           IconButton(
-            onPressed: () => _openCopyMealPopup(context),
-            icon: const Icon(Icons.copy),
-          )
+            onPressed: () async => _openCopyMealPopup(
+              context,
+              (await ref.read(authServiceProvider).getCurrentUser())!.userId,
+            ),
+            icon: Icon(
+              Icons.copy,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
       body: Padding(
@@ -68,6 +81,17 @@ class MealDetailsScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: MacrosDisplay(
+                    nutrients: n,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: Column(
@@ -94,17 +118,6 @@ class MealDetailsScreen extends ConsumerWidget {
                         },
                       ),
                   ],
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: MacrosDisplay(
-                    nutrients: n,
-                  ),
                 ),
               ),
               const SizedBox(
@@ -145,13 +158,11 @@ class MealDetailsScreen extends ConsumerWidget {
     return '${item}g';
   }
 
-  void _openCopyMealPopup(BuildContext context) {
+  void _openCopyMealPopup(BuildContext context, String userId) {
     showDialog(
       context: context,
-      builder: (c) => CopyMealDialog(
-        meal,
-        fromTime: log.day.getDateTime(),
-      ),
+      builder: (c) =>
+          CopyMealDialog(meal, fromTime: log.day.getDateTime(), userId: userId),
     );
   }
 }
@@ -161,10 +172,12 @@ class CopyMealDialog extends ConsumerStatefulWidget {
     this.source, {
     super.key,
     required this.fromTime,
+    required this.userId,
   });
 
   final DateTime fromTime;
   final Meal source;
+  final String userId;
 
   @override
   ConsumerState<CopyMealDialog> createState() => _CopyMealDialogState();
@@ -186,7 +199,8 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
       selectedDate = now;
     }
     ctrl = TextEditingController(text: DateFormat.yMd().format(selectedDate));
-    selectedLog = ref.read(diaryServiceProvider).getLog(selectedDate);
+    selectedLog =
+        ref.read(diaryServiceProvider).getLog(selectedDate, uid: widget.userId);
   }
 
   @override
@@ -202,20 +216,22 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  // show datepicker
+                  final range = ref.read(dateRangeProvider)!;
                   final picked = await showDatePicker(
                     context: context,
                     initialDate: selectedDate,
-                    firstDate:
-                        DateTime.now().subtract(const Duration(days: 100)),
-                    lastDate: DateTime.now().add(const Duration(days: 30)),
+                    firstDate: range[0],
+                    lastDate: range[1],
                   );
+
+                  final uid = widget.userId;
                   if (picked != null) {
                     setState(() {
                       selectedDate = picked;
                       selectedMeal = null;
-                      selectedLog =
-                          ref.read(diaryServiceProvider).getLog(selectedDate);
+                      selectedLog = ref
+                          .read(diaryServiceProvider)
+                          .getLog(selectedDate, uid: uid);
                     });
                     ctrl.text = DateFormat.yMd().format(selectedDate);
                   }
@@ -303,7 +319,7 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -326,12 +342,13 @@ class FoodEntry extends StatelessWidget {
     final serving = food.servingSize;
     return FoodListTile(
       name: food.description,
-      subtitle: '${food.chosenServingAmount}x ${serving.value} ${serving.unit}',
-      color: Theme.of(context).colorScheme.secondary,
+      subtitle:
+          '${(food.chosenServingAmount * serving.value).toStringWithoutTrailingZeros()} ${serving.unit}',
       n: food.nutritionalContents.servingFactor(food.servingFactor),
       onTap: onTap,
       trailingIcon: const Icon(Icons.delete),
       onTapTrailing: onTapTrailing,
+      brandName: food.brandName,
     );
   }
 }

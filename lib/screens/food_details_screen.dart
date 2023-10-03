@@ -1,8 +1,11 @@
 import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
+import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/utils/food_extension.dart';
+import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
@@ -55,8 +58,9 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
       end: amountValue * multi,
     ).animate(_animController);
 
-    amount = TextEditingController(text: amountValue.toString())
-      ..addListener(updateAmountValue);
+    amount = TextEditingController(
+      text: amountValue.toStringWithoutTrailingZeros(),
+    )..addListener(updateAmountValue);
     _animController.forward();
     super.initState();
   }
@@ -97,10 +101,12 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.food.description),
+        title: Text(
+          '${widget.food.description} ${widget.food.verified ? '✅' : ''}',
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: SingleChildScrollView(
           child: AnimatedBuilder(
             animation: _animController,
@@ -113,13 +119,18 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Card(child: MacrosDisplay(nutrients: nc)),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: MacrosDisplay(nutrients: nc),
+                    ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       child: Column(
                         children: [
                           MicroNutrientsDisplay(
@@ -136,9 +147,15 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                                   entry.key,
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                Text(
-                                  entry.value ?? 'N/A',
-                                  style: const TextStyle(fontSize: 16),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    entry.value ?? 'N/A',
+                                    style: const TextStyle(fontSize: 16),
+                                    textAlign: TextAlign.right,
+                                  ),
                                 ),
                               ],
                             ),
@@ -155,7 +172,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
             },
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Column(
                   children: [
                     Row(
@@ -263,7 +280,9 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
                           ),
                           AnimatedElevatedButton(
                             onPressed: onSubmit,
-                            icon: const Icon(Icons.add),
+                            icon: Icon(
+                              widget.foodIdx == null ? Icons.add : Icons.edit,
+                            ),
                             label: widget.foodIdx == null ? 'LOG' : 'EDIT',
                           ),
                         ],
@@ -299,6 +318,13 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
           .read(snackbarServiceProvider)
           .showBasic('Logged ${widget.food.description}');
       ref.read(routerProvider).pop<DiaryEntry?>(res);
+      ref.read(routerProvider).popUntil((route) {
+        return [
+          HomeRoute.name,
+          MealDetailsRoute.name,
+          FoodSearchRoute.name,
+        ].contains(route.settings.name);
+      });
     }
   }
 
@@ -322,7 +348,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
         widget.food.copyWith(
           chosenServingSize: selectedServingIndex,
           chosenServingAmount: amt,
-        )
+        ),
       ],
     );
   }

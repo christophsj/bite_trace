@@ -6,22 +6,27 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/amplifyconfiguration.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _configureAmplify();
+  HomeWidget.setAppGroupId('HOME_WIDGET');
   runApp(const ProviderScope(child: BiteTraceApp()));
 }
 
 Future<void> _configureAmplify() async {
   try {
-    final api = AmplifyAPI();
     final auth = AmplifyAuthCognito();
-    final datastore = AmplifyDataStore(modelProvider: ModelProvider.instance);
+    final datastore = AmplifyDataStore(
+      modelProvider: ModelProvider.instance,
+    );
+    final api = AmplifyAPI(
+      modelProvider: ModelProvider.instance,
+    );
 
     await Amplify.addPlugins([api, auth, datastore]);
     await Amplify.configure(amplifyconfig);
@@ -35,6 +40,7 @@ class BiteTraceApp extends ConsumerWidget {
   const BiteTraceApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(homeWidgetServiceProvider);
     return Authenticator(
       authenticatorBuilder: (context, state) {
         switch (state.currentStep) {
@@ -92,8 +98,8 @@ class BiteTraceApp extends ConsumerWidget {
         title: 'Bite Trace',
         builder: Authenticator.builder(),
         scaffoldMessengerKey: ref.read(snackbarServiceProvider).key,
-        theme: FlexThemeData.light(scheme: FlexScheme.aquaBlue),
-        darkTheme: FlexThemeData.dark(scheme: FlexScheme.aquaBlue),
+        theme: ref.watch(lightThemeProvider),
+        darkTheme: ref.watch(darkThemeProvider),
         themeMode: ref.watch(themeModeProvider),
         scrollBehavior: TouchAndMouseScroll(),
       ),

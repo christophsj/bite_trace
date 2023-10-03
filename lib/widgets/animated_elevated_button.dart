@@ -10,6 +10,7 @@ class AnimatedElevatedButton extends StatefulWidget {
     this.label,
     this.checkColor,
     this.style,
+    this.showCheckmark = true,
   });
 
   final FutureOr<void> Function()? onPressed;
@@ -17,6 +18,7 @@ class AnimatedElevatedButton extends StatefulWidget {
   final String? label;
   final Color? checkColor;
   final ButtonStyle? style;
+  final bool showCheckmark;
 
   @override
   State<AnimatedElevatedButton> createState() => _AnimatedElevatedButtonState();
@@ -107,11 +109,14 @@ class _AnimatedElevatedButtonState extends State<AnimatedElevatedButton> {
               child: CircularProgressIndicator(),
             ),
           ),
-        ButtonState.done => Icon(
-            Icons.check,
-            key: const Key('2'),
-            color: widget.checkColor ?? Theme.of(context).colorScheme.onPrimary,
-          ),
+        ButtonState.done => widget.showCheckmark
+            ? Icon(
+                Icons.check,
+                key: const Key('2'),
+                color: widget.checkColor ??
+                    Theme.of(context).colorScheme.onPrimary,
+              )
+            : Container(key: const Key('0'), child: child),
       },
     );
   }

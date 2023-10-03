@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
-import 'package:bite_trace/widgets/animated_elevated_button.dart';
+import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -111,8 +110,11 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
   Future<void> _fetchRecentPage(int pageKey) async {
     try {
       final foodService = ref.read(diaryServiceProvider);
-      final newItems =
-          await foodService.getRecentFoods(filter: query.text, page: pageKey);
+      final newItems = await foodService.getRecentFoods(
+        userId: log.id,
+        filter: query.text,
+        page: pageKey,
+      );
 
       if (newItems.isEmpty) {
         _recentPagingController.appendLastPage(newItems);
@@ -135,6 +137,19 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
               pinned: true,
               titleSpacing: 1,
               toolbarHeight: 60,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    context.pushRoute(
+                      BarcodeScanRoute(
+                        log: log,
+                        selectedMealIndex: selectedMealIndex,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.camera_alt),
+                ),
+              ],
               title: TextField(
                 autofocus: true,
                 controller: query,
@@ -155,7 +170,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 tabs: [
                   ('All', Icons.food_bank),
                   ('Recent', Icons.history),
-                  ('Favorite', Icons.favorite)
+                  ('Favorite', Icons.favorite),
                 ]
                     .map(
                       (e) => Tab(
@@ -208,131 +223,37 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
             child: Text('No items found.'),
           );
         },
-        itemBuilder: (context, item, index) {
-          final n = item.nutritionalContents;
-          final multi = item.servingSizes[0].nutritionMultiplier;
-          final unit =
-              '${item.servingSizes[0].value} ${item.servingSizes[0].unit}';
-          final cals =
-              '${(item.nutritionalContents.calories * multi).toInt()} calories';
-          return Padding(
-            padding:
-                index == 0 ? EdgeInsets.zero : const EdgeInsets.only(top: 6.0),
-            child: ListTile(
-              textColor: Theme.of(context).colorScheme.onSurface,
-              shape: RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Theme.of(context).primaryColor,
+        itemBuilder: (context, food, index) {
+          return FoodListTile(
+            brandName: food.brandName,
+            name: '${food.description} ${food.verified ? '✅' : ''}',
+            n: food.nutritionalContents,
+            onTap: () async {
+              final result = await AutoRouter.of(context).push<DiaryEntry?>(
+                FoodDetailsRoute(
+                  initialMealIndex: selectedMealIndex,
+                  log: log,
+                  food: food,
                 ),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              tileColor: Theme.of(context).colorScheme.surface,
-              onTap: () async {
-                final result = await AutoRouter.of(context).push<DiaryEntry?>(
-                  FoodDetailsRoute(
-                    initialMealIndex: selectedMealIndex,
-                    log: log,
-                    food: item,
-                  ),
-                );
-                if (result != null) {
-                  log = result;
-                  query.clear();
-                }
-              },
-              title: Text(
-                '${item.description} ${item.verified ? '✅' : ''}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              subtitle: RichText(
-                maxLines: 1,
-                text: TextSpan(
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: unit,
-                    ),
-                    TextSpan(text: ' - $cals'),
-                    TextSpan(
-                      text: ' ${(n.carbohydrates * multi).toInt()}c ',
-                      style: const TextStyle(
-                        color: CustomColors.carbColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '${(n.fat * multi).toInt()}f ',
-                      style: const TextStyle(
-                        color: CustomColors.fatColor,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '${(n.protein * multi).toInt()}p ',
-                      style: const TextStyle(
-                        color: CustomColors.proteinColor,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              trailing: AnimatedElevatedButton(
-                onPressed: () async {
-                  final selectedMeal = log.meals![selectedMealIndex];
-                  log = await ref
-                      .read(diaryServiceProvider)
-                      .addFoodsToMeal(log, selectedMeal, [item]);
-                  ref
-                      .read(snackbarServiceProvider)
-                      .showBasic('Added ${item.description}');
-                },
-                icon: const Icon(Icons.add),
-                checkColor: Colors.green,
-              ),
-            ),
+              );
+              if (result != null) {
+                log = result;
+                query.clear();
+              }
+            },
+            trailingIcon: const Icon(Icons.add),
+            onTapTrailing: () async {
+              final selectedMeal = log.meals![selectedMealIndex];
+              log = await ref
+                  .read(diaryServiceProvider)
+                  .addFoodsToMeal(log, selectedMeal, [food]);
+              ref
+                  .read(snackbarServiceProvider)
+                  .showBasic('Added ${food.description}');
+            },
           );
         },
       ),
     );
   }
-
-  // Widget _buildDropdown() {
-  //   return Builder(
-  //     builder: (context) {
-  //       final theme = Theme.of(context);
-  //       return DropdownButton(
-  //         dropdownColor: theme.brightness == Brightness.light
-  //             ? theme.colorScheme.primary
-  //             : theme.colorScheme.background,
-  //         underline: Container(),
-  //         value: selectedMealIndex,
-  //         items: widget.log.meals!
-  //             .map(
-  //               (e) => DropdownMenuItem(
-  //                 value: e.index,
-  //                 child: Text(
-  //                   e.name,
-  //                   style: TextStyle(
-  //                     fontWeight: FontWeight.w400,
-  //                     fontSize: 18,
-  //                     color: theme.brightness == Brightness.light
-  //                         ? theme.colorScheme.onPrimary
-  //                         : theme.colorScheme.onSurface,
-  //                   ),
-  //                 ),
-  //               ),
-  //             )
-  //             .toList(),
-  //         onChanged: (i) {
-  //           setState(() {
-  //             if (i != null) selectedMealIndex = i;
-  //           });
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }
