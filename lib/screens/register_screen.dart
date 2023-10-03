@@ -96,21 +96,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   validator: macroValidator,
                   controller: carbController,
                   decoration:
-                      const InputDecoration(labelText: 'Carbohydrate Goal'),
+                      const InputDecoration(labelText: 'Carbohydrate Goal (%)'),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
                   validator: macroValidator,
                   controller: fatController,
-                  decoration: const InputDecoration(labelText: 'Fat Goal'),
+                  decoration: const InputDecoration(labelText: 'Fat Goal (%)'),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
                   controller: proteinController,
                   validator: macroValidator,
-                  decoration: const InputDecoration(labelText: 'Protein Goal'),
+                  decoration:
+                      const InputDecoration(labelText: 'Protein Goal (%)'),
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 20),
