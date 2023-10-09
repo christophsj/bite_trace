@@ -18,9 +18,9 @@ import 'package:bite_trace/screens/home/account_screen.dart' as _i1;
 import 'package:bite_trace/screens/home/diary_screen.dart' as _i3;
 import 'package:bite_trace/screens/home/exercise_screen.dart' as _i4;
 import 'package:bite_trace/screens/home/friends_screen.dart' as _i8;
+import 'package:bite_trace/screens/home/measurements_screen.dart' as _i11;
 import 'package:bite_trace/screens/home_screen.dart' as _i9;
 import 'package:bite_trace/screens/meal_details_screen.dart' as _i10;
-import 'package:bite_trace/screens/register_screen.dart' as _i11;
 import 'package:flutter/material.dart' as _i14;
 
 abstract class $AppRouter extends _i12.RootStackRouter {
@@ -115,10 +115,10 @@ abstract class $AppRouter extends _i12.RootStackRouter {
         ),
       );
     },
-    RegisterRoute.name: (routeData) {
+    MeasurementsRoute.name: (routeData) {
       return _i12.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i11.RegisterScreen(),
+        child: const _i11.MeasurementsScreen(),
       );
     },
   };
@@ -420,15 +420,15 @@ class MealDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i11.RegisterScreen]
-class RegisterRoute extends _i12.PageRouteInfo<void> {
-  const RegisterRoute({List<_i12.PageRouteInfo>? children})
+/// [_i11.MeasurementsScreen]
+class MeasurementsRoute extends _i12.PageRouteInfo<void> {
+  const MeasurementsRoute({List<_i12.PageRouteInfo>? children})
       : super(
-          RegisterRoute.name,
+          MeasurementsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'RegisterRoute';
+  static const String name = 'MeasurementsRoute';
 
   static const _i12.PageInfo<void> page = _i12.PageInfo<void>(name);
 }

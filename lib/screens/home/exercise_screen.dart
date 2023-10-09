@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pedometer/pedometer.dart';
@@ -7,19 +6,6 @@ import 'package:pedometer/pedometer.dart';
 @RoutePage()
 class ExerciseScreen extends ConsumerStatefulWidget {
   const ExerciseScreen({super.key});
-
-  static const futureDays = 10;
-
-  static DateTime idxToDate(int index) {
-    return DateTime.now()
-        .atMidday()
-        .subtract(Duration(days: index - futureDays))
-        .atMidday();
-  }
-
-  static int dateToIdx(DateTime next) {
-    return DateTime.now().atMidday().difference(next).inDays + futureDays;
-  }
 
   @override
   ConsumerState<ExerciseScreen> createState() => _DiaryScreenState();

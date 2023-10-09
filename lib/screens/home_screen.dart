@@ -4,6 +4,7 @@ import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/screens/register_screen.dart';
 import 'package:bite_trace/service/account_service.dart';
+import 'package:bite_trace/service/datastore_service.dart';
 import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/error_view.dart';
@@ -16,10 +17,6 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return x(ref);
-  }
-
-  Widget x(WidgetRef ref) {
     final accountState = ref.watch(accountStateProvider);
 
     return switch (accountState) {
@@ -38,7 +35,8 @@ class HomeScreen extends ConsumerWidget {
         ),
       (final AccountStateError s) => ErrorView(error: s),
       (final AccountStateReady _) => _buildLoggedInContent(ref),
-      (final AccountStateLoggedOut _) => const RegisterScreen()
+      (final AccountStateLoggedOut _) =>
+        _withStatusOverlay(const RegisterScreen(), ref, context)
     };
   }
 
@@ -46,6 +44,7 @@ class HomeScreen extends ConsumerWidget {
     return AutoTabsRouter(
       routes: const [
         DiaryRoute(),
+        MeasurementsRoute(),
         FriendsRoute(),
         AccountRoute(),
       ],
@@ -56,26 +55,31 @@ class HomeScreen extends ConsumerWidget {
       builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(
-          body: child,
-          appBar: [
-            DiaryRoute.name,
-          ].contains(AutoRouter.of(context).childControllers[0].current.name)
-              ? PreferredSize(
-                  preferredSize: const Size.fromHeight(
-                    130,
-                  ),
-                  child: SafeArea(
-                    child: DiaryCalendar(),
-                  ),
+          body: _withStatusOverlay(child, ref, context),
+          appBar: MeasurementsRoute.name ==
+                  AutoRouter.of(context).childControllers[0].current.name
+              ? null
+              : [
+                  DiaryRoute.name,
+                ].contains(
+                  AutoRouter.of(context).childControllers[0].current.name,
                 )
-              : AppBar(
-                  title: FutureBuilder<AuthUser?>(
-                    future: ref.read(userProvider.future),
-                    builder: (context, snapshot) {
-                      return Text('Hi ${snapshot.data?.username ?? ''}');
-                    },
-                  ),
-                ),
+                  ? PreferredSize(
+                      preferredSize: const Size.fromHeight(
+                        130,
+                      ),
+                      child: SafeArea(
+                        child: DiaryCalendar(),
+                      ),
+                    )
+                  : AppBar(
+                      title: FutureBuilder<AuthUser?>(
+                        future: ref.read(userProvider.future),
+                        builder: (context, snapshot) {
+                          return Text('Hi ${snapshot.data?.username ?? ''}');
+                        },
+                      ),
+                    ),
           bottomNavigationBar: BottomNavigationBar(
             showSelectedLabels: false,
             showUnselectedLabels: false,
@@ -90,6 +94,10 @@ class HomeScreen extends ConsumerWidget {
                 label: 'Diary',
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.monitor_weight_outlined),
+                label: 'Diary',
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.people),
                 label: 'Friends',
               ),
@@ -99,6 +107,78 @@ class HomeScreen extends ConsumerWidget {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _withStatusOverlay(Widget child, WidgetRef ref, BuildContext context) {
+    return Builder(
+      builder: (context) {
+        final datastore = ref.watch(datastoreStateProvider);
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            child,
+            if (!datastore.networkIsUp ||
+                !datastore.ready && datastore.networkIsUp)
+              Positioned(
+                bottom: 25,
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(6.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      if (!datastore.networkIsUp) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.cancel,
+                              color: Colors.red,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'network',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Theme.of(context).colorScheme.background,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      if (!datastore.ready && datastore.networkIsUp) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.sync,
+                              color: Colors.yellow,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'synching...',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Theme.of(context).colorScheme.background,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );

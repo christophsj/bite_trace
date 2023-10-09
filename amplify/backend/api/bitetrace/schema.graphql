@@ -16,6 +16,25 @@ type AccountData @model @auth(rules: [{ allow: public }]) {
   food: [MyFood!] @hasMany
 }
 
+type Measurements @model @auth(rules: [{ allow: public }]) {
+  id: ID! @primaryKey
+  weight: [MeasurementEntry!]
+  waist: [MeasurementEntry!]
+  chest: [MeasurementEntry!]
+  thighs: [MeasurementEntry!]
+  custom: [CustomMeasurementEntry!]
+}
+
+type CustomMeasurementEntry {
+  name: String!
+  entry: MeasurementEntry!
+}
+
+type MeasurementEntry {
+  date: AWSDate!
+  value: Float!
+}
+
 type MyFood @model @auth(rules: [{ allow: public }]) {
   food: Food!
 }

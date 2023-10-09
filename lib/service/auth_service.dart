@@ -25,6 +25,7 @@ class AuthService {
   }
 
   Future<void> signOut() {
+    Amplify.DataStore.clear();
     return Amplify.Auth.signOut();
   }
 }

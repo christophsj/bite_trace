@@ -50,6 +50,15 @@ class AccountService extends StateNotifier<AccountState> {
     }
   }
 
+  Future<AccountData?> getAuthAccount() async {
+    final user = await ref.read(authServiceProvider).getCurrentUser();
+    final uid = user?.userId;
+    if (uid == null) {
+      return null;
+    }
+    return getAccount(uid);
+  }
+
   Future<AccountData?> getAccount(String uid) async {
     try {
       final result = await Amplify.DataStore.query(

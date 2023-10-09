@@ -129,61 +129,61 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              titleSpacing: 1,
-              toolbarHeight: 60,
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    context.pushRoute(
-                      BarcodeScanRoute(
-                        log: log,
-                        selectedMealIndex: selectedMealIndex,
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.camera_alt),
-                ),
-              ],
-              title: TextField(
-                autofocus: true,
-                controller: query,
-                onChanged: _onSearchChanged,
-                onSubmitted: (value) {
-                  _cancelDebouncer();
-                  final ctrl = _getCurrentPagingController();
-                  ctrl?.refresh();
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            titleSpacing: 1,
+            toolbarHeight: 60,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.pushRoute(
+                    BarcodeScanRoute(
+                      log: log,
+                      selectedMealIndex: selectedMealIndex,
+                    ),
+                  );
                 },
-                decoration: const InputDecoration(
-                  hintText: 'Which food are you looking for?',
-                  border: OutlineInputBorder(),
-                ),
+                icon: const Icon(Icons.camera_alt),
               ),
-              bottom: TabBar(
-                indicatorColor: Theme.of(context).colorScheme.primary,
-                controller: tabCtrl,
-                tabs: [
-                  ('All', Icons.food_bank),
-                  ('Recent', Icons.history),
-                  ('Favorite', Icons.favorite),
-                ]
-                    .map(
-                      (e) => Tab(
-                        icon: Icon(
-                          e.$2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    )
-                    .toList(),
+            ],
+            title: TextField(
+              autofocus: true,
+              controller: query,
+              onChanged: _onSearchChanged,
+              onSubmitted: (value) {
+                _cancelDebouncer();
+                final ctrl = _getCurrentPagingController();
+                ctrl?.refresh();
+              },
+              decoration: InputDecoration(
+                hintText: 'Which food are you looking for?',
+                fillColor: Theme.of(context).colorScheme.onPrimary,
+                border: const OutlineInputBorder(),
               ),
             ),
-            SliverFillRemaining(
+            bottom: TabBar(
+              indicatorColor: Theme.of(context).colorScheme.primary,
+              controller: tabCtrl,
+              tabs: [
+                ('All', Icons.food_bank),
+                ('Recent', Icons.history),
+                ('Favorite', Icons.favorite),
+              ]
+                  .map(
+                    (e) => Tab(
+                      icon: Icon(
+                        e.$2,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8.0),
+            sliver: SliverFillRemaining(
               child: TabBarView(
                 controller: tabCtrl,
                 children: [
@@ -193,8 +193,8 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

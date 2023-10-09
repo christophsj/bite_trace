@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
-import 'package:bite_trace/service/datastore_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
@@ -87,29 +86,14 @@ class _DiaryScreenState extends ConsumerState<Diary> {
                   tryFromCache: false,
                   uid: widget.accountData.id,
                 ),
-            child: ListView(
-              children: [
-                DiarySection(entryState.entry!, data),
-                if (!ref.watch(datastoreStateProvider).networkIsUp)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red,
-                          size: 14,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'network',
-                          style: TextStyle(fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
+            child: Builder(
+              builder: (context) {
+                return ListView(
+                  children: [
+                    DiarySection(entryState.entry!, data),
+                  ],
+                );
+              },
             ),
           );
         } else {
