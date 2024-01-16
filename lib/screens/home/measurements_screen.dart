@@ -191,7 +191,9 @@ class GraphAndEntries extends StatelessWidget {
       bool addedNew = false;
       for (int j = 0; j < input[i].length; j++) {
         if (input[i][j].date == res[i]?.date) {
-          entries[i].add(res[i]!);
+          if (res[i] != null) {
+            entries[i].add(res[i]!);
+          }
           addedNew = true;
         } else {
           entries[i].add(input[i][j]);
@@ -243,16 +245,19 @@ class GraphAndEntries extends StatelessWidget {
           children: [
             ...entry
                 .where((element) => element != null)
+                .toList()
+                .asMap()
+                .entries
                 .map(
                   (e) => [
                     TextSpan(
-                      text: '${labels[entry.indexOf(e)]}: ',
+                      text: '${labels[e.key]}: ',
                       style: const TextStyle(),
                     ),
                     TextSpan(
-                      text: '${e!.value.toStringWithoutTrailingZeros()}$unit  ',
-                      style: TextStyle(
-                        color: colors[entry.indexOf(e)],
+                      text:
+                          '${e.value!.value.toStringWithoutTrailingZeros()}$unit  ',
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                     ),
@@ -273,6 +278,13 @@ class GraphAndEntries extends StatelessWidget {
           onUpdate(entries);
         }
       },
+      trailing: IconButton(
+        onPressed: () {
+          final entries = _updateInput([for (final _ in entry) null]);
+          onUpdate(entries);
+        },
+        icon: const Icon(Icons.delete),
+      ),
       subtitle: Text(
         entry
             .where((element) => element != null)
@@ -333,24 +345,38 @@ class GraphAndEntries extends StatelessWidget {
               titlesData: FlTitlesData(
                 topTitles: const AxisTitles(),
                 rightTitles: const AxisTitles(),
-                leftTitles: const AxisTitles(
+                leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
+                    interval: 1,
                     reservedSize: 40,
+                    getTitlesWidget: (value, meta) {
+                      return SideTitleWidget(
+                        axisSide: meta.axisSide,
+                        fitInside: SideTitleFitInsideData(
+                          enabled: true,
+                          axisPosition: meta.axisPosition,
+                          parentAxisSize: meta.parentAxisSize,
+                          distanceFromEdge: 2,
+                        ),
+                        child: Text(value.toStringWithoutTrailingZeros()),
+                      );
+                    },
                   ),
                 ),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    interval: 24 * 60 * 60,
+                    reservedSize: 30,
                     getTitlesWidget: (value, meta) {
                       return SideTitleWidget(
-                        axisSide: AxisSide.bottom,
+                        axisSide: meta.axisSide,
                         angle: 0.6,
+                        space: 10,
                         child: Text(
-                          DateFormat.Md().format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                              (value * 1000).toInt(),
+                          DateFormat.M().format(
+                            DateTime.fromMicrosecondsSinceEpoch(
+                              value.toInt(),
                             ),
                           ),
                         ),
@@ -372,7 +398,10 @@ class GraphAndEntries extends StatelessWidget {
                     spots: entries.value
                         .map(
                           (e) => FlSpot(
-                            e.date.getDateTime().millisecondsSinceEpoch / 1000,
+                            e.date
+                                .getDateTime()
+                                .microsecondsSinceEpoch
+                                .toDouble(),
                             e.value,
                           ),
                         )

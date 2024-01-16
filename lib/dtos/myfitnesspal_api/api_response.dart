@@ -10,7 +10,6 @@ part 'api_response.g.dart';
 class ApiResponse with _$ApiResponse {
   const factory ApiResponse({
     required List<FoodApiItem> items,
-    @JsonKey(name: 'totalResultsCount') required int totalResultsCount,
   }) = _ApiResponse;
 
   factory ApiResponse.fromJson(Map<String, Object?> json) =>

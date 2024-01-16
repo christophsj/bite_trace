@@ -44,7 +44,6 @@ class HomeScreen extends ConsumerWidget {
     return AutoTabsRouter(
       routes: const [
         DiaryRoute(),
-        MeasurementsRoute(),
         FriendsRoute(),
         AccountRoute(),
       ],
@@ -93,10 +92,10 @@ class HomeScreen extends ConsumerWidget {
                 icon: Icon(Icons.book),
                 label: 'Diary',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.monitor_weight_outlined),
-                label: 'Diary',
-              ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.monitor_weight_outlined),
+              //   label: 'Diary',
+              // ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.people),
                 label: 'Friends',
@@ -154,21 +153,13 @@ class HomeScreen extends ConsumerWidget {
                         );
                       }
                       if (!datastore.ready && datastore.networkIsUp) {
-                        return Row(
+                        return const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.sync,
                               color: Colors.yellow,
                               size: 14,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'synching...',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Theme.of(context).colorScheme.background,
-                              ),
                             ),
                           ],
                         );
