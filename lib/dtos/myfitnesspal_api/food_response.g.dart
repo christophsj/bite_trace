@@ -6,7 +6,7 @@ part of 'food_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_FoodResponse _$$_FoodResponseFromJson(Map json) => _$_FoodResponse(
+_$FoodResponseImpl _$$FoodResponseImplFromJson(Map json) => _$FoodResponseImpl(
       countryCode: json['country_code'] as String?,
       deleted: json['deleted'] as bool,
       description: json['description'] as String,
@@ -25,7 +25,7 @@ _$_FoodResponse _$$_FoodResponseFromJson(Map json) => _$_FoodResponse(
       brandName: json['brand_name'] as String?,
     );
 
-Map<String, dynamic> _$$_FoodResponseToJson(_$_FoodResponse instance) =>
+Map<String, dynamic> _$$FoodResponseImplToJson(_$FoodResponseImpl instance) =>
     <String, dynamic>{
       'country_code': instance.countryCode,
       'deleted': instance.deleted,

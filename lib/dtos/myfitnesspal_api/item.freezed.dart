@@ -12,7 +12,7 @@ part of 'item.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 FoodApiItem _$FoodApiItemFromJson(Map<String, dynamic> json) {
   return _FoodApiItem.fromJson(json);
@@ -84,11 +84,11 @@ class _$FoodApiItemCopyWithImpl<$Res, $Val extends FoodApiItem>
 }
 
 /// @nodoc
-abstract class _$$_FoodApiItemCopyWith<$Res>
+abstract class _$$FoodApiItemImplCopyWith<$Res>
     implements $FoodApiItemCopyWith<$Res> {
-  factory _$$_FoodApiItemCopyWith(
-          _$_FoodApiItem value, $Res Function(_$_FoodApiItem) then) =
-      __$$_FoodApiItemCopyWithImpl<$Res>;
+  factory _$$FoodApiItemImplCopyWith(
+          _$FoodApiItemImpl value, $Res Function(_$FoodApiItemImpl) then) =
+      __$$FoodApiItemImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({FoodResponse item, List<String> tags, String type});
@@ -98,11 +98,11 @@ abstract class _$$_FoodApiItemCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_FoodApiItemCopyWithImpl<$Res>
-    extends _$FoodApiItemCopyWithImpl<$Res, _$_FoodApiItem>
-    implements _$$_FoodApiItemCopyWith<$Res> {
-  __$$_FoodApiItemCopyWithImpl(
-      _$_FoodApiItem _value, $Res Function(_$_FoodApiItem) _then)
+class __$$FoodApiItemImplCopyWithImpl<$Res>
+    extends _$FoodApiItemCopyWithImpl<$Res, _$FoodApiItemImpl>
+    implements _$$FoodApiItemImplCopyWith<$Res> {
+  __$$FoodApiItemImplCopyWithImpl(
+      _$FoodApiItemImpl _value, $Res Function(_$FoodApiItemImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -112,7 +112,7 @@ class __$$_FoodApiItemCopyWithImpl<$Res>
     Object? tags = null,
     Object? type = null,
   }) {
-    return _then(_$_FoodApiItem(
+    return _then(_$FoodApiItemImpl(
       item: null == item
           ? _value.item
           : item // ignore: cast_nullable_to_non_nullable
@@ -131,15 +131,15 @@ class __$$_FoodApiItemCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_FoodApiItem implements _FoodApiItem {
-  const _$_FoodApiItem(
+class _$FoodApiItemImpl implements _FoodApiItem {
+  const _$FoodApiItemImpl(
       {required this.item,
       required final List<String> tags,
       required this.type})
       : _tags = tags;
 
-  factory _$_FoodApiItem.fromJson(Map<String, dynamic> json) =>
-      _$$_FoodApiItemFromJson(json);
+  factory _$FoodApiItemImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FoodApiItemImplFromJson(json);
 
   @override
   final FoodResponse item;
@@ -160,10 +160,10 @@ class _$_FoodApiItem implements _FoodApiItem {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_FoodApiItem &&
+            other is _$FoodApiItemImpl &&
             (identical(other.item, item) || other.item == item) &&
             const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.type, type) || other.type == type));
@@ -177,12 +177,12 @@ class _$_FoodApiItem implements _FoodApiItem {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_FoodApiItemCopyWith<_$_FoodApiItem> get copyWith =>
-      __$$_FoodApiItemCopyWithImpl<_$_FoodApiItem>(this, _$identity);
+  _$$FoodApiItemImplCopyWith<_$FoodApiItemImpl> get copyWith =>
+      __$$FoodApiItemImplCopyWithImpl<_$FoodApiItemImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_FoodApiItemToJson(
+    return _$$FoodApiItemImplToJson(
       this,
     );
   }
@@ -192,10 +192,10 @@ abstract class _FoodApiItem implements FoodApiItem {
   const factory _FoodApiItem(
       {required final FoodResponse item,
       required final List<String> tags,
-      required final String type}) = _$_FoodApiItem;
+      required final String type}) = _$FoodApiItemImpl;
 
   factory _FoodApiItem.fromJson(Map<String, dynamic> json) =
-      _$_FoodApiItem.fromJson;
+      _$FoodApiItemImpl.fromJson;
 
   @override
   FoodResponse get item;
@@ -205,6 +205,6 @@ abstract class _FoodApiItem implements FoodApiItem {
   String get type;
   @override
   @JsonKey(ignore: true)
-  _$$_FoodApiItemCopyWith<_$_FoodApiItem> get copyWith =>
+  _$$FoodApiItemImplCopyWith<_$FoodApiItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

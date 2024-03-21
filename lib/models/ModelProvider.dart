@@ -22,12 +22,9 @@
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'AccountData.dart';
 import 'DiaryEntry.dart';
-import 'Measurements.dart';
 import 'MyFood.dart';
-import 'CustomMeasurementEntry.dart';
 import 'Food.dart';
 import 'Meal.dart';
-import 'MeasurementEntry.dart';
 import 'NutrientGoal.dart';
 import 'NutrientGoals.dart';
 import 'NutrientGoalsConfig.dart';
@@ -35,12 +32,9 @@ import 'Nutrients.dart';
 import 'ServingSize.dart';
 
 export 'AccountData.dart';
-export 'CustomMeasurementEntry.dart';
 export 'DiaryEntry.dart';
 export 'Food.dart';
 export 'Meal.dart';
-export 'MeasurementEntry.dart';
-export 'Measurements.dart';
 export 'MyFood.dart';
 export 'NutrientGoal.dart';
 export 'NutrientGoals.dart';
@@ -50,11 +44,11 @@ export 'ServingSize.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "860ac3a6d8ecad7c7d7401201d9438ab";
+  String version = "3e49f137b24f99f265ba2a24049685b0";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema, Measurements.schema, MyFood.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema, MyFood.schema];
   @override
-  List<amplify_core.ModelSchema> customTypeSchemas = [CustomMeasurementEntry.schema, Food.schema, Meal.schema, MeasurementEntry.schema, NutrientGoal.schema, NutrientGoals.schema, NutrientGoalsConfig.schema, Nutrients.schema, ServingSize.schema];
+  List<amplify_core.ModelSchema> customTypeSchemas = [Food.schema, Meal.schema, NutrientGoal.schema, NutrientGoals.schema, NutrientGoalsConfig.schema, Nutrients.schema, ServingSize.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
@@ -65,8 +59,6 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return AccountData.classType;
       case "DiaryEntry":
         return DiaryEntry.classType;
-      case "Measurements":
-        return Measurements.classType;
       case "MyFood":
         return MyFood.classType;
       default:

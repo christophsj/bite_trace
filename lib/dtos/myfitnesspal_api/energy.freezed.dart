@@ -12,7 +12,7 @@ part of 'energy.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 Energy _$EnergyFromJson(Map<String, dynamic> json) {
   return _Energy.fromJson(json);
@@ -66,19 +66,21 @@ class _$EnergyCopyWithImpl<$Res, $Val extends Energy>
 }
 
 /// @nodoc
-abstract class _$$_EnergyCopyWith<$Res> implements $EnergyCopyWith<$Res> {
-  factory _$$_EnergyCopyWith(_$_Energy value, $Res Function(_$_Energy) then) =
-      __$$_EnergyCopyWithImpl<$Res>;
+abstract class _$$EnergyImplCopyWith<$Res> implements $EnergyCopyWith<$Res> {
+  factory _$$EnergyImplCopyWith(
+          _$EnergyImpl value, $Res Function(_$EnergyImpl) then) =
+      __$$EnergyImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String unit, double value});
 }
 
 /// @nodoc
-class __$$_EnergyCopyWithImpl<$Res>
-    extends _$EnergyCopyWithImpl<$Res, _$_Energy>
-    implements _$$_EnergyCopyWith<$Res> {
-  __$$_EnergyCopyWithImpl(_$_Energy _value, $Res Function(_$_Energy) _then)
+class __$$EnergyImplCopyWithImpl<$Res>
+    extends _$EnergyCopyWithImpl<$Res, _$EnergyImpl>
+    implements _$$EnergyImplCopyWith<$Res> {
+  __$$EnergyImplCopyWithImpl(
+      _$EnergyImpl _value, $Res Function(_$EnergyImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +89,7 @@ class __$$_EnergyCopyWithImpl<$Res>
     Object? unit = null,
     Object? value = null,
   }) {
-    return _then(_$_Energy(
+    return _then(_$EnergyImpl(
       unit: null == unit
           ? _value.unit
           : unit // ignore: cast_nullable_to_non_nullable
@@ -102,11 +104,11 @@ class __$$_EnergyCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Energy implements _Energy {
-  const _$_Energy({required this.unit, required this.value});
+class _$EnergyImpl implements _Energy {
+  const _$EnergyImpl({required this.unit, required this.value});
 
-  factory _$_Energy.fromJson(Map<String, dynamic> json) =>
-      _$$_EnergyFromJson(json);
+  factory _$EnergyImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EnergyImplFromJson(json);
 
   @override
   final String unit;
@@ -119,10 +121,10 @@ class _$_Energy implements _Energy {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Energy &&
+            other is _$EnergyImpl &&
             (identical(other.unit, unit) || other.unit == unit) &&
             (identical(other.value, value) || other.value == value));
   }
@@ -134,12 +136,12 @@ class _$_Energy implements _Energy {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_EnergyCopyWith<_$_Energy> get copyWith =>
-      __$$_EnergyCopyWithImpl<_$_Energy>(this, _$identity);
+  _$$EnergyImplCopyWith<_$EnergyImpl> get copyWith =>
+      __$$EnergyImplCopyWithImpl<_$EnergyImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_EnergyToJson(
+    return _$$EnergyImplToJson(
       this,
     );
   }
@@ -147,9 +149,9 @@ class _$_Energy implements _Energy {
 
 abstract class _Energy implements Energy {
   const factory _Energy(
-      {required final String unit, required final double value}) = _$_Energy;
+      {required final String unit, required final double value}) = _$EnergyImpl;
 
-  factory _Energy.fromJson(Map<String, dynamic> json) = _$_Energy.fromJson;
+  factory _Energy.fromJson(Map<String, dynamic> json) = _$EnergyImpl.fromJson;
 
   @override
   String get unit;
@@ -157,6 +159,6 @@ abstract class _Energy implements Energy {
   double get value;
   @override
   @JsonKey(ignore: true)
-  _$$_EnergyCopyWith<_$_Energy> get copyWith =>
+  _$$EnergyImplCopyWith<_$EnergyImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

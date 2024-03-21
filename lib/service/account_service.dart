@@ -1,80 +1,76 @@
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:bite_trace/models/ModelProvider.dart';
+import 'package:bite_trace/models/AccountData.dart';
+import 'package:bite_trace/models/NutrientGoal.dart';
 import 'package:bite_trace/providers.dart';
-import 'package:bite_trace/state/account_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final accountStateProvider =
-    StateNotifierProvider<AccountService, AccountState>((ref) {
-  return ref.watch(accountServiceProvider);
-});
+class AccountService {
+  AccountService({required this.ref}) : super();
 
-class AccountService extends StateNotifier<AccountState> {
-  AccountService({required this.ref})
-      : initialAccountData = ref.read(accountDataProvider.future),
-        super(const AccountState.updating());
-
-  final Future<AccountData?> initialAccountData;
   final Ref ref;
 
   Future<AccountData?> createAccount(AccountData accountData) =>
-      updateAccount(accountData);
+      updateAccount(accountData, create: true);
 
-  Future<void> updateGoals(NutrientGoal nutrientGoal) async {
-    final accountData = state.getData()!.copyWith(
-          nutrientGoal: nutrientGoal,
-        );
+  Future<void> updateGoals(AccountData old, NutrientGoal nutrientGoal) async {
+    final accountData = old.copyWith(
+      nutrientGoal: nutrientGoal,
+    );
     await updateAccount(accountData);
   }
 
-  Future<AccountData?> updateAccount(AccountData accountData) async {
+  Future<AccountData?> updateAccount(
+    AccountData accountData, {
+    bool create = false,
+  }) async {
     try {
-      await Amplify.DataStore.save(accountData);
-      _handleState(accountData);
+      GraphQLRequest request;
+      if (create) {
+        request = ModelMutations.create(accountData);
+      } else {
+        request = ModelMutations.update(accountData);
+      }
+      final result = await Amplify.API.mutate(request: request).response;
+
+      if (result.hasErrors) {
+        ref
+            .read(snackbarServiceProvider)
+            .showBasic('Failed to update account.');
+        return null;
+      }
+
+      ref.read(authServiceProvider).refreshAccountData(accountData);
       return accountData;
-    } on DataStoreException catch (e) {
+    } on ApiException catch (e) {
       safePrint('Mutation failed: $e');
       ref.read(snackbarServiceProvider).showBasic(e.toString());
-      state = AccountState.error(e.message);
       return null;
     }
   }
 
-  void _handleState(AccountData? response) {
-    if (response == null) {
-      state = const AccountState.loggedOut();
-    } else {
-      state = AccountState.ready(
-        response,
-      );
+  Future<void> deleteAccount(AccountData data) async {
+    try {
+      final request = ModelMutations.delete(data);
+      await Amplify.API.mutate(request: request).response;
+    } on ApiException catch (e) {
+      safePrint('Mutation failed: $e');
+      ref.read(snackbarServiceProvider).showBasic('Failed to delete account.');
     }
-  }
-
-  Future<AccountData?> getAuthAccount() async {
-    final user = await ref.read(authServiceProvider).getCurrentUser();
-    final uid = user?.userId;
-    if (uid == null) {
-      return null;
-    }
-    return getAccount(uid);
   }
 
   Future<AccountData?> getAccount(String uid) async {
     try {
-      final result = await Amplify.DataStore.query(
+      final request = ModelQueries.get(
         AccountData.classType,
-        where: AccountData.ID.eq(uid),
+        AccountDataModelIdentifier(id: uid),
       );
-      final updateState =
-          (await ref.read(authServiceProvider).getCurrentUser())?.userId == uid;
-      final accountData = result.isEmpty ? null : result.first;
-      if (updateState) {
-        _handleState(accountData);
-      }
+      final response = await Amplify.API.query(request: request).response;
+      final accountData = response.data;
+
       return accountData;
     } on ApiException catch (e) {
       safePrint('Query failed: $e');
-      state = AccountState.error(e.toString());
       ref.read(snackbarServiceProvider).showBasic(e.toString());
       return null;
     }

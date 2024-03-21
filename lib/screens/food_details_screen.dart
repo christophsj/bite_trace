@@ -317,7 +317,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetailsScreen>
       ref
           .read(snackbarServiceProvider)
           .showBasic('Logged ${widget.food.description}');
-      ref.read(routerProvider).pop<DiaryEntry?>(res);
+      ref.read(routerProvider).maybePop<DiaryEntry?>(res);
       ref.read(routerProvider).popUntil((route) {
         return [
           HomeRoute.name,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
@@ -33,8 +34,8 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
 
   final PagingController<int, Food> _pagingController =
       PagingController(firstPageKey: 1);
-  final PagingController<int, Food> _recentPagingController =
-      PagingController(firstPageKey: 0);
+  final PagingController<GraphQLRequest<PaginatedResult<DiaryEntry>>?, Food>
+      _recentPagingController = PagingController(firstPageKey: null);
 
   late final TabController tabCtrl;
 
@@ -107,19 +108,26 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     }
   }
 
-  Future<void> _fetchRecentPage(int pageKey) async {
+  Future<void> _fetchRecentPage(
+    GraphQLRequest<PaginatedResult<DiaryEntry>>? pageKey,
+  ) async {
     try {
-      final foodService = ref.read(diaryServiceProvider);
-      final newItems = await foodService.getRecentFoods(
-        userId: log.id,
-        filter: query.text,
-        page: pageKey,
-      );
+      final (newItems, nextKey) =
+          await ref.read(diaryServiceProvider).getRecentFoods(
+                userId: log.id,
+                filter: query.text,
+                pageKey: pageKey,
+              );
+      final ids =
+          _recentPagingController.itemList?.map((e) => e.foodId).toSet() ?? {};
+      final toAdd = newItems.where((e) {
+        return !ids.contains(e.foodId);
+      }).toList();
 
-      if (newItems.isEmpty) {
-        _recentPagingController.appendLastPage(newItems);
+      if (nextKey == null) {
+        _recentPagingController.appendLastPage(toAdd);
       } else {
-        _recentPagingController.appendPage(newItems, pageKey + 1);
+        _recentPagingController.appendPage(toAdd, nextKey);
       }
     } catch (error) {
       _recentPagingController.error = error;
@@ -199,7 +207,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     );
   }
 
-  PagingController<int, Food>? _getCurrentPagingController() {
+  PagingController<dynamic, Food>? _getCurrentPagingController() {
     final ctrl = switch (tabCtrl.index) {
       0 => _pagingController,
       1 => _recentPagingController,
@@ -209,8 +217,8 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     return ctrl;
   }
 
-  Widget _buildPaginatedFoodResult(PagingController<int, Food> controller) {
-    return PagedListView<int, Food>(
+  Widget _buildPaginatedFoodResult(PagingController<dynamic, Food> controller) {
+    return PagedListView<dynamic, Food>(
       pagingController: controller,
       builderDelegate: PagedChildBuilderDelegate<Food>(
         noItemsFoundIndicatorBuilder: (context) {

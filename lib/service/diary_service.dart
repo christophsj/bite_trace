@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
@@ -17,19 +18,6 @@ final diaryProvider = StateNotifierProvider<DiaryService, DiaryState>((ref) {
 class DiaryService extends StateNotifier<DiaryState> {
   DiaryService({required this.ref}) : super(DiaryState());
   final Ref ref;
-
-  final Map<String, Map<DateTime, bool>> _inDb = {};
-
-  bool inDb(String userId, DateTime dateTime) {
-    return _inDb[userId]?[dateTime.atMidday()] ?? true;
-  }
-
-  void setInDb(String userId, DateTime dateTime, bool inDb) {
-    if (_inDb[userId] == null) {
-      _inDb[userId] = {};
-    }
-    _inDb[userId]![dateTime.atMidday()] = inDb;
-  }
 
   Future<DiaryEntry> getLog(
     DateTime date, {
@@ -53,33 +41,114 @@ class DiaryService extends StateNotifier<DiaryState> {
       // does not exist -> empty log
       log = _setDefaultMeals(
         DiaryEntry(
-          day: TemporalDate(date),
+          day: TemporalDate(date).format(),
           id: userId,
           goals: acc.nutrientGoal.getCurrentGoal(date),
         ),
         acc,
       );
-      setInDb(userId, date, false);
-    } else {
-      setInDb(userId, date, true);
     }
 
     _updateState(log);
     return log;
   }
 
-  Future<List<Food>> getRecentFoods({
+  Future<(List<Food>, GraphQLRequest<PaginatedResult<DiaryEntry>>?)>
+      getRecentFoods({
     required String userId,
     required String filter,
-    int page = 0,
-    int limitDays = 14,
+    GraphQLRequest<PaginatedResult<DiaryEntry>>? pageKey,
+    int limitDays = 10,
   }) async {
-    final entries = await Amplify.DataStore.query<DiaryEntry>(
-      DiaryEntry.classType,
-      where: DiaryEntry.ID.eq(userId),
-      sortBy: [DiaryEntry.DAY.descending()],
-      pagination: QueryPagination(page: page, limit: limitDays),
+    final graphQlOperation = GraphQLRequest<PaginatedResult<DiaryEntry>>(
+      modelType: const PaginatedModelType(DiaryEntry.classType),
+      decodePath: 'listDiaryEntries',
+      variables: <String, dynamic>{
+        'id': userId,
+        'limit': 5,
+        'nextToken': null,
+      },
+      document: '''
+query MyQuery(\$id: ID!, \$limit: Int!, \$nextToken: String) {
+  listDiaryEntries(id: \$id, limit: \$limit, sortDirection: DESC, nextToken: \$nextToken) {
+    nextToken
+    items {
+      day
+      id
+      meals {
+        name
+        foods {
+          brandName
+          chosenServingAmount
+          chosenServingSize
+          countryCode
+          description
+          foodId
+          imageUrl
+          verified
+          nutritionalContents {
+            calcium
+            calories
+            carbohydrates
+            cholesterol
+            fat
+            fiber
+            iron
+            monounsaturatedFat
+            polyunsaturatedFat
+            potassium
+            protein
+            saturatedFat
+            sodium
+            sugar
+            transFat
+            vitaminA
+            vitaminB1
+            vitaminB12
+            vitaminB2
+            vitaminB6
+            vitaminB9
+            vitaminC
+            vitaminD
+            vitaminE
+            vitaminK
+            vitaminPP
+          }
+          servingSizes {
+            index
+            nutritionMultiplier
+            unit
+            value
+          }
+        }
+      }
+    }
+  }
+}
+
+''',
     );
+
+    final request = await Amplify.API
+        .query(
+          request: pageKey ?? graphQlOperation,
+        )
+        .response;
+
+    if (request.hasErrors) {
+      ref.read(snackbarServiceProvider).showBasic(request.errors.first.message);
+      throw Exception(request.errors.first.message);
+    }
+
+    final List<DiaryEntry> entries = request.data?.items
+            .where((element) => element != null)
+            .cast<DiaryEntry>()
+            .toList() ??
+        <DiaryEntry>[];
+
+    if (entries.isEmpty) {
+      return (<Food>[], null);
+    }
 
     for (final log in entries) {
       _updateState(log);
@@ -105,19 +174,29 @@ class DiaryService extends StateNotifier<DiaryState> {
       }
     }
 
-    return foods;
+    final diff = DateTime.now()
+        .difference(TemporalDate.fromString(entries[0].day).getDateTime());
+
+    return (
+      foods,
+      diff.inDays > limitDays ? null : request.data?.requestForNextResult
+    );
   }
 
   Future<DiaryEntry?> _queryLogFromDb(String user, DateTime date) async {
-    final result = await Amplify.DataStore.query(
-      DiaryEntry.classType,
-      where: DiaryEntry.DAY.eq(TemporalDate(date)).and(DiaryEntry.ID.eq(user)),
-    );
+    final result = await Amplify.API
+        .query(
+          request: ModelQueries.get(
+            DiaryEntry.classType,
+            DiaryEntryModelIdentifier(
+              id: user,
+              day: TemporalDate(date).format(),
+            ),
+          ),
+        )
+        .response;
 
-    if (result.isEmpty) {
-      return null;
-    }
-    return result[0];
+    return result.data;
   }
 
   DiaryEntry _setDefaultMeals(DiaryEntry log, AccountData data) {
@@ -159,7 +238,7 @@ class DiaryService extends StateNotifier<DiaryState> {
     safePrint('Updating state at ${log.id}');
     state = state.copyWithEntry(
       userId: log.id,
-      dateTime: log.day.getDateTime().toLocal(),
+      dateTime: TemporalDate.fromString(log.day).getDateTime().toLocal(),
       entry: DiaryEntryState(entry: log),
     );
   }
@@ -203,9 +282,18 @@ class DiaryService extends StateNotifier<DiaryState> {
 
   Future<void> _updateOrCreate(DiaryEntry log) async {
     try {
-      await Amplify.DataStore.save(log);
+      final request = ModelMutations.create(log);
+      final response = await Amplify.API
+          .mutate(
+            request: request,
+          )
+          .response;
       _updateState(log);
-    } on DataStoreException catch (e) {
+
+      if (response.hasErrors) {
+        throw Exception(response.errors.first.message);
+      }
+    } on ApiException catch (e) {
       ref
           .read(snackbarServiceProvider)
           .showBasic('Error updating model: "${e.message}"');
@@ -224,7 +312,14 @@ class DiaryService extends StateNotifier<DiaryState> {
           entry: entry.entry!.copyWith(goals: x),
         ),
       );
-      Amplify.DataStore.save(entry.entry!);
+
+      await Amplify.API
+          .mutate(
+            request: ModelMutations.update(
+              entry.entry!,
+            ),
+          )
+          .response;
     }
   }
 }

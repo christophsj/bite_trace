@@ -6,7 +6,7 @@ part of 'serving_size.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ServingSize _$$_ServingSizeFromJson(Map json) => _$_ServingSize(
+_$ServingSizeImpl _$$ServingSizeImplFromJson(Map json) => _$ServingSizeImpl(
       id: json['id'] as String,
       index: json['index'] as int,
       nutritionMultiplier: (json['nutrition_multiplier'] as num).toDouble(),
@@ -14,7 +14,7 @@ _$_ServingSize _$$_ServingSizeFromJson(Map json) => _$_ServingSize(
       value: (json['value'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$_ServingSizeToJson(_$_ServingSize instance) =>
+Map<String, dynamic> _$$ServingSizeImplToJson(_$ServingSizeImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'index': instance.index,

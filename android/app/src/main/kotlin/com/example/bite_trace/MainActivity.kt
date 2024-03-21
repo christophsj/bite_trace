@@ -1,4 +1,4 @@
-package com.example.bite_trace
+package com.bitetrace
 
 import io.flutter.embedding.android.FlutterActivity
 

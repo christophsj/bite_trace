@@ -12,7 +12,7 @@ part of 'nutritional_contents.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 NutritionalContentsDto _$NutritionalContentsDtoFromJson(
     Map<String, dynamic> json) {
@@ -201,11 +201,12 @@ class _$NutritionalContentsDtoCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$_NutritionalContentsDtoCopyWith<$Res>
+abstract class _$$NutritionalContentsDtoImplCopyWith<$Res>
     implements $NutritionalContentsDtoCopyWith<$Res> {
-  factory _$$_NutritionalContentsDtoCopyWith(_$_NutritionalContentsDto value,
-          $Res Function(_$_NutritionalContentsDto) then) =
-      __$$_NutritionalContentsDtoCopyWithImpl<$Res>;
+  factory _$$NutritionalContentsDtoImplCopyWith(
+          _$NutritionalContentsDtoImpl value,
+          $Res Function(_$NutritionalContentsDtoImpl) then) =
+      __$$NutritionalContentsDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -233,12 +234,13 @@ abstract class _$$_NutritionalContentsDtoCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_NutritionalContentsDtoCopyWithImpl<$Res>
+class __$$NutritionalContentsDtoImplCopyWithImpl<$Res>
     extends _$NutritionalContentsDtoCopyWithImpl<$Res,
-        _$_NutritionalContentsDto>
-    implements _$$_NutritionalContentsDtoCopyWith<$Res> {
-  __$$_NutritionalContentsDtoCopyWithImpl(_$_NutritionalContentsDto _value,
-      $Res Function(_$_NutritionalContentsDto) _then)
+        _$NutritionalContentsDtoImpl>
+    implements _$$NutritionalContentsDtoImplCopyWith<$Res> {
+  __$$NutritionalContentsDtoImplCopyWithImpl(
+      _$NutritionalContentsDtoImpl _value,
+      $Res Function(_$NutritionalContentsDtoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -263,7 +265,7 @@ class __$$_NutritionalContentsDtoCopyWithImpl<$Res>
     Object? transFat = freezed,
     Object? vitaminA = freezed,
   }) {
-    return _then(_$_NutritionalContentsDto(
+    return _then(_$NutritionalContentsDtoImpl(
       calcium: freezed == calcium
           ? _value.calcium
           : calcium // ignore: cast_nullable_to_non_nullable
@@ -342,8 +344,8 @@ class __$$_NutritionalContentsDtoCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_NutritionalContentsDto extends _NutritionalContentsDto {
-  const _$_NutritionalContentsDto(
+class _$NutritionalContentsDtoImpl extends _NutritionalContentsDto {
+  const _$NutritionalContentsDtoImpl(
       {this.calcium,
       @JsonKey(defaultValue: 0) required this.carbohydrates,
       this.cholesterol,
@@ -364,8 +366,8 @@ class _$_NutritionalContentsDto extends _NutritionalContentsDto {
       this.vitaminA})
       : super._();
 
-  factory _$_NutritionalContentsDto.fromJson(Map<String, dynamic> json) =>
-      _$$_NutritionalContentsDtoFromJson(json);
+  factory _$NutritionalContentsDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NutritionalContentsDtoImplFromJson(json);
 
   @override
   final double? calcium;
@@ -413,10 +415,10 @@ class _$_NutritionalContentsDto extends _NutritionalContentsDto {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_NutritionalContentsDto &&
+            other is _$NutritionalContentsDtoImpl &&
             (identical(other.calcium, calcium) || other.calcium == calcium) &&
             (identical(other.carbohydrates, carbohydrates) ||
                 other.carbohydrates == carbohydrates) &&
@@ -473,13 +475,13 @@ class _$_NutritionalContentsDto extends _NutritionalContentsDto {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NutritionalContentsDtoCopyWith<_$_NutritionalContentsDto> get copyWith =>
-      __$$_NutritionalContentsDtoCopyWithImpl<_$_NutritionalContentsDto>(
-          this, _$identity);
+  _$$NutritionalContentsDtoImplCopyWith<_$NutritionalContentsDtoImpl>
+      get copyWith => __$$NutritionalContentsDtoImplCopyWithImpl<
+          _$NutritionalContentsDtoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_NutritionalContentsDtoToJson(
+    return _$$NutritionalContentsDtoImplToJson(
       this,
     );
   }
@@ -504,11 +506,11 @@ abstract class _NutritionalContentsDto extends NutritionalContentsDto {
       final double? vitaminC,
       final double? vitaminD,
       final double? transFat,
-      final double? vitaminA}) = _$_NutritionalContentsDto;
+      final double? vitaminA}) = _$NutritionalContentsDtoImpl;
   const _NutritionalContentsDto._() : super._();
 
   factory _NutritionalContentsDto.fromJson(Map<String, dynamic> json) =
-      _$_NutritionalContentsDto.fromJson;
+      _$NutritionalContentsDtoImpl.fromJson;
 
   @override
   double? get calcium;
@@ -551,6 +553,6 @@ abstract class _NutritionalContentsDto extends NutritionalContentsDto {
   double? get vitaminA;
   @override
   @JsonKey(ignore: true)
-  _$$_NutritionalContentsDtoCopyWith<_$_NutritionalContentsDto> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$NutritionalContentsDtoImplCopyWith<_$NutritionalContentsDtoImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

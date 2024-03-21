@@ -28,7 +28,7 @@ import 'package:collection/collection.dart';
 class DiaryEntry extends amplify_core.Model {
   static const classType = const _DiaryEntryModelType();
   final String id;
-  final amplify_core.TemporalDate? _day;
+  final String? _day;
   final List<Meal>? _meals;
   final NutrientGoals? _goals;
   final amplify_core.TemporalDateTime? _createdAt;
@@ -57,7 +57,7 @@ class DiaryEntry extends amplify_core.Model {
     }
   }
   
-  amplify_core.TemporalDate get day {
+  String get day {
     try {
       return _day!;
     } catch(e) {
@@ -88,7 +88,7 @@ class DiaryEntry extends amplify_core.Model {
   
   const DiaryEntry._internal({required this.id, required day, meals, goals, createdAt, updatedAt}): _day = day, _meals = meals, _goals = goals, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory DiaryEntry({String? id, required amplify_core.TemporalDate day, List<Meal>? meals, NutrientGoals? goals}) {
+  factory DiaryEntry({String? id, required String day, List<Meal>? meals, NutrientGoals? goals}) {
     return DiaryEntry._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       day: day,
@@ -119,7 +119,7 @@ class DiaryEntry extends amplify_core.Model {
     
     buffer.write("DiaryEntry {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("day=" + (_day != null ? _day!.format() : "null") + ", ");
+    buffer.write("day=" + "$_day" + ", ");
     buffer.write("meals=" + (_meals != null ? _meals!.toString() : "null") + ", ");
     buffer.write("goals=" + (_goals != null ? _goals!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
@@ -151,7 +151,7 @@ class DiaryEntry extends amplify_core.Model {
   
   DiaryEntry.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _day = json['day'] != null ? amplify_core.TemporalDate.fromString(json['day']) : null,
+      _day = json['day'],
       _meals = json['meals'] is List
         ? (json['meals'] as List)
           .where((e) => e != null)
@@ -165,7 +165,7 @@ class DiaryEntry extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'day': _day?.format(), 'meals': _meals?.map((Meal? e) => e?.toJson()).toList(), 'goals': _goals?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'day': _day, 'meals': _meals?.map((Meal? e) => e?.toJson()).toList(), 'goals': _goals?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -206,7 +206,7 @@ class DiaryEntry extends amplify_core.Model {
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: DiaryEntry.DAY,
       isRequired: true,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.date)
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
@@ -258,7 +258,7 @@ class _DiaryEntryModelType extends amplify_core.ModelType<DiaryEntry> {
  */
 class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEntry> {
   final String id;
-  final amplify_core.TemporalDate day;
+  final String day;
 
   /**
    * Create an instance of DiaryEntryModelIdentifier using [id] the primary key.

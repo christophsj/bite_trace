@@ -1,3 +1,4 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
@@ -8,7 +9,6 @@ import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
-import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +56,7 @@ class _DiaryScreenState extends ConsumerState<Diary> {
         Diary.dateToIdx(next),
       );
     });
-    final dateRange = ref.watch(dateRangeProvider)!;
+    final dateRange = ref.watch(dateRangeProvider);
 
     final itemCount = dateRange[1].difference(dateRange[0]).inDays + 1;
     final diaryState = ref.watch(diaryProvider);
@@ -130,13 +130,12 @@ class DiarySection extends ConsumerWidget {
   }
 
   static NutrientGoals getValidGoals(DiaryEntry log, AccountData accountData) {
+    final day = TemporalDate.fromString(log.day).getDateTime();
     if (log.goals == null) {
-      return accountData.nutrientGoal.getCurrentGoal(log.day.getDateTime());
+      return accountData.nutrientGoal.getCurrentGoal(day);
     } else if (accountData.nutrientGoal.setAt != null &&
-        !log.day
-            .getDateTime()
-            .isBefore(accountData.nutrientGoal.setAt!.getDateTime())) {
-      return accountData.nutrientGoal.getCurrentGoal(log.day.getDateTime());
+        !day.isBefore(accountData.nutrientGoal.setAt!.getDateTime())) {
+      return accountData.nutrientGoal.getCurrentGoal(day);
     }
     return log.goals!;
   }

@@ -10,24 +10,6 @@
       "keyDescription": "bitetrace-dev"
     },
     "additionalAuthTypes": [],
-    "conflictResolution": {
-      "defaultResolutionStrategy": {
-        "type": "AUTOMERGE"
-      },
-      "perModelResolutionStrategy": [
-        {
-          "resolutionStrategy": {
-            "type": "AUTOMERGE"
-          },
-          "entityName": "DiaryEntry"
-        },
-        {
-          "resolutionStrategy": {
-            "type": "AUTOMERGE"
-          },
-          "entityName": "AccountData"
-        }
-      ]
-    }
+    "conflictResolution": {}
   }
 }

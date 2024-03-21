@@ -1,11 +1,7 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:bite_trace/models/AccountData.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
-import 'package:bite_trace/service/account_service.dart';
-import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
-import 'package:bite_trace/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,22 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class FriendsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accountState = ref.read(accountStateProvider);
-    return switch (accountState) {
-      (AccountStateInitializing _) => const Center(
-          child: SizedBox(
-            height: 40,
-            width: 40,
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      (final AccountStateError s) => ErrorView(error: s),
-      (final AccountStateLoggedOut s) => ErrorView(error: s),
-      (final AccountStateReady s) => _userDataReady(s.data, ref)
-    };
-  }
+    final data = ref.watch(authProvider).accountData;
 
-  Widget _userDataReady(AccountData data, WidgetRef ref) {
+    if (data == null) {
+      return const CircularProgressIndicator();
+    }
+
     if (data.friends == null || data.friends!.isEmpty) {
       return const Center(
         child: Text('You have no friends'),

@@ -1,7 +1,6 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/amplifyconfiguration.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
@@ -9,26 +8,23 @@ import 'package:bite_trace/providers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:home_widget/home_widget.dart';
+//import 'package:home_widget/home_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _configureAmplify();
-  HomeWidget.setAppGroupId('HOME_WIDGET');
+  // HomeWidget.setAppGroupId('HOME_WIDGET');
   runApp(const ProviderScope(child: BiteTraceApp()));
 }
 
 Future<void> _configureAmplify() async {
   try {
     final auth = AmplifyAuthCognito();
-    final datastore = AmplifyDataStore(
-      modelProvider: ModelProvider.instance,
-    );
     final api = AmplifyAPI(
       modelProvider: ModelProvider.instance,
     );
 
-    await Amplify.addPlugins([api, auth, datastore]);
+    await Amplify.addPlugins([api, auth]);
     await Amplify.configure(amplifyconfig);
     safePrint('Successfully configured');
   } on Exception catch (e) {
@@ -40,7 +36,6 @@ class BiteTraceApp extends ConsumerWidget {
   const BiteTraceApp({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(homeWidgetServiceProvider);
     return Authenticator(
       authenticatorBuilder: (context, state) {
         switch (state.currentStep) {

@@ -1,3 +1,4 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
@@ -8,7 +9,6 @@ import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/num_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/animated_elevated_button.dart';
-import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:bite_trace/widgets/nutrients_display.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +34,7 @@ class MealDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final meal = ref
         .watch(diaryProvider)
-        .getEntry(userId, log.day.getDateTime())!
+        .getEntry(userId, TemporalDate.fromString(log.day).getDateTime())!
         .entry!
         .meals![this.meal.index];
 
@@ -65,7 +65,7 @@ class MealDetailsScreen extends ConsumerWidget {
           IconButton(
             onPressed: () async => _openCopyMealPopup(
               context,
-              (await ref.read(authServiceProvider).getCurrentUser())!.userId,
+              ref.read(authProvider).authUser!.userId,
             ),
             icon: Icon(
               Icons.copy,
@@ -161,8 +161,11 @@ class MealDetailsScreen extends ConsumerWidget {
   void _openCopyMealPopup(BuildContext context, String userId) {
     showDialog(
       context: context,
-      builder: (c) =>
-          CopyMealDialog(meal, fromTime: log.day.getDateTime(), userId: userId),
+      builder: (c) => CopyMealDialog(
+        meal,
+        fromTime: TemporalDate.fromString(log.day).getDateTime(),
+        userId: userId,
+      ),
     );
   }
 }
@@ -216,7 +219,7 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  final range = ref.read(dateRangeProvider)!;
+                  final range = ref.read(dateRangeProvider);
                   final picked = await showDatePicker(
                     context: context,
                     initialDate: selectedDate,
@@ -313,7 +316,7 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
                               selectedMeal!,
                               widget.source,
                             );
-                        ref.read(routerProvider).pop();
+                        ref.read(routerProvider).maybePop();
                       },
                 label: 'copy'.toUpperCase(),
               ),

@@ -12,7 +12,6 @@ class AppRouter extends $AppRouter {
             AutoRoute(page: AccountRoute.page),
             AutoRoute(page: DiaryRoute.page),
             AutoRoute(page: FriendsRoute.page),
-            AutoRoute(page: MeasurementsRoute.page),
             AutoRoute(page: ExerciseRoute.page),
           ],
         ),
