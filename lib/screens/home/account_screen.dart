@@ -375,9 +375,8 @@ class AccountScreen extends ConsumerWidget {
                           ...addColors,
                         ];
                       },
-                      onChanged: (value) async {
+                      onChanged: (value) {
                         if (value != null) {
-                          ref.read(themeIdxProvider.notifier).state = value;
                           ref.read(accountServiceProvider).updateAccount(
                                 data.copyWith(themeColorIdx: value),
                               );

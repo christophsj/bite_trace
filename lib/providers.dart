@@ -5,7 +5,7 @@ import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/service/auth_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/service/food_service.dart';
-// import 'package:bite_trace/service/home_widget_service.dart';
+import 'package:bite_trace/service/home_widget_service.dart';
 import 'package:bite_trace/service/open_food_service.dart';
 import 'package:bite_trace/service/snackbar_service.dart';
 import 'package:bite_trace/state/auth_state.dart';
@@ -34,8 +34,8 @@ final foodSearchProvider =
 final openFoodServiceProvider =
     Provider<OpenFoodService>((ref) => OpenFoodService(ref: ref));
 
-// final homeWidgetServiceProvider =
-//     Provider<HomeWidgetService>((ref) => HomeWidgetService(ref: ref));
+final homeWidgetServiceProvider =
+    Provider<HomeWidgetService>((ref) => HomeWidgetService(ref: ref));
 
 final selectedDayProvider = StateProvider<DateTime>((ref) {
   return DateTime.now().atMidday();
@@ -58,7 +58,7 @@ final themeModeProvider = StateProvider<ThemeMode>((ref) {
 
 final themeIdxProvider = StateProvider<int>((ref) {
   final s = ref.watch(authProvider);
-  final int? idx = s.accountData?.themeModeIdx;
+  final int? idx = s.accountData?.themeColorIdx;
   return idx ?? 0;
 });
 
