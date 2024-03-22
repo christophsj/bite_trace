@@ -9,11 +9,14 @@ import 'package:bite_trace/state/diary_state.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 final diaryProvider = StateNotifierProvider<DiaryService, DiaryState>((ref) {
   final s = ref.watch(diaryServiceProvider);
   return s;
 });
+
+final logger = Logger();
 
 class DiaryService extends StateNotifier<DiaryState> {
   DiaryService({required this.ref}) : super(DiaryState());
@@ -26,7 +29,9 @@ class DiaryService extends StateNotifier<DiaryState> {
   }) async {
     final key = date;
     final userId = uid;
+    logger.d('Getting log for $userId at $key');
     if (!tryFromCache || state.getEntry(userId, key) == null) {
+      logger.d('Getting log from db');
       return _getLog(userId, key);
     }
 
@@ -235,10 +240,10 @@ query MyQuery(\$id: ID!, \$limit: Int!, \$nextToken: String) {
   }
 
   Future<void> _updateState(DiaryEntry log) async {
-    safePrint('Updating state at ${log.id}');
+    logger.d('Updating state at ${log.id} on ${log.day}');
     state = state.copyWithEntry(
       userId: log.id,
-      dateTime: TemporalDate.fromString(log.day).getDateTime().toLocal(),
+      dateTime: TemporalDate.fromString(log.day).getDateTime(),
       entry: DiaryEntryState(entry: log),
     );
   }

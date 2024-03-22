@@ -49,7 +49,8 @@ class _DiaryScreenState extends ConsumerState<Diary> {
     super.initState();
   }
 
-  Widget _onUserDataReady(AccountData data) {
+  @override
+  Widget build(BuildContext context) {
     ref.listen(selectedDayProvider, (previous, next) {
       if (_pageController.page!.round() == Diary.dateToIdx(next)) return;
       _pageController.jumpToPage(
@@ -59,12 +60,12 @@ class _DiaryScreenState extends ConsumerState<Diary> {
     final dateRange = ref.watch(dateRangeProvider);
 
     final itemCount = dateRange[1].difference(dateRange[0]).inDays + 1;
-    final diaryState = ref.watch(diaryProvider);
     return PageView.builder(
       reverse: true,
       controller: _pageController,
       itemCount: itemCount,
       itemBuilder: (context, index) {
+        final diaryState = ref.watch(diaryProvider);
         final date = Diary.idxToDate(index);
         final entryState = diaryState.getEntry(widget.accountData.id, date);
         if (entryState != null) {
@@ -90,7 +91,7 @@ class _DiaryScreenState extends ConsumerState<Diary> {
               builder: (context) {
                 return ListView(
                   children: [
-                    DiarySection(entryState.entry!, data),
+                    DiarySection(entryState.entry!, widget.accountData),
                   ],
                 );
               },
@@ -111,11 +112,6 @@ class _DiaryScreenState extends ConsumerState<Diary> {
         }
       },
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _onUserDataReady(widget.accountData);
   }
 }
 
