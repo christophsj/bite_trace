@@ -34,19 +34,25 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
   late DiaryEntry log;
   Timer? _debounce;
 
-  final PagingController<int, Food> _pagingController =
-      PagingController(firstPageKey: 1);
-  final PagingController<GraphQLRequest<PaginatedResult<DiaryEntry>>?, Food>
-      _recentPagingController = PagingController(firstPageKey: null);
-  final PagingController<GraphQLRequest<PaginatedResult<MyMeal>>?, MyMeal>
-      _mealsPagingController = PagingController(firstPageKey: null);
+  late final PagingController<int, Food> _pagingController;
+  late final PagingController<GraphQLRequest<PaginatedResult<DiaryEntry>>?,
+      Food> _recentPagingController;
+  late final PagingController<GraphQLRequest<PaginatedResult<MyMeal>>?, MyMeal>
+      _mealsPagingController;
 
   late final TabController tabCtrl;
 
-  final TextEditingController query = TextEditingController(text: '');
+  late final TextEditingController query;
+  bool disposed = false;
 
   @override
   void initState() {
+    super.initState();
+    _pagingController = PagingController(firstPageKey: 1);
+    query = TextEditingController(text: '');
+    _recentPagingController = PagingController(firstPageKey: null);
+    _mealsPagingController = PagingController(firstPageKey: null);
+
     tabCtrl = TabController(length: 3, vsync: this);
     log = widget.log;
     selectedMealIndex = widget.initialMealIndex;
@@ -59,14 +65,16 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     _mealsPagingController.addPageRequestListener((pageKey) {
       _fetchMealPage(pageKey);
     });
-    super.initState();
   }
 
   @override
   void dispose() {
+    disposed = true;
+
     tabCtrl.dispose();
     _pagingController.dispose();
     _recentPagingController.dispose();
+    _mealsPagingController.dispose();
     query.dispose();
     _debounce?.cancel();
     super.dispose();
@@ -105,6 +113,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
             ),
           )
           .toList();
+      if (disposed) return;
       if (newItems.items.isEmpty) {
         _pagingController.appendLastPage(items);
       } else {
@@ -126,6 +135,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
           .where((element) => element != null)
           .cast<MyMeal>()
           .toList();
+      if (disposed) return;
 
       if (result.hasNextResult) {
         _mealsPagingController.appendLastPage(items);
@@ -152,6 +162,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
       final toAdd = newItems.where((e) {
         return !ids.contains(e.foodId);
       }).toList();
+      if (disposed) return;
 
       if (nextKey == null) {
         _recentPagingController.appendLastPage(toAdd);

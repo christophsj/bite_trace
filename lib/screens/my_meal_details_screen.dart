@@ -90,13 +90,7 @@ class MyMealDetailsScreen extends ConsumerWidget {
                             log.meals![selectedMealIndex],
                             foods,
                           );
-                      ref.read(routerProvider).popUntil((route) {
-                        return [
-                          HomeRoute.name,
-                          MealDetailsRoute.name,
-                          FoodSearchRoute.name,
-                        ].contains(route.settings.name);
-                      });
+                      ref.read(routerProvider).popUntilRoot();
                     },
                     icon: const Icon(
                       Icons.add,

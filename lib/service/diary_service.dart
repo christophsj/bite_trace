@@ -81,6 +81,7 @@ query MyQuery(\$id: ID!, \$limit: Int!, \$nextToken: String) {
       day
       id
       meals {
+        index
         name
         foods {
           brandName
