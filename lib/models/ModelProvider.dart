@@ -23,6 +23,7 @@ import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'AccountData.dart';
 import 'DiaryEntry.dart';
 import 'MyFood.dart';
+import 'MyMeal.dart';
 import 'Food.dart';
 import 'Meal.dart';
 import 'NutrientGoal.dart';
@@ -36,6 +37,7 @@ export 'DiaryEntry.dart';
 export 'Food.dart';
 export 'Meal.dart';
 export 'MyFood.dart';
+export 'MyMeal.dart';
 export 'NutrientGoal.dart';
 export 'NutrientGoals.dart';
 export 'NutrientGoalsConfig.dart';
@@ -44,9 +46,9 @@ export 'ServingSize.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "3e49f137b24f99f265ba2a24049685b0";
+  String version = "1f9299b2f6910d29305b6a52d75903fa";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema, MyFood.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [AccountData.schema, DiaryEntry.schema, MyFood.schema, MyMeal.schema];
   @override
   List<amplify_core.ModelSchema> customTypeSchemas = [Food.schema, Meal.schema, NutrientGoal.schema, NutrientGoals.schema, NutrientGoalsConfig.schema, Nutrients.schema, ServingSize.schema];
   static final ModelProvider _instance = ModelProvider();
@@ -61,6 +63,8 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return DiaryEntry.classType;
       case "MyFood":
         return MyFood.classType;
+      case "MyMeal":
+        return MyMeal.classType;
       default:
         throw Exception("Failed to find model in model provider for model name: " + modelName);
     }

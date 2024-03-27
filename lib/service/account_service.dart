@@ -1,7 +1,6 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:bite_trace/models/AccountData.dart';
-import 'package:bite_trace/models/NutrientGoal.dart';
+import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

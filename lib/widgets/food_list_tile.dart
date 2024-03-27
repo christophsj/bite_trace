@@ -13,11 +13,13 @@ class FoodListTile extends StatelessWidget {
     this.subtitle,
     this.threeLine = false,
     this.brandName,
+    this.onLongPress,
   });
 
   final String name;
   final Nutrients n;
   final void Function() onTap;
+  final void Function()? onLongPress;
   final void Function() onTapTrailing;
   final Widget trailingIcon;
   final String? subtitle;
@@ -36,6 +38,7 @@ class FoodListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
+        onLongPress: onLongPress,
         onTap: onTap,
         leading: Column(
           mainAxisSize: MainAxisSize.min,

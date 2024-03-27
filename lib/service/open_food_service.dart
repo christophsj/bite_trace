@@ -5,7 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 
 class OpenFoodService {
-  OpenFoodService({required this.ref});
+  OpenFoodService({required this.ref}) {
+    OpenFoodAPIConfiguration.userAgent = UserAgent(
+      name: 'bitetrace',
+    );
+  }
 
   final Ref ref;
 

@@ -6,6 +6,8 @@ import 'package:bite_trace/mapper/food_dto_to_food_mapper.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
+import 'package:bite_trace/utils/food_extension.dart';
+import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,6 +38,8 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
       PagingController(firstPageKey: 1);
   final PagingController<GraphQLRequest<PaginatedResult<DiaryEntry>>?, Food>
       _recentPagingController = PagingController(firstPageKey: null);
+  final PagingController<GraphQLRequest<PaginatedResult<MyMeal>>?, MyMeal>
+      _mealsPagingController = PagingController(firstPageKey: null);
 
   late final TabController tabCtrl;
 
@@ -51,6 +55,9 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
     });
     _recentPagingController.addPageRequestListener((pageKey) {
       _fetchRecentPage(pageKey);
+    });
+    _mealsPagingController.addPageRequestListener((pageKey) {
+      _fetchMealPage(pageKey);
     });
     super.initState();
   }
@@ -105,6 +112,28 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
       }
     } catch (error) {
       _pagingController.error = error;
+    }
+  }
+
+  Future<void> _fetchMealPage(
+    GraphQLRequest<PaginatedResult<MyMeal>>? pageKey,
+  ) async {
+    try {
+      final result =
+          await ref.read(mealServiceProvider).getMyMeals(next: pageKey);
+
+      final items = result.items
+          .where((element) => element != null)
+          .cast<MyMeal>()
+          .toList();
+
+      if (result.hasNextResult) {
+        _mealsPagingController.appendLastPage(items);
+      } else {
+        _mealsPagingController.appendPage(items, result.requestForNextResult);
+      }
+    } catch (error) {
+      _mealsPagingController.error = error;
     }
   }
 
@@ -177,7 +206,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
               tabs: [
                 ('All', Icons.food_bank),
                 ('Recent', Icons.history),
-                ('Favorite', Icons.favorite),
+                ('Meals', Icons.restaurant_menu),
               ]
                   .map(
                     (e) => Tab(
@@ -197,7 +226,7 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
                 children: [
                   _buildPaginatedFoodResult(_pagingController),
                   _buildPaginatedFoodResult(_recentPagingController),
-                  const Center(child: Text('Favorite')),
+                  _buildPaginatedMealResult(_mealsPagingController),
                 ],
               ),
             ),
@@ -258,6 +287,57 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
               ref
                   .read(snackbarServiceProvider)
                   .showBasic('Added ${food.description}');
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPaginatedMealResult(
+    PagingController<dynamic, MyMeal> controller,
+  ) {
+    return PagedListView<dynamic, MyMeal>(
+      pagingController: controller,
+      builderDelegate: PagedChildBuilderDelegate<MyMeal>(
+        noItemsFoundIndicatorBuilder: (context) {
+          return const Center(
+            child: Text('No meals saved yet :('),
+          );
+        },
+        itemBuilder: (context, meal, index) {
+          return FoodListTile(
+            name: meal.name,
+            onLongPress: () async {
+              await ref.read(mealServiceProvider).removeMeal(meal);
+              ref
+                  .read(snackbarServiceProvider)
+                  .showBasic('Removed ${meal.name}');
+              controller.refresh();
+            },
+            n: NutrientsExtension.combine(
+              meal.foods
+                  .map(
+                    (e) => e.nutritionalContents.servingFactor(e.servingFactor),
+                  )
+                  .toList(),
+            ),
+            onTap: () async {
+              await AutoRouter.of(context).push(
+                MyMealDetailsRoute(
+                  log: log,
+                  meal: meal,
+                  selectedMealIndex: selectedMealIndex,
+                ),
+              );
+            },
+            trailingIcon: const Icon(Icons.add),
+            onTapTrailing: () async {
+              final selectedMeal = log.meals![selectedMealIndex];
+              log = await ref
+                  .read(diaryServiceProvider)
+                  .addFoodsToMeal(log, selectedMeal, meal.foods);
+              ref.read(snackbarServiceProvider).showBasic('Added ${meal.name}');
             },
           );
         },
