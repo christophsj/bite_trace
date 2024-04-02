@@ -28,7 +28,9 @@ class Diary extends ConsumerStatefulWidget {
   }
 
   static int dateToIdx(DateTime next) {
-    return DateTime.now().atMidday().difference(next).inDays + futureDays;
+    return (DateTime.now().atMidday().difference(next.atMidday()).inHours / 24)
+            .round() +
+        futureDays;
   }
 
   @override
@@ -52,6 +54,10 @@ class _DiaryScreenState extends ConsumerState<Diary> {
   @override
   Widget build(BuildContext context) {
     ref.listen(selectedDayProvider, (previous, next) {
+      print("Current page: " + _pageController.page!.toString());
+      print("requesteed page: " + Diary.dateToIdx(next).toString());
+      print(next);
+      print("");
       if (_pageController.page!.round() == Diary.dateToIdx(next)) return;
       _pageController.jumpToPage(
         Diary.dateToIdx(next),
