@@ -6,12 +6,13 @@ part of 'energy.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_Energy _$$_EnergyFromJson(Map json) => _$_Energy(
+_$EnergyImpl _$$EnergyImplFromJson(Map json) => _$EnergyImpl(
       unit: json['unit'] as String,
       value: (json['value'] as num).toDouble(),
     );
 
-Map<String, dynamic> _$$_EnergyToJson(_$_Energy instance) => <String, dynamic>{
+Map<String, dynamic> _$$EnergyImplToJson(_$EnergyImpl instance) =>
+    <String, dynamic>{
       'unit': instance.unit,
       'value': instance.value,
     };

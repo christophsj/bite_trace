@@ -6,8 +6,8 @@ part of 'nutritional_contents.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_NutritionalContentsDto _$$_NutritionalContentsDtoFromJson(Map json) =>
-    _$_NutritionalContentsDto(
+_$NutritionalContentsDtoImpl _$$NutritionalContentsDtoImplFromJson(Map json) =>
+    _$NutritionalContentsDtoImpl(
       calcium: (json['calcium'] as num?)?.toDouble(),
       carbohydrates: (json['carbohydrates'] as num?)?.toDouble() ?? 0,
       cholesterol: (json['cholesterol'] as num?)?.toDouble(),
@@ -30,8 +30,8 @@ _$_NutritionalContentsDto _$$_NutritionalContentsDtoFromJson(Map json) =>
       vitaminA: (json['vitamin_a'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$$_NutritionalContentsDtoToJson(
-        _$_NutritionalContentsDto instance) =>
+Map<String, dynamic> _$$NutritionalContentsDtoImplToJson(
+        _$NutritionalContentsDtoImpl instance) =>
     <String, dynamic>{
       'calcium': instance.calcium,
       'carbohydrates': instance.carbohydrates,

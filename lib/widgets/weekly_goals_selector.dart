@@ -20,6 +20,7 @@ class WeeklyGoalsSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final accountData = ref.read(authProvider).accountData;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Column(
@@ -30,18 +31,22 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                   onTap: () => onSelect(e),
                   onDoubleTap: () => _openEditConfigPopup(context, e, (s) {
                     ref.read(accountServiceProvider).updateGoals(
+                          accountData!,
                           nutrientGoal.copyWith(
                             weekly: [
-                              ...nutrientGoal.weekly.where((element) => element != e),
+                              ...nutrientGoal.weekly
+                                  .where((element) => element != e),
                               e.copyWith(name: s),
                             ],
                           ),
                         );
                   }, () {
                     ref.read(accountServiceProvider).updateGoals(
+                          accountData!,
                           nutrientGoal.copyWith(
                             weekly: [
-                              ...nutrientGoal.weekly.where((element) => element != e),
+                              ...nutrientGoal.weekly
+                                  .where((element) => element != e),
                             ],
                           ),
                         );
@@ -69,8 +74,8 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                               ),
                             ),
                             child: DragTarget<int>(
-                              onWillAccept: (data) {
-                                return e.days?.contains(data) != true;
+                              onWillAcceptWithDetails: (data) {
+                                return e.days?.contains(data.data) != true;
                               },
                               onMove: (data) {
                                 if (e.days?.contains(data.data) == true) {
@@ -82,22 +87,24 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                               },
                               onLeave: (data) =>
                                   setstate(() => hovered = false),
-                              onAccept: (data) {
-                                if (e.days?.contains(data) == true) {
+                              onAcceptWithDetails: (data) {
+                                if (e.days?.contains(data.data) == true) {
                                   return;
                                 }
-                                final days = <int>[...e.days ?? <int>[], data]
-                                  ..sort();
+                                final days = <int>[
+                                  ...e.days ?? <int>[],
+                                  data.data,
+                                ]..sort();
                                 final idx = nutrientGoal.weekly.indexOf(e);
                                 final prevIdx = nutrientGoal.weekly.indexWhere(
                                   (element) =>
-                                      element.days?.contains(data) == true,
+                                      element.days?.contains(data.data) == true,
                                 );
 
                                 nutrientGoal.weekly[prevIdx] =
                                     nutrientGoal.weekly[prevIdx].copyWith(
                                   days: nutrientGoal.weekly[prevIdx].days!
-                                      .where((element) => element != data)
+                                      .where((element) => element != data.data)
                                       .toList(),
                                 );
 
@@ -106,7 +113,7 @@ class WeeklyGoalsSelector extends ConsumerWidget {
 
                                 ref
                                     .read(accountServiceProvider)
-                                    .updateGoals(nutrientGoal);
+                                    .updateGoals(accountData!, nutrientGoal);
                               },
                               builder: (
                                 context,
@@ -231,14 +238,14 @@ class WeeklyGoalsSelector extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 onEditName(text.text);
-                AutoRouter.of(c).pop();
+                AutoRouter.of(c).maybePop();
               },
               child: const Text('Save'),
             ),
             IconButton(
               onPressed: () {
                 onDelete();
-                AutoRouter.of(c).pop();
+                AutoRouter.of(c).maybePop();
               },
               icon: const Icon(Icons.delete),
             ),

@@ -2,7 +2,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/screens/home/diary.dart';
-import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
@@ -31,14 +30,15 @@ class HomeWidgetData {
 }
 
 final homeWidgetDataProvider = StateProvider<HomeWidgetData>((ref) {
-  final accState = ref.watch(accountStateProvider);
+  final accState = ref.watch(authProvider);
   final diaryState = ref.watch(diaryProvider);
 
-  final user = accState.getData();
+  final user = accState.authUser;
 
-  if (user != null) {
+  final accountData = accState.accountData;
+  if (user != null && accountData != null) {
     final diaryEntry =
-        diaryState.getEntry(user.id, DateTime.now().atMidday())?.entry;
+        diaryState.getEntry(user.userId, DateTime.now().atMidday())?.entry;
 
     if (diaryEntry == null) {
       return HomeWidgetData();
@@ -46,7 +46,7 @@ final homeWidgetDataProvider = StateProvider<HomeWidgetData>((ref) {
 
     final goals = DiarySection.getValidGoals(
       diaryEntry,
-      user,
+      accountData,
     );
     return HomeWidgetData(
       goals: goals,

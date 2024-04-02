@@ -12,7 +12,7 @@ part of 'api_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 ApiResponse _$ApiResponseFromJson(Map<String, dynamic> json) {
   return _ApiResponse.fromJson(json);
@@ -21,8 +21,6 @@ ApiResponse _$ApiResponseFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ApiResponse {
   List<FoodApiItem> get items => throw _privateConstructorUsedError;
-  @JsonKey(name: 'totalResultsCount')
-  int get totalResultsCount => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,9 +34,7 @@ abstract class $ApiResponseCopyWith<$Res> {
           ApiResponse value, $Res Function(ApiResponse) then) =
       _$ApiResponseCopyWithImpl<$Res, ApiResponse>;
   @useResult
-  $Res call(
-      {List<FoodApiItem> items,
-      @JsonKey(name: 'totalResultsCount') int totalResultsCount});
+  $Res call({List<FoodApiItem> items});
 }
 
 /// @nodoc
@@ -55,71 +51,57 @@ class _$ApiResponseCopyWithImpl<$Res, $Val extends ApiResponse>
   @override
   $Res call({
     Object? items = null,
-    Object? totalResultsCount = null,
   }) {
     return _then(_value.copyWith(
       items: null == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<FoodApiItem>,
-      totalResultsCount: null == totalResultsCount
-          ? _value.totalResultsCount
-          : totalResultsCount // ignore: cast_nullable_to_non_nullable
-              as int,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$_ApiResponseCopyWith<$Res>
+abstract class _$$ApiResponseImplCopyWith<$Res>
     implements $ApiResponseCopyWith<$Res> {
-  factory _$$_ApiResponseCopyWith(
-          _$_ApiResponse value, $Res Function(_$_ApiResponse) then) =
-      __$$_ApiResponseCopyWithImpl<$Res>;
+  factory _$$ApiResponseImplCopyWith(
+          _$ApiResponseImpl value, $Res Function(_$ApiResponseImpl) then) =
+      __$$ApiResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {List<FoodApiItem> items,
-      @JsonKey(name: 'totalResultsCount') int totalResultsCount});
+  $Res call({List<FoodApiItem> items});
 }
 
 /// @nodoc
-class __$$_ApiResponseCopyWithImpl<$Res>
-    extends _$ApiResponseCopyWithImpl<$Res, _$_ApiResponse>
-    implements _$$_ApiResponseCopyWith<$Res> {
-  __$$_ApiResponseCopyWithImpl(
-      _$_ApiResponse _value, $Res Function(_$_ApiResponse) _then)
+class __$$ApiResponseImplCopyWithImpl<$Res>
+    extends _$ApiResponseCopyWithImpl<$Res, _$ApiResponseImpl>
+    implements _$$ApiResponseImplCopyWith<$Res> {
+  __$$ApiResponseImplCopyWithImpl(
+      _$ApiResponseImpl _value, $Res Function(_$ApiResponseImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? items = null,
-    Object? totalResultsCount = null,
   }) {
-    return _then(_$_ApiResponse(
+    return _then(_$ApiResponseImpl(
       items: null == items
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
               as List<FoodApiItem>,
-      totalResultsCount: null == totalResultsCount
-          ? _value.totalResultsCount
-          : totalResultsCount // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$_ApiResponse with DiagnosticableTreeMixin implements _ApiResponse {
-  const _$_ApiResponse(
-      {required final List<FoodApiItem> items,
-      @JsonKey(name: 'totalResultsCount') required this.totalResultsCount})
+class _$ApiResponseImpl with DiagnosticableTreeMixin implements _ApiResponse {
+  const _$ApiResponseImpl({required final List<FoodApiItem> items})
       : _items = items;
 
-  factory _$_ApiResponse.fromJson(Map<String, dynamic> json) =>
-      _$$_ApiResponseFromJson(json);
+  factory _$ApiResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiResponseImplFromJson(json);
 
   final List<FoodApiItem> _items;
   @override
@@ -130,12 +112,8 @@ class _$_ApiResponse with DiagnosticableTreeMixin implements _ApiResponse {
   }
 
   @override
-  @JsonKey(name: 'totalResultsCount')
-  final int totalResultsCount;
-
-  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ApiResponse(items: $items, totalResultsCount: $totalResultsCount)';
+    return 'ApiResponse(items: $items)';
   }
 
   @override
@@ -143,55 +121,47 @@ class _$_ApiResponse with DiagnosticableTreeMixin implements _ApiResponse {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'ApiResponse'))
-      ..add(DiagnosticsProperty('items', items))
-      ..add(DiagnosticsProperty('totalResultsCount', totalResultsCount));
+      ..add(DiagnosticsProperty('items', items));
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ApiResponse &&
-            const DeepCollectionEquality().equals(other._items, _items) &&
-            (identical(other.totalResultsCount, totalResultsCount) ||
-                other.totalResultsCount == totalResultsCount));
+            other is _$ApiResponseImpl &&
+            const DeepCollectionEquality().equals(other._items, _items));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_items), totalResultsCount);
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_items));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ApiResponseCopyWith<_$_ApiResponse> get copyWith =>
-      __$$_ApiResponseCopyWithImpl<_$_ApiResponse>(this, _$identity);
+  _$$ApiResponseImplCopyWith<_$ApiResponseImpl> get copyWith =>
+      __$$ApiResponseImplCopyWithImpl<_$ApiResponseImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ApiResponseToJson(
+    return _$$ApiResponseImplToJson(
       this,
     );
   }
 }
 
 abstract class _ApiResponse implements ApiResponse {
-  const factory _ApiResponse(
-      {required final List<FoodApiItem> items,
-      @JsonKey(name: 'totalResultsCount')
-      required final int totalResultsCount}) = _$_ApiResponse;
+  const factory _ApiResponse({required final List<FoodApiItem> items}) =
+      _$ApiResponseImpl;
 
   factory _ApiResponse.fromJson(Map<String, dynamic> json) =
-      _$_ApiResponse.fromJson;
+      _$ApiResponseImpl.fromJson;
 
   @override
   List<FoodApiItem> get items;
   @override
-  @JsonKey(name: 'totalResultsCount')
-  int get totalResultsCount;
-  @override
   @JsonKey(ignore: true)
-  _$$_ApiResponseCopyWith<_$_ApiResponse> get copyWith =>
+  _$$ApiResponseImplCopyWith<_$ApiResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

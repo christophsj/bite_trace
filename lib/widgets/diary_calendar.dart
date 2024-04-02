@@ -1,30 +1,9 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/screens/home/diary.dart';
-import 'package:bite_trace/service/account_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-final dateRangeProvider = StateProvider<List<DateTime>?>((ref) {
-  final state = ref.watch(accountStateProvider);
-  if (state.getData() == null) {
-    return null;
-  }
-
-  DateTime from = (state.getData()!.createdAt ?? TemporalDateTime.now())
-      .getDateTimeInUtc()
-      .toLocal()
-      .atMidday();
-  if (state.getData()!.createdAt == null) {
-    // if for some reason created at is not availabe, make last 14 days available
-    from = from.subtract(const Duration(days: 14));
-  }
-  final to =
-      DateTime.now().atMidday().add(const Duration(days: Diary.futureDays));
-  return [from, to];
-});
 
 class DiaryCalendar extends ConsumerWidget {
   String _formatDay(DateTime date) {
@@ -107,7 +86,7 @@ class DiaryCalendar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedDayProvider);
-    final dateRange = ref.watch(dateRangeProvider)!;
+    final dateRange = ref.watch(dateRangeProvider);
 
     final itemCount = dateRange[1].difference(dateRange[0]).inDays + 1;
 
@@ -142,7 +121,7 @@ class DiaryCalendar extends ConsumerWidget {
                 ),
               IconButton(
                 onPressed: () {
-                  final range = ref.read(dateRangeProvider)!;
+                  final range = ref.read(dateRangeProvider);
                   final day = ref.read(selectedDayProvider);
                   showDatePicker(
                     context: context,

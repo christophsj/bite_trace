@@ -104,7 +104,7 @@ class _StringListEditorWidgetState extends State<StringListEditorWidget> {
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 widget.onSubmit(list.map((e) => e.text).toList());
-                AutoRouter.of(context).pop();
+                AutoRouter.of(context).maybePop();
               }
             },
             icon: const Icon(Icons.done_rounded),

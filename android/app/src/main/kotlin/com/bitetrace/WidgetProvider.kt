@@ -1,4 +1,4 @@
-package com.example.bite_trace
+package com.bitetrace
 
 import android.appwidget.AppWidgetManager
 import android.content.Context

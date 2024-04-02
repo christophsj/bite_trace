@@ -24,15 +24,15 @@ import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'package:collection/collection.dart';
 
 
-/** This is an auto generated class representing the DiaryEntry type in your schema. */
-class DiaryEntry extends amplify_core.Model {
-  static const classType = const _DiaryEntryModelType();
+/** This is an auto generated class representing the MyMeal type in your schema. */
+class MyMeal extends amplify_core.Model {
+  static const classType = const _MyMealModelType();
   final String id;
-  final String? _day;
-  final List<Meal>? _meals;
-  final NutrientGoals? _goals;
+  final String? _name;
+  final List<Food>? _foods;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
+  final String? _accountDataMealsId;
 
   @override
   getInstanceType() => classType;
@@ -41,25 +41,15 @@ class DiaryEntry extends amplify_core.Model {
   @override
   String getId() => id;
   
-  DiaryEntryModelIdentifier get modelIdentifier {
-    try {
-      return DiaryEntryModelIdentifier(
-        id: id,
-        day: _day!
+  MyMealModelIdentifier get modelIdentifier {
+      return MyMealModelIdentifier(
+        id: id
       );
-    } catch(e) {
-      throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
   }
   
-  String get day {
+  String get name {
     try {
-      return _day!;
+      return _name!;
     } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
           amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -70,12 +60,17 @@ class DiaryEntry extends amplify_core.Model {
     }
   }
   
-  List<Meal>? get meals {
-    return _meals;
-  }
-  
-  NutrientGoals? get goals {
-    return _goals;
+  List<Food> get foods {
+    try {
+      return _foods!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   amplify_core.TemporalDateTime? get createdAt {
@@ -86,14 +81,18 @@ class DiaryEntry extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const DiaryEntry._internal({required this.id, required day, meals, goals, createdAt, updatedAt}): _day = day, _meals = meals, _goals = goals, _createdAt = createdAt, _updatedAt = updatedAt;
+  String? get accountDataMealsId {
+    return _accountDataMealsId;
+  }
   
-  factory DiaryEntry({String? id, required String day, List<Meal>? meals, NutrientGoals? goals}) {
-    return DiaryEntry._internal(
+  const MyMeal._internal({required this.id, required name, required foods, createdAt, updatedAt, accountDataMealsId}): _name = name, _foods = foods, _createdAt = createdAt, _updatedAt = updatedAt, _accountDataMealsId = accountDataMealsId;
+  
+  factory MyMeal({String? id, required String name, required List<Food> foods, String? accountDataMealsId}) {
+    return MyMeal._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
-      day: day,
-      meals: meals != null ? List<Meal>.unmodifiable(meals) : meals,
-      goals: goals);
+      name: name,
+      foods: foods != null ? List<Food>.unmodifiable(foods) : foods,
+      accountDataMealsId: accountDataMealsId);
   }
   
   bool equals(Object other) {
@@ -103,11 +102,11 @@ class DiaryEntry extends amplify_core.Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is DiaryEntry &&
+    return other is MyMeal &&
       id == other.id &&
-      _day == other._day &&
-      DeepCollectionEquality().equals(_meals, other._meals) &&
-      _goals == other._goals;
+      _name == other._name &&
+      DeepCollectionEquality().equals(_foods, other._foods) &&
+      _accountDataMealsId == other._accountDataMealsId;
   }
   
   @override
@@ -117,74 +116,73 @@ class DiaryEntry extends amplify_core.Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("DiaryEntry {");
+    buffer.write("MyMeal {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("day=" + "$_day" + ", ");
-    buffer.write("meals=" + (_meals != null ? _meals!.toString() : "null") + ", ");
-    buffer.write("goals=" + (_goals != null ? _goals!.toString() : "null") + ", ");
+    buffer.write("name=" + "$_name" + ", ");
+    buffer.write("foods=" + (_foods != null ? _foods!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("accountDataMealsId=" + "$_accountDataMealsId");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  DiaryEntry copyWith({List<Meal>? meals, NutrientGoals? goals}) {
-    return DiaryEntry._internal(
+  MyMeal copyWith({String? name, List<Food>? foods, String? accountDataMealsId}) {
+    return MyMeal._internal(
       id: id,
-      day: day,
-      meals: meals ?? this.meals,
-      goals: goals ?? this.goals);
+      name: name ?? this.name,
+      foods: foods ?? this.foods,
+      accountDataMealsId: accountDataMealsId ?? this.accountDataMealsId);
   }
   
-  DiaryEntry copyWithModelFieldValues({
-    ModelFieldValue<List<Meal>>? meals,
-    ModelFieldValue<NutrientGoals?>? goals
+  MyMeal copyWithModelFieldValues({
+    ModelFieldValue<String>? name,
+    ModelFieldValue<List<Food>>? foods,
+    ModelFieldValue<String?>? accountDataMealsId
   }) {
-    return DiaryEntry._internal(
+    return MyMeal._internal(
       id: id,
-      day: day,
-      meals: meals == null ? this.meals : meals.value,
-      goals: goals == null ? this.goals : goals.value
+      name: name == null ? this.name : name.value,
+      foods: foods == null ? this.foods : foods.value,
+      accountDataMealsId: accountDataMealsId == null ? this.accountDataMealsId : accountDataMealsId.value
     );
   }
   
-  DiaryEntry.fromJson(Map<String, dynamic> json)  
+  MyMeal.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _day = json['day'],
-      _meals = json['meals'] is List
-        ? (json['meals'] as List)
+      _name = json['name'],
+      _foods = json['foods'] is List
+        ? (json['foods'] as List)
           .where((e) => e != null)
-          .map((e) => Meal.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .map((e) => Food.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
-      _goals = json['goals']?['serializedData'] != null
-        ? NutrientGoals.fromJson(new Map<String, dynamic>.from(json['goals']['serializedData']))
-        : null,
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
+      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null,
+      _accountDataMealsId = json['accountDataMealsId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'day': _day, 'meals': _meals?.map((Meal? e) => e?.toJson()).toList(), 'goals': _goals?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'foods': _foods?.map((Food? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'accountDataMealsId': _accountDataMealsId
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
-    'day': _day,
-    'meals': _meals,
-    'goals': _goals,
+    'name': _name,
+    'foods': _foods,
     'createdAt': _createdAt,
-    'updatedAt': _updatedAt
+    'updatedAt': _updatedAt,
+    'accountDataMealsId': _accountDataMealsId
   };
 
-  static final amplify_core.QueryModelIdentifier<DiaryEntryModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<DiaryEntryModelIdentifier>();
+  static final amplify_core.QueryModelIdentifier<MyMealModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<MyMealModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
-  static final DAY = amplify_core.QueryField(fieldName: "day");
-  static final MEALS = amplify_core.QueryField(fieldName: "meals");
-  static final GOALS = amplify_core.QueryField(fieldName: "goals");
+  static final NAME = amplify_core.QueryField(fieldName: "name");
+  static final FOODS = amplify_core.QueryField(fieldName: "foods");
+  static final ACCOUNTDATAMEALSID = amplify_core.QueryField(fieldName: "accountDataMealsId");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "DiaryEntry";
-    modelSchemaDefinition.pluralName = "DiaryEntries";
+    modelSchemaDefinition.name = "MyMeal";
+    modelSchemaDefinition.pluralName = "MyMeals";
     
     modelSchemaDefinition.authRules = [
       amplify_core.AuthRule(
@@ -197,29 +195,19 @@ class DiaryEntry extends amplify_core.Model {
         ])
     ];
     
-    modelSchemaDefinition.indexes = [
-      amplify_core.ModelIndex(fields: const ["id", "day"], name: null)
-    ];
-    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: DiaryEntry.DAY,
+      key: MyMeal.NAME,
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
-      fieldName: 'meals',
-      isRequired: false,
+      fieldName: 'foods',
+      isRequired: true,
       isArray: true,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'Meal')
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
-      fieldName: 'goals',
-      isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'NutrientGoals')
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embeddedCollection, ofCustomTypeName: 'Food')
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
@@ -235,43 +223,43 @@ class DiaryEntry extends amplify_core.Model {
       isReadOnly: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
     ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: MyMeal.ACCOUNTDATAMEALSID,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
   });
 }
 
-class _DiaryEntryModelType extends amplify_core.ModelType<DiaryEntry> {
-  const _DiaryEntryModelType();
+class _MyMealModelType extends amplify_core.ModelType<MyMeal> {
+  const _MyMealModelType();
   
   @override
-  DiaryEntry fromJson(Map<String, dynamic> jsonData) {
-    return DiaryEntry.fromJson(jsonData);
+  MyMeal fromJson(Map<String, dynamic> jsonData) {
+    return MyMeal.fromJson(jsonData);
   }
   
   @override
   String modelName() {
-    return 'DiaryEntry';
+    return 'MyMeal';
   }
 }
 
 /**
  * This is an auto generated class representing the model identifier
- * of [DiaryEntry] in your schema.
+ * of [MyMeal] in your schema.
  */
-class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEntry> {
+class MyMealModelIdentifier implements amplify_core.ModelIdentifier<MyMeal> {
   final String id;
-  final String day;
 
-  /**
-   * Create an instance of DiaryEntryModelIdentifier using [id] the primary key.
-   * And [day] the sort key.
-   */
-  const DiaryEntryModelIdentifier({
-    required this.id,
-    required this.day});
+  /** Create an instance of MyMealModelIdentifier using [id] the primary key. */
+  const MyMealModelIdentifier({
+    required this.id});
   
   @override
   Map<String, dynamic> serializeAsMap() => (<String, dynamic>{
-    'id': id,
-    'day': day
+    'id': id
   });
   
   @override
@@ -284,7 +272,7 @@ class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEnt
   String serializeAsString() => serializeAsMap().values.join('#');
   
   @override
-  String toString() => 'DiaryEntryModelIdentifier(id: $id, day: $day)';
+  String toString() => 'MyMealModelIdentifier(id: $id)';
   
   @override
   bool operator ==(Object other) {
@@ -292,13 +280,11 @@ class DiaryEntryModelIdentifier implements amplify_core.ModelIdentifier<DiaryEnt
       return true;
     }
     
-    return other is DiaryEntryModelIdentifier &&
-      id == other.id &&
-      day == other.day;
+    return other is MyMealModelIdentifier &&
+      id == other.id;
   }
   
   @override
   int get hashCode =>
-    id.hashCode ^
-    day.hashCode;
+    id.hashCode;
 }

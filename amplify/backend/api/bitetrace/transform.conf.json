@@ -1,20 +1,4 @@
 {
     "Version": 5,
-    "ElasticsearchWarning": true,
-    "ResolverConfig": {
-        "project": {
-            "ConflictHandler": "AUTOMERGE",
-            "ConflictDetection": "VERSION"
-        },
-        "models": {
-            "DiaryEntry": {
-                "ConflictHandler": "AUTOMERGE",
-                "ConflictDetection": "VERSION"
-            },
-            "AccountData": {
-                "ConflictHandler": "AUTOMERGE",
-                "ConflictDetection": "VERSION"
-            }
-        }
-    }
+    "ElasticsearchWarning": true
 }

@@ -1,12 +1,8 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
 import 'package:bite_trace/screens/register_screen.dart';
-import 'package:bite_trace/service/account_service.dart';
-import 'package:bite_trace/state/account_state.dart';
 import 'package:bite_trace/widgets/diary_calendar.dart';
-import 'package:bite_trace/widgets/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,30 +12,29 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return x(ref);
-  }
+    final accountState = ref.watch(authProvider);
 
-  Widget x(WidgetRef ref) {
-    final accountState = ref.watch(accountStateProvider);
-
-    return switch (accountState) {
-      (AccountStateInitializing _) => Scaffold(
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/logo.png'),
-              const SizedBox(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(),
-              ),
-            ],
-          ),
+    if (accountState.initializing) {
+      return Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/logo.png'),
+            const SizedBox(
+              height: 50,
+              width: 50,
+              child: CircularProgressIndicator(),
+            ),
+          ],
         ),
-      (final AccountStateError s) => ErrorView(error: s),
-      (final AccountStateReady _) => _buildLoggedInContent(ref),
-      (final AccountStateLoggedOut _) => const RegisterScreen()
-    };
+      );
+    }
+
+    if (!accountState.isRegistered) {
+      return const RegisterScreen();
+    }
+
+    return _buildLoggedInContent(ref);
   }
 
   Widget _buildLoggedInContent(WidgetRef ref) {
@@ -59,7 +54,9 @@ class HomeScreen extends ConsumerWidget {
           body: child,
           appBar: [
             DiaryRoute.name,
-          ].contains(AutoRouter.of(context).childControllers[0].current.name)
+          ].contains(
+            AutoRouter.of(context).childControllers[0].current.name,
+          )
               ? PreferredSize(
                   preferredSize: const Size.fromHeight(
                     130,
@@ -69,11 +66,8 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 )
               : AppBar(
-                  title: FutureBuilder<AuthUser?>(
-                    future: ref.read(userProvider.future),
-                    builder: (context, snapshot) {
-                      return Text('Hi ${snapshot.data?.username ?? ''}');
-                    },
+                  title: Text(
+                    'Hi ${ref.read(authProvider).authUser?.username ?? ''}',
                   ),
                 ),
           bottomNavigationBar: BottomNavigationBar(
@@ -89,6 +83,10 @@ class HomeScreen extends ConsumerWidget {
                 icon: Icon(Icons.book),
                 label: 'Diary',
               ),
+              // BottomNavigationBarItem(
+              //   icon: Icon(Icons.monitor_weight_outlined),
+              //   label: 'Diary',
+              // ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.people),
                 label: 'Friends',
@@ -102,14 +100,5 @@ class HomeScreen extends ConsumerWidget {
         );
       },
     );
-  }
-}
-
-class ErrorPage extends StatelessWidget {
-  const ErrorPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

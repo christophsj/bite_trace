@@ -56,6 +56,17 @@ class _FoodDetailsState extends ConsumerState<BarcodeScanScreen>
               future: search,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          const Text('Error fetching data'),
+                          Text(snapshot.error.toString()),
+                        ],
+                      ),
+                    );
+                  }
+
                   if (!snapshot.hasData && snapshot.data!.isEmpty) {
                     return const Center(
                       child: Text('nothing found :('),

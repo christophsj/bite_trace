@@ -1,4 +1,4 @@
-import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bite_trace/constants.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
@@ -66,7 +66,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final accountService = ref.read(accountServiceProvider);
-    final authService = ref.read(authServiceProvider);
 
     final validMacros = sum == 100;
     final color =
@@ -156,7 +155,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             );
 
                             final data = AccountData(
-                              id: (await authService.getCurrentUser())!.userId,
+                              id: ref.read(authProvider).authUser?.userId,
                               nutrientGoal: NutrientGoal(
                                 daily: n,
                                 isDaily: true,
@@ -171,8 +170,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               ),
                               mealNames: Constants.defaultMealNames,
                               friends: [],
-                              name: (await authService.getCurrentUser())!
-                                  .username,
+                              name: ref.read(authProvider).authUser!.username,
                             );
                             await accountService.createAccount(data);
                           }

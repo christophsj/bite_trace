@@ -1,15 +1,14 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:bite_trace/models/ModelProvider.dart';
 import 'package:bite_trace/providers.dart';
 import 'package:bite_trace/routing/router.gr.dart';
-import 'package:bite_trace/service/datastore_service.dart';
 import 'package:bite_trace/service/diary_service.dart';
 import 'package:bite_trace/utils/date_time_extension.dart';
 import 'package:bite_trace/utils/food_extension.dart';
 import 'package:bite_trace/utils/nutrient_extension.dart';
 import 'package:bite_trace/utils/nutrient_goals_extension.dart';
 import 'package:bite_trace/widgets/dashboard.dart';
-import 'package:bite_trace/widgets/diary_calendar.dart';
 import 'package:bite_trace/widgets/error_view.dart';
 import 'package:bite_trace/widgets/food_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +28,9 @@ class Diary extends ConsumerStatefulWidget {
   }
 
   static int dateToIdx(DateTime next) {
-    return DateTime.now().atMidday().difference(next).inDays + futureDays;
+    return (DateTime.now().atMidday().difference(next.atMidday()).inHours / 24)
+            .round() +
+        futureDays;
   }
 
   @override
@@ -50,22 +51,27 @@ class _DiaryScreenState extends ConsumerState<Diary> {
     super.initState();
   }
 
-  Widget _onUserDataReady(AccountData data) {
+  @override
+  Widget build(BuildContext context) {
     ref.listen(selectedDayProvider, (previous, next) {
+      print("Current page: " + _pageController.page!.toString());
+      print("requesteed page: " + Diary.dateToIdx(next).toString());
+      print(next);
+      print("");
       if (_pageController.page!.round() == Diary.dateToIdx(next)) return;
       _pageController.jumpToPage(
         Diary.dateToIdx(next),
       );
     });
-    final dateRange = ref.watch(dateRangeProvider)!;
+    final dateRange = ref.watch(dateRangeProvider);
 
     final itemCount = dateRange[1].difference(dateRange[0]).inDays + 1;
-    final diaryState = ref.watch(diaryProvider);
     return PageView.builder(
       reverse: true,
       controller: _pageController,
       itemCount: itemCount,
       itemBuilder: (context, index) {
+        final diaryState = ref.watch(diaryProvider);
         final date = Diary.idxToDate(index);
         final entryState = diaryState.getEntry(widget.accountData.id, date);
         if (entryState != null) {
@@ -87,29 +93,14 @@ class _DiaryScreenState extends ConsumerState<Diary> {
                   tryFromCache: false,
                   uid: widget.accountData.id,
                 ),
-            child: ListView(
-              children: [
-                DiarySection(entryState.entry!, data),
-                if (!ref.watch(datastoreStateProvider).networkIsUp)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red,
-                          size: 14,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'network',
-                          style: TextStyle(fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
+            child: Builder(
+              builder: (context) {
+                return ListView(
+                  children: [
+                    DiarySection(entryState.entry!, widget.accountData),
+                  ],
+                );
+              },
             ),
           );
         } else {
@@ -128,11 +119,6 @@ class _DiaryScreenState extends ConsumerState<Diary> {
       },
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return _onUserDataReady(widget.accountData);
-  }
 }
 
 class DiarySection extends ConsumerWidget {
@@ -146,13 +132,12 @@ class DiarySection extends ConsumerWidget {
   }
 
   static NutrientGoals getValidGoals(DiaryEntry log, AccountData accountData) {
+    final day = TemporalDate.fromString(log.day).getDateTime();
     if (log.goals == null) {
-      return accountData.nutrientGoal.getCurrentGoal(log.day.getDateTime());
+      return accountData.nutrientGoal.getCurrentGoal(day);
     } else if (accountData.nutrientGoal.setAt != null &&
-        !log.day
-            .getDateTime()
-            .isBefore(accountData.nutrientGoal.setAt!.getDateTime())) {
-      return accountData.nutrientGoal.getCurrentGoal(log.day.getDateTime());
+        !day.isBefore(accountData.nutrientGoal.setAt!.getDateTime())) {
+      return accountData.nutrientGoal.getCurrentGoal(day);
     }
     return log.goals!;
   }

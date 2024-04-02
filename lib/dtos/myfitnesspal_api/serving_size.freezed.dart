@@ -12,7 +12,7 @@ part of 'serving_size.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 ServingSizeDto _$ServingSizeDtoFromJson(Map<String, dynamic> json) {
   return _ServingSize.fromJson(json);
@@ -91,11 +91,11 @@ class _$ServingSizeDtoCopyWithImpl<$Res, $Val extends ServingSizeDto>
 }
 
 /// @nodoc
-abstract class _$$_ServingSizeCopyWith<$Res>
+abstract class _$$ServingSizeImplCopyWith<$Res>
     implements $ServingSizeDtoCopyWith<$Res> {
-  factory _$$_ServingSizeCopyWith(
-          _$_ServingSize value, $Res Function(_$_ServingSize) then) =
-      __$$_ServingSizeCopyWithImpl<$Res>;
+  factory _$$ServingSizeImplCopyWith(
+          _$ServingSizeImpl value, $Res Function(_$ServingSizeImpl) then) =
+      __$$ServingSizeImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -107,11 +107,11 @@ abstract class _$$_ServingSizeCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_ServingSizeCopyWithImpl<$Res>
-    extends _$ServingSizeDtoCopyWithImpl<$Res, _$_ServingSize>
-    implements _$$_ServingSizeCopyWith<$Res> {
-  __$$_ServingSizeCopyWithImpl(
-      _$_ServingSize _value, $Res Function(_$_ServingSize) _then)
+class __$$ServingSizeImplCopyWithImpl<$Res>
+    extends _$ServingSizeDtoCopyWithImpl<$Res, _$ServingSizeImpl>
+    implements _$$ServingSizeImplCopyWith<$Res> {
+  __$$ServingSizeImplCopyWithImpl(
+      _$ServingSizeImpl _value, $Res Function(_$ServingSizeImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -123,7 +123,7 @@ class __$$_ServingSizeCopyWithImpl<$Res>
     Object? unit = null,
     Object? value = null,
   }) {
-    return _then(_$_ServingSize(
+    return _then(_$ServingSizeImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -150,16 +150,16 @@ class __$$_ServingSizeCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_ServingSize implements _ServingSize {
-  const _$_ServingSize(
+class _$ServingSizeImpl implements _ServingSize {
+  const _$ServingSizeImpl(
       {required this.id,
       required this.index,
       required this.nutritionMultiplier,
       required this.unit,
       required this.value});
 
-  factory _$_ServingSize.fromJson(Map<String, dynamic> json) =>
-      _$$_ServingSizeFromJson(json);
+  factory _$ServingSizeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ServingSizeImplFromJson(json);
 
   @override
   final String id;
@@ -178,10 +178,10 @@ class _$_ServingSize implements _ServingSize {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ServingSize &&
+            other is _$ServingSizeImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.index, index) || other.index == index) &&
             (identical(other.nutritionMultiplier, nutritionMultiplier) ||
@@ -198,12 +198,12 @@ class _$_ServingSize implements _ServingSize {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ServingSizeCopyWith<_$_ServingSize> get copyWith =>
-      __$$_ServingSizeCopyWithImpl<_$_ServingSize>(this, _$identity);
+  _$$ServingSizeImplCopyWith<_$ServingSizeImpl> get copyWith =>
+      __$$ServingSizeImplCopyWithImpl<_$ServingSizeImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ServingSizeToJson(
+    return _$$ServingSizeImplToJson(
       this,
     );
   }
@@ -215,10 +215,10 @@ abstract class _ServingSize implements ServingSizeDto {
       required final int index,
       required final double nutritionMultiplier,
       required final String unit,
-      required final double value}) = _$_ServingSize;
+      required final double value}) = _$ServingSizeImpl;
 
   factory _ServingSize.fromJson(Map<String, dynamic> json) =
-      _$_ServingSize.fromJson;
+      _$ServingSizeImpl.fromJson;
 
   @override
   String get id;
@@ -232,6 +232,6 @@ abstract class _ServingSize implements ServingSizeDto {
   double get value;
   @override
   @JsonKey(ignore: true)
-  _$$_ServingSizeCopyWith<_$_ServingSize> get copyWith =>
+  _$$ServingSizeImplCopyWith<_$ServingSizeImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

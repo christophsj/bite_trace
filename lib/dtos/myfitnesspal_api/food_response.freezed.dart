@@ -12,7 +12,7 @@ part of 'food_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 FoodResponse _$FoodResponseFromJson(Map<String, dynamic> json) {
   return _FoodResponse.fromJson(json);
@@ -152,11 +152,11 @@ class _$FoodResponseCopyWithImpl<$Res, $Val extends FoodResponse>
 }
 
 /// @nodoc
-abstract class _$$_FoodResponseCopyWith<$Res>
+abstract class _$$FoodResponseImplCopyWith<$Res>
     implements $FoodResponseCopyWith<$Res> {
-  factory _$$_FoodResponseCopyWith(
-          _$_FoodResponse value, $Res Function(_$_FoodResponse) then) =
-      __$$_FoodResponseCopyWithImpl<$Res>;
+  factory _$$FoodResponseImplCopyWith(
+          _$FoodResponseImpl value, $Res Function(_$FoodResponseImpl) then) =
+      __$$FoodResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -178,11 +178,11 @@ abstract class _$$_FoodResponseCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_FoodResponseCopyWithImpl<$Res>
-    extends _$FoodResponseCopyWithImpl<$Res, _$_FoodResponse>
-    implements _$$_FoodResponseCopyWith<$Res> {
-  __$$_FoodResponseCopyWithImpl(
-      _$_FoodResponse _value, $Res Function(_$_FoodResponse) _then)
+class __$$FoodResponseImplCopyWithImpl<$Res>
+    extends _$FoodResponseCopyWithImpl<$Res, _$FoodResponseImpl>
+    implements _$$FoodResponseImplCopyWith<$Res> {
+  __$$FoodResponseImplCopyWithImpl(
+      _$FoodResponseImpl _value, $Res Function(_$FoodResponseImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -201,7 +201,7 @@ class __$$_FoodResponseCopyWithImpl<$Res>
     Object? version = freezed,
     Object? brandName = freezed,
   }) {
-    return _then(_$_FoodResponse(
+    return _then(_$FoodResponseImpl(
       countryCode: freezed == countryCode
           ? _value.countryCode
           : countryCode // ignore: cast_nullable_to_non_nullable
@@ -256,8 +256,8 @@ class __$$_FoodResponseCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_FoodResponse implements _FoodResponse {
-  const _$_FoodResponse(
+class _$FoodResponseImpl implements _FoodResponse {
+  const _$FoodResponseImpl(
       {this.countryCode,
       required this.deleted,
       required this.description,
@@ -272,8 +272,8 @@ class _$_FoodResponse implements _FoodResponse {
       this.brandName})
       : _servingSizes = servingSizes;
 
-  factory _$_FoodResponse.fromJson(Map<String, dynamic> json) =>
-      _$$_FoodResponseFromJson(json);
+  factory _$FoodResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FoodResponseImplFromJson(json);
 
   @override
   final String? countryCode;
@@ -312,10 +312,10 @@ class _$_FoodResponse implements _FoodResponse {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_FoodResponse &&
+            other is _$FoodResponseImpl &&
             (identical(other.countryCode, countryCode) ||
                 other.countryCode == countryCode) &&
             (identical(other.deleted, deleted) || other.deleted == deleted) &&
@@ -356,12 +356,12 @@ class _$_FoodResponse implements _FoodResponse {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_FoodResponseCopyWith<_$_FoodResponse> get copyWith =>
-      __$$_FoodResponseCopyWithImpl<_$_FoodResponse>(this, _$identity);
+  _$$FoodResponseImplCopyWith<_$FoodResponseImpl> get copyWith =>
+      __$$FoodResponseImplCopyWithImpl<_$FoodResponseImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_FoodResponseToJson(
+    return _$$FoodResponseImplToJson(
       this,
     );
   }
@@ -380,10 +380,10 @@ abstract class _FoodResponse implements FoodResponse {
       final String? userId,
       required final bool verified,
       final String? version,
-      final String? brandName}) = _$_FoodResponse;
+      final String? brandName}) = _$FoodResponseImpl;
 
   factory _FoodResponse.fromJson(Map<String, dynamic> json) =
-      _$_FoodResponse.fromJson;
+      _$FoodResponseImpl.fromJson;
 
   @override
   String? get countryCode;
@@ -411,6 +411,6 @@ abstract class _FoodResponse implements FoodResponse {
   String? get brandName;
   @override
   @JsonKey(ignore: true)
-  _$$_FoodResponseCopyWith<_$_FoodResponse> get copyWith =>
+  _$$FoodResponseImplCopyWith<_$FoodResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
