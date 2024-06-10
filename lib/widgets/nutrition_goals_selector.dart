@@ -90,7 +90,7 @@ class _NutritionGoalsSelectorState extends State<NutritionGoalsSelector> {
                 textAlign: TextAlign.end,
                 text: TextSpan(
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   children: [
                     TextSpan(

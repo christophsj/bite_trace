@@ -114,7 +114,7 @@ class _CopyMealDialogState extends ConsumerState<CopyMealDialog> {
                     ),
                     dropdownColor: theme.brightness == Brightness.light
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.background,
+                        : theme.colorScheme.surface,
                     items: snapshot.data!.meals!
                         .map(
                           (e) => DropdownMenuItem(

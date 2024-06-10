@@ -490,7 +490,7 @@ class AccountScreen extends ConsumerWidget {
         ),
         iconEnabledColor: theme.colorScheme.primary,
         underline: Container(),
-        dropdownColor: theme.colorScheme.background,
+        dropdownColor: theme.colorScheme.surface,
         selectedItemBuilder: (BuildContext context) {
           return values.map((e) => e.name).map<Widget>((String item) {
             return Container(

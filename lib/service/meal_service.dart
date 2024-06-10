@@ -31,7 +31,7 @@ class MealService {
       await Amplify.API.mutate(request: request).response;
     } on ApiException catch (e) {
       safePrint('Mutation failed: $e');
-      ref.read(snackbarServiceProvider).showBasic('Failed to delete delete.');
+      ref.read(snackbarServiceProvider).showBasic('Failed to add meal.');
     }
   }
 
@@ -54,9 +54,10 @@ class MealService {
       final request = next ??
           ModelQueries.list(
             MyMeal.classType,
-            limit: 10,
-            where: MyMeal.ACCOUNTDATAMEALSID
-                .eq(ref.read(authProvider).authUser!.userId),
+            limit: 20,
+            where: MyMeal.ACCOUNTDATAMEALSID.eq(
+              ref.read(authProvider).authUser!.userId,
+            ),
           );
       final response = await Amplify.API.query(request: request).response;
       final data = response.data;

@@ -31,7 +31,7 @@ class AppBarWithMealSelector extends SliverAppBar {
               return DropdownButton(
                 dropdownColor: theme.brightness == Brightness.light
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.background,
+                    : theme.colorScheme.surface,
                 underline: Container(),
                 value: selectedMealIndex,
                 items: meals

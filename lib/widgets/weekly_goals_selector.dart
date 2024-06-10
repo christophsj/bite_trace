@@ -157,7 +157,7 @@ class WeeklyGoalsSelector extends ConsumerWidget {
                                               Theme.of(context).primaryColor,
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
-                                          color: MaterialStateProperty.all(
+                                          color: WidgetStateProperty.all(
                                             Theme.of(context).primaryColor,
                                           ),
                                           label: Text(

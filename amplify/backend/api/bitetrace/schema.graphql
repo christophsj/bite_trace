@@ -26,6 +26,7 @@ type MyMeal @model @auth(rules: [{ allow: public }]) {
   foods: [Food!]!
 }
 
+
 type NutrientGoal {
   isDaily: Boolean!
   daily: NutrientGoals!
