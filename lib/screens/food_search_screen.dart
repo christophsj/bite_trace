@@ -138,9 +138,9 @@ class _FoodSearchState extends ConsumerState<FoodSearchScreen>
       if (disposed) return;
 
       if (result.hasNextResult) {
-        _mealsPagingController.appendLastPage(items);
-      } else {
         _mealsPagingController.appendPage(items, result.requestForNextResult);
+      } else {
+        _mealsPagingController.appendLastPage(items);
       }
     } catch (error) {
       _mealsPagingController.error = error;

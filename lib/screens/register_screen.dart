@@ -69,7 +69,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     final validMacros = sum == 100;
     final color =
-        validMacros ? Theme.of(context).colorScheme.onBackground : Colors.red;
+        validMacros ? Theme.of(context).colorScheme.onSurface : Colors.red;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(

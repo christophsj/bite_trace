@@ -231,7 +231,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
           TextSpan(
             text: diff >= 0 ? 'left' : 'over',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -243,7 +243,7 @@ class ProgressIndicatorWithValue extends StatelessWidget {
     return RichText(
       text: TextSpan(
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.normal,
         ),
         children: [

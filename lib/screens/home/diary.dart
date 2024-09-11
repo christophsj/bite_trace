@@ -54,10 +54,10 @@ class _DiaryScreenState extends ConsumerState<Diary> {
   @override
   Widget build(BuildContext context) {
     ref.listen(selectedDayProvider, (previous, next) {
-      print("Current page: " + _pageController.page!.toString());
-      print("requesteed page: " + Diary.dateToIdx(next).toString());
-      print(next);
-      print("");
+      // print('Current page: ${_pageController.page!}');
+      // print('requesteed page: ${Diary.dateToIdx(next)}');
+      // print(next);
+      // print('');
       if (_pageController.page!.round() == Diary.dateToIdx(next)) return;
       _pageController.jumpToPage(
         Diary.dateToIdx(next),

@@ -89,7 +89,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetails>
   Widget build(BuildContext context) {
     final dropdownTextStyle = TextStyle(
       fontSize: 18,
-      color: Theme.of(context).colorScheme.onBackground,
+      color: Theme.of(context).colorScheme.onSurface,
     );
 
     final inputDecoration = InputDecoration(
@@ -206,7 +206,7 @@ class _FoodDetailsState extends ConsumerState<FoodDetails>
                               DropdownButtonFormField(
                                 isExpanded: true,
                                 dropdownColor:
-                                    Theme.of(context).colorScheme.background,
+                                    Theme.of(context).colorScheme.surface,
                                 value: selectedServingIndex,
                                 decoration: inputDecoration.copyWith(
                                   labelText: 'Serving Size',
