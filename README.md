@@ -1,6 +1,6 @@
 # bite_trace
 
-A Flutter project for tracking calories, protein, carbs and fat.
+A Flutter project for tracking calories, protein, carbs and fat. Important note: For food data, this app relied on the public MyFitnessPal API. This API is no longer available for use in the app.
 
 ## Directory Structure
 
